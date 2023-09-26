@@ -1,0 +1,52 @@
+query getAllPlanets($after: String,
+    $first: Int) {
+    allPlanets(after: $after, first: $first){
+        totalCount
+        edges {
+            cursor
+            node {
+                id
+            }
+        }
+        pageInfo {
+            startCursor
+            hasNextPage
+            hasPreviousPage
+            endCursor
+        }
+        planets {
+            name
+            population
+            id
+        }
+    }
+}
+
+query getPlanet($id: ID) {
+    planet(id: $id) {
+        name
+        diameter
+        rotationPeriod
+        orbitalPeriod
+        gravity
+        population
+        climates
+        terrains
+        surfaceWater
+        residentConnection{
+            totalCount
+            residents {
+                id
+            }
+        }
+        filmConnection{
+            totalCount
+            films {
+                id
+            }
+        }
+        created
+        edited
+        id
+    }
+}

@@ -1,0 +1,56 @@
+query getAllVehicles($after: String,
+    $first: Int) {
+    allVehicles(after: $after, first: $first){
+        totalCount
+        edges {
+            cursor
+            node {
+                id
+            }
+        }
+        pageInfo {
+            startCursor
+            hasNextPage
+            hasPreviousPage
+            endCursor
+        }
+        vehicles {
+            name
+            model
+            id
+        }
+    }
+}
+
+query getVehicle($id: ID) {
+    vehicle(id: $id) {
+        name
+        model
+        vehicleClass
+        manufacturers
+        costInCredits
+        length
+        crew
+        passengers
+        maxAtmospheringSpeed
+        cargoCapacity
+        consumables
+        pilotConnection{
+            totalCount
+            pilots {
+                id
+                name
+            }
+        }
+        filmConnection{
+            totalCount
+            films {
+                id
+                title
+            }
+        }
+        created
+        edited
+        id
+    }
+}

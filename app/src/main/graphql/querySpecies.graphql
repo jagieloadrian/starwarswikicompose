@@ -1,0 +1,56 @@
+query getAllSpecies($after: String,
+    $first: Int) {
+    allSpecies(after: $after, first: $first){
+        totalCount
+        edges {
+            cursor
+            node {
+                id
+            }
+        }
+        pageInfo {
+            startCursor
+            hasNextPage
+            hasPreviousPage
+            endCursor
+        }
+        species {
+            name
+            language
+            id
+        }
+    }
+}
+
+query getSpecie($id: ID) {
+    species(id: $id) {
+        name
+        classification
+        designation
+        averageHeight
+        averageLifespan
+        eyeColors
+        hairColors
+        skinColors
+        language
+        homeworld {
+            id
+            name
+        }
+        personConnection{
+            totalCount
+            people {
+                id
+            }
+        }
+        filmConnection{
+            totalCount
+            films {
+                id
+            }
+        }
+        created
+        edited
+        id
+    }
+}

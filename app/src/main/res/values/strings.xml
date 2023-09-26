@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">StarWarsWikiCompose</string>
+    <string name="on_boarding_image">On boarding Image</string>
+    <string name="movies">MOVIES</string>
+    <string name="people">PEOPLE</string>
+    <string name="starships">STARSHIPS</string>
+    <string name="vehicles">VEHICLES</string>
+    <string name="species">SPECIES</string>
+    <string name="planets">PLANETS</string>
+    <string name="search_icon">search icon</string>
+    <string name="close_icon">close icon</string>
+    <string name="network_error_icon">network error icon</string>
+</resources>
