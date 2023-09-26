@@ -1,0 +1,58 @@
+query getAllStarships($after: String,
+    $first: Int) {
+    allStarships(after: $after, first: $first){
+        totalCount
+        edges {
+            cursor
+            node {
+                id
+            }
+        }
+        pageInfo {
+            startCursor
+            hasNextPage
+            hasPreviousPage
+            endCursor
+        }
+        starships {
+            name
+            model
+            id
+        }
+    }
+}
+
+query getStarship($id: ID) {
+    starship(id: $id) {
+        name
+        model
+        starshipClass
+        manufacturers
+        costInCredits
+        length
+        crew
+        passengers
+        maxAtmospheringSpeed
+        hyperdriveRating
+        MGLT
+        cargoCapacity
+        consumables
+        pilotConnection{
+            totalCount
+            pilots {
+                id
+                name
+            }
+        }
+        filmConnection{
+            totalCount
+            films {
+                id
+                title
+            }
+        }
+        created
+        edited
+        id
+    }
+}

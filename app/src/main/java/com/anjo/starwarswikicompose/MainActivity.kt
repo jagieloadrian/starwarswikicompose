@@ -1,0 +1,47 @@
+package com.anjo.starwarswikicompose
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.anjo.starwarswikicompose.domain.usecases.UseCases
+import com.anjo.starwarswikicompose.navigation.Screen
+import com.anjo.starwarswikicompose.navigation.SetupNavGraph
+import com.anjo.starwarswikicompose.ui.theme.StarWarsWikiComposeTheme
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
+
+    private lateinit var navController: NavHostController
+
+    @Inject
+    lateinit var useCases: UseCases
+
+    val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        throwable.printStackTrace()
+    }
+
+    private var completed = false
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            StarWarsWikiComposeTheme {
+                navController = rememberNavController()
+                SetupNavGraph(navController = navController,
+                        startDestination = if (completed) Screen.Home.route else Screen.Welcome.route)
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            completed = useCases.readOnboardingUseCase()
+        }
+    }
+}

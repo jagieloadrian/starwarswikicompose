@@ -1,0 +1,59 @@
+query getAllPeoples($after: String,
+    $first: Int) {
+    allPeople(after: $after, first: $first){
+        totalCount
+        edges {
+            cursor
+            node {
+                id
+            }
+        }
+        pageInfo {
+            startCursor
+            hasNextPage
+            hasPreviousPage
+            endCursor
+        }
+        people {
+            name
+            birthYear
+            id
+        }
+    }
+}
+
+query getPerson($id: ID) {
+    person(id: $id) {
+        name
+        birthYear
+        eyeColor
+        gender
+        hairColor
+        height
+        mass
+        skinColor
+        homeworld {
+            name
+            id
+        }
+        species {
+            name
+            id
+        }
+        starshipConnection{
+            totalCount
+            starships {
+                id
+            }
+        }
+        vehicleConnection{
+            totalCount
+            vehicles {
+                id
+            }
+        }
+        created
+        edited
+        id
+    }
+}

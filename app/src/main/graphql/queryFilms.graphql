@@ -1,0 +1,61 @@
+query getAllFilms($after: String,
+    $first: Int) {
+    allFilms(after: $after, first: $first){
+        totalCount
+        edges {
+            cursor
+            node {
+                id
+            }
+        }
+        pageInfo {
+            startCursor
+            hasNextPage
+            hasPreviousPage
+            endCursor
+        }
+        films {
+            title
+            episodeID
+            id
+        }
+    }
+}
+
+query getFilm($id: ID) {
+    film(id: $id) {
+        title
+        episodeID
+        openingCrawl
+        director
+        producers
+        releaseDate
+        speciesConnection{
+            totalCount
+            species {
+                id
+            }
+        }
+        starshipConnection{
+            totalCount
+            starships {
+                id
+            }
+        }
+        characterConnection{
+            totalCount
+            characters {
+                id
+            }
+        }
+        planetConnection{
+            totalCount
+            planets {
+                id
+            }
+        }
+        created
+        edited
+        id
+    }
+}
