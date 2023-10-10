@@ -37,12 +37,14 @@ query getPlanet($id: ID) {
             totalCount
             residents {
                 id
+                name
             }
         }
         filmConnection{
             totalCount
             films {
                 id
+                title
             }
         }
         created

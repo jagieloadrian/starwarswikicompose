@@ -1,4 +1,4 @@
-package com.anjo.starwarswikicompose.presentation.common//package com.anjo.starwarswikicompose.presentation.common
+package com.anjo.starwarswikicompose.presentation.common
 
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.RepeatMode

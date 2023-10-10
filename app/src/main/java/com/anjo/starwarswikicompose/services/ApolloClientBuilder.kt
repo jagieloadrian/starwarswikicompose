@@ -3,6 +3,7 @@ package com.anjo.starwarswikicompose.services
 import android.content.Context
 import com.anjo.starwarswikicompose.services.datafetcher.DataFetcherImpl
 import com.anjo.starwarswikicompose.services.interceptor.NetworkConnectionInterceptor
+import com.anjo.starwarswikicompose.utils.Constants.BASE_URL
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.network.okHttpClient
 import dagger.Module
@@ -20,8 +21,6 @@ object ApolloClientBuilder {
     @Singleton
     @Provides
     fun apolloClient(okHttpClient: OkHttpClient): ApolloClient {
-        //todo przenieść link do properties
-        val BASE_URL = "https://swapi-graphql.netlify.app/.netlify/functions/index"
         return ApolloClient.Builder()
                 .serverUrl(BASE_URL)
                 .okHttpClient(okHttpClient)

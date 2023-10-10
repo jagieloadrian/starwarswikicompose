@@ -11,17 +11,25 @@ val Teal200 = Color(0xFF03DAC5)
 val LightGray = Color(0xFFD8D8D8)
 val DarkGray = Color(0xFF2A2A2A)
 
-val StarColor = Color(0xFFFFC94D)
+val GoldColor = Color(0xFFD5B322)
+val GoldOrangeColor = Color(0xFFFF5722)
 
 val ShimmerLightGray = Color(0xFFF1F1F1)
 val ShimmerMediumGray = Color(0xFFE3E3E3)
 val ShimmerDarkGray = Color(0xFF1D1D1D)
+
+val BOXES_COLORS = listOf(Color.Yellow, Color.Red, Purple700)
+val CLICKABLE_BOXES_COLORS = listOf(Color.Yellow, Color.Red)
+val RELATED_BOXES_COLORS = listOf(Color.Yellow, Color.Red, Color.Blue)
 
 
 val Colors.statusBarColor
     get() = if (isLight) Purple700 else Color.Black
 
 val Colors.welcomeScreenBackgroundColor
+    get() = if (isLight) Color.White else Color.Black
+
+val Colors.customTabTextColor
     get() = if (isLight) Color.White else Color.Black
 
 val Colors.titleColor
@@ -44,3 +52,6 @@ val Colors.topAppBarContentColor: Color
 
 val Colors.topAppBarBackgroundColor: Color
     get() = if (isLight) Purple500 else Color.Black
+
+val Colors.topAppBarHomeBackgroundColor: Color
+    get() = if (isLight) GoldColor else GoldOrangeColor

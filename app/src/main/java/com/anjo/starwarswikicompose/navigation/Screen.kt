@@ -1,10 +1,36 @@
 package com.anjo.starwarswikicompose.navigation
 
-import com.anjo.starwarswikicompose.utils.Category
-import com.anjo.starwarswikicompose.utils.Category.PEOPLES
-
-sealed class Screen(val route: String, val enum:Category?) {
-    object Welcome : Screen("welcome_screen", null)
-    object Home : Screen("home_screen", null)
-    object People:Screen("people_screen", PEOPLES)
+sealed class Screen(val route: String) {
+    object Welcome : Screen("welcome_screen")
+    object Home : Screen("home_screen")
+    object PersonDetail:Screen("details_person/{personId}") {
+        fun passPersonId(personId:String):String {
+            return "details_person/$personId"
+        }
+    }
+    object MovieDetail: Screen("details_movie/{movieId}") {
+        fun passMovieId(movieId:String):String {
+            return "details_movie/$movieId"
+        }
+    }
+    object PlanetDetail: Screen("details_planet/{planetId}") {
+        fun passPlanetId(planetId:String):String {
+            return "details_planet/$planetId"
+        }
+    }
+    object SpecieDetail: Screen("details_specie/{specieId}") {
+        fun passSpecieId(specieId:String):String {
+            return "details_specie/$specieId"
+        }
+    }
+    object StarshipDetail: Screen("details_starship/{starshipId}") {
+        fun passStarshipId(starshipId:String):String {
+            return "details_starship/$starshipId"
+        }
+    }
+    object VehicleDetail: Screen("details_vehicle/{vehicleId}") {
+        fun passVehicleId(vehicleId:String):String {
+            return "details_vehicle/$vehicleId"
+        }
+    }
 }

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">StarWarsWikiCompose</string>
+    <string name="app_name_top_bar">StarWarsWiki</string>
     <string name="on_boarding_image">On boarding Image</string>
     <string name="movies">MOVIES</string>
     <string name="people">PEOPLE</string>
@@ -9,5 +10,54 @@
     <string name="planets">PLANETS</string>
     <string name="search_icon">search icon</string>
     <string name="close_icon">close icon</string>
+    <string name="home_icon">home icon</string>
     <string name="network_error_icon">network error icon</string>
+
+
+    <string name="homeworld_box_name">Home World</string>
+    <string name="species_box_name">Specie</string>
+    <string name="birth_box_name">Birth Year</string>
+    <string name="height_box_name">Height</string>
+    <string name="mass_box_name">Mass</string>
+    <string name="gender_box_name">Gender</string>
+    <string name="hair_box_name">Hair</string>
+    <string name="skin_box_name">Skin</string>
+    <string name="title_box_name">Title</string>
+    <string name="episode_id_box_name">Episode</string>
+    <string name="opening_crawl_box_name">Opening Crawl</string>
+    <string name="director_box_name">Director</string>
+    <string name="producers_box_name">Producers</string>
+    <string name="release_date_box_name">Release Date</string>
+    <string name="diameter_box_name">Diameter</string>
+    <string name="rotation_period_box_name">Rotation Period</string>
+    <string name="orbital_period_box_name">Orbital Period</string>
+    <string name="gravity_box_name">Gravity</string>
+    <string name="population_box_name">Population</string>
+    <string name="climates_box_name">Climates</string>
+    <string name="terrains_box_name">Terrains</string>
+    <string name="surface_water_box_name">Surface Water</string>
+    <string name="classification_box_name">Classification</string>
+    <string name="designation_box_name">Designation</string>
+    <string name="avr_height_box_name">Average Height</string>
+    <string name="avr_lifespan_box_name">Average Lifespan</string>
+    <string name="eye_colors_box_name">Eye Colors</string>
+    <string name="hair_colors_box_name">Hair Colors</string>
+    <string name="skin_colors_box_name">Skin Colors</string>
+    <string name="language_box_name">Language</string>
+    <string name="character_box_name">Characters</string>
+    <string name="movies_box_name">Movies</string>
+    <string name="model_box_name">Model</string>
+    <string name="starship_class_box_name">Starship class</string>
+    <string name="vehicle_class_box_name">Vehicle class</string>
+    <string name="manufacturers_box_name">Manufacturers</string>
+    <string name="cost_box_name">Cost</string>
+    <string name="length_box_name">Length</string>
+    <string name="crew_box_name">Crew</string>
+    <string name="passengers_box_name">Passengers</string>
+    <string name="v_max_box_name">V Max</string>
+    <string name="hyperdrive_box_name">Hyperdrive</string>
+    <string name="mglt_box_name">Megalight</string>
+    <string name="cargo_box_name">Cargo</string>
+    <string name="consumables_box_name">Consumables</string>
+
 </resources>
