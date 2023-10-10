@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.home
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anjo.starwarswikicompose.services.datafetcher.DataFetcherImpl
@@ -19,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val dataFetcherImpl: DataFetcherImpl) : ViewModel() {
 
-    private val _fetchedFilms = mutableStateOf(createAllFilmsEmptyObject())
+    private val _fetchedFilms = MutableStateFlow(createAllFilmsEmptyObject())
     val fetchedFilms = _fetchedFilms
     private val _fetchedPeople = MutableStateFlow(createAllPeopleEmptyObject())
     val fetchedPeoples = _fetchedPeople
