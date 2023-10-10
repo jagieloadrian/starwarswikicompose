@@ -4,7 +4,7 @@ enum class Category(
         val categoryName:String
 ) {
     FILMS("Films"),
-    PEOPLES("Peoples"),
+    PEOPLE("People"),
     PLANETS("Planets"),
     SPECIES("Species"),
     STARSHIPS("Starships"),

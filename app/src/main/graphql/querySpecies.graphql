@@ -41,12 +41,14 @@ query getSpecie($id: ID) {
             totalCount
             people {
                 id
+                name
             }
         }
         filmConnection{
             totalCount
             films {
                 id
+                title
             }
         }
         created

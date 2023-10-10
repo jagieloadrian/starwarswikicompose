@@ -34,24 +34,35 @@ query getFilm($id: ID) {
             totalCount
             species {
                 id
+                name
             }
         }
         starshipConnection{
             totalCount
             starships {
                 id
+                name
             }
         }
         characterConnection{
             totalCount
             characters {
                 id
+                name
             }
         }
         planetConnection{
             totalCount
             planets {
                 id
+                name
+            }
+        }
+        vehicleConnection{
+            totalCount
+            vehicles {
+                id
+                name
             }
         }
         created

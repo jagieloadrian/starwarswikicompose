@@ -1,18 +1,22 @@
 package com.anjo.starwarswikicompose.presentation.screens.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -20,13 +24,20 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
-import com.anjo.starwarswikicompose.ui.theme.Purple500
+import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
+import com.anjo.starwarswikicompose.ui.theme.customTabTextColor
+import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
 import com.anjo.starwarswikicompose.utils.Category
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(navController: NavHostController) {
@@ -40,17 +51,34 @@ fun HomeScreen(navController: NavHostController) {
     }
     val scope = rememberCoroutineScope()
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        ScrollableTabRow(selectedTabIndex = pagerState.currentPage) {
-            tabs.forEachIndexed { index, category ->
-                val selected = selectedIndex == index
-                CustomTab(selected, category) {
-                    selectedIndex = index
-                    scope.launch { pagerState.animateScrollToPage(index) }
+    val systemUiController = rememberSystemUiController()
+    val sytemBarColor = MaterialTheme.colors.topAppBarHomeBackgroundColor
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+                color = sytemBarColor
+        )
+    }
+
+    Scaffold(
+            topBar = { HomeTopBar() }
+    ) {
+        Column(modifier = Modifier.fillMaxSize()
+                .paint(painter = painterResource(R.drawable.stars_image),
+                        contentScale = ContentScale.FillBounds)) {
+            ScrollableTabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    backgroundColor = MaterialTheme.colors.topAppBarHomeBackgroundColor) {
+                tabs.forEachIndexed { index, category ->
+                    val selected = selectedIndex == index
+                    CustomTab(selected, category) {
+                        selectedIndex = index
+                        scope.launch { pagerState.animateScrollToPage(index) }
+                    }
                 }
             }
+            TabContent(navController, pagerState, tabs)
         }
-        TabContent(navController, pagerState, tabs)
     }
 }
 
@@ -61,13 +89,14 @@ private fun CustomTab(selected: Boolean,
             selected = selected,
             modifier = Modifier
                     .clip(RoundedCornerShape(25))
-                    .background(Purple500),
+                    .background(MaterialTheme.colors.topAppBarHomeBackgroundColor),
             onClick = onClick,
             text = {
                 Text(
                         text = enum.categoryName,
                         modifier = Modifier.padding(SMALL_PADDING),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colors.customTabTextColor
                 )
             }
     )
@@ -79,6 +108,6 @@ fun TabContent(navController: NavHostController, state: PagerState, tabs: Array<
     HorizontalPager(
             modifier = Modifier,
             state = state) { page ->
-            CommonList(navController, tabs[page])
-        }
+        CommonList(navController, tabs[page])
     }
+}

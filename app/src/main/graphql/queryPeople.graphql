@@ -32,6 +32,13 @@ query getPerson($id: ID) {
         height
         mass
         skinColor
+        filmConnection {
+            totalCount
+            films {
+                id
+                title
+            }
+        }
         homeworld {
             name
             id
@@ -43,12 +50,14 @@ query getPerson($id: ID) {
         starshipConnection{
             totalCount
             starships {
+                name
                 id
             }
         }
         vehicleConnection{
             totalCount
             vehicles {
+                name
                 id
             }
         }
