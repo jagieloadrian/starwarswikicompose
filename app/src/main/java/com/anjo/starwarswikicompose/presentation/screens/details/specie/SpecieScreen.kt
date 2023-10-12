@@ -1,10 +1,20 @@
 package com.anjo.starwarswikicompose.presentation.screens.details.specie
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +36,13 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.GetSpecieQuery
 import com.anjo.starwarswikicompose.R
-import com.anjo.starwarswikicompose.presentation.screens.common.*
+import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
+import com.anjo.starwarswikicompose.presentation.screens.common.InfoBoxColumn
+import com.anjo.starwarswikicompose.presentation.screens.common.RelatedBox
+import com.anjo.starwarswikicompose.presentation.screens.common.choosePainter
+import com.anjo.starwarswikicompose.presentation.screens.common.clickableArrangementInLazyRow
+import com.anjo.starwarswikicompose.presentation.screens.common.findImage
+import com.anjo.starwarswikicompose.presentation.screens.common.shouldInstanceLazyRow
 import com.anjo.starwarswikicompose.ui.theme.INFO_BOX_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.NAME_PLACEHOLDER_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT

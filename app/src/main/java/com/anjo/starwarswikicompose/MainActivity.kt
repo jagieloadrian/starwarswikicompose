@@ -1,14 +1,20 @@
 package com.anjo.starwarswikicompose
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.anjo.starwarswikicompose.domain.usecases.UseCases
 import com.anjo.starwarswikicompose.navigation.Screen
 import com.anjo.starwarswikicompose.navigation.SetupNavGraph
+import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.ui.theme.StarWarsWikiComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -31,14 +37,21 @@ class MainActivity : ComponentActivity() {
 
     private var completed = false
 
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             StarWarsWikiComposeTheme {
                 navController = rememberNavController()
-                SetupNavGraph(navController = navController,
-                        startDestination = if (completed) Screen.Home.route else Screen.Welcome.route)
+                Scaffold(
+                        topBar = { CustomTopAppBar(navController) },
+                        bottomBar = { CustomBottomAppBar(navController) }
+                ) { innerPadding ->
+                    SetupNavGraph(navController = navController,
+                            startDestination = if (completed) Screen.Home.route else Screen.Welcome.route,
+                            modifier = Modifier.padding(innerPadding))
 
+                }
             }
         }
         lifecycleScope.launch(Dispatchers.IO + coroutineExceptionHandler) {

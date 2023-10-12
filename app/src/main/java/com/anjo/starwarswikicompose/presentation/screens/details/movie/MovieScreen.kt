@@ -141,7 +141,7 @@ private fun MovieVisualisation(
 
 @Composable
 private fun ShowCharacters(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navController: NavHostController) {
-    val count =  selectedMovie.characterConnection?.totalCount
+    val count = selectedMovie.characterConnection?.totalCount
     if (shouldInstanceLazyRow(selectedMovie.characterConnection,
                     count,
                     selectedMovie.characterConnection?.characters)) {
@@ -157,7 +157,7 @@ private fun ShowCharacters(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navC
 
 @Composable
 private fun ShowPlanets(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navController: NavHostController) {
-    val count =  selectedMovie.planetConnection?.totalCount
+    val count = selectedMovie.planetConnection?.totalCount
     if (shouldInstanceLazyRow(selectedMovie.planetConnection,
                     selectedMovie.planetConnection?.totalCount,
                     selectedMovie.planetConnection?.planets)) {
@@ -173,7 +173,7 @@ private fun ShowPlanets(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navCont
 
 @Composable
 private fun ShowVehicles(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navController: NavHostController) {
-    val count =  selectedMovie.vehicleConnection?.totalCount
+    val count = selectedMovie.vehicleConnection?.totalCount
     if (shouldInstanceLazyRow(selectedMovie.vehicleConnection,
                     count,
                     selectedMovie.vehicleConnection?.vehicles)) {
@@ -189,7 +189,7 @@ private fun ShowVehicles(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navCon
 
 @Composable
 private fun ShowStarships(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navController: NavHostController) {
-    val count =  selectedMovie.starshipConnection?.totalCount
+    val count = selectedMovie.starshipConnection?.totalCount
     if (shouldInstanceLazyRow(selectedMovie.starshipConnection,
                     count,
                     selectedMovie.starshipConnection?.starships)) {
@@ -205,7 +205,7 @@ private fun ShowStarships(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navCo
 
 @Composable
 private fun ShowSpecies(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navController: NavHostController) {
-    val count =  selectedMovie.speciesConnection?.totalCount
+    val count = selectedMovie.speciesConnection?.totalCount
     if (shouldInstanceLazyRow(selectedMovie.speciesConnection,
                     count,
                     selectedMovie.speciesConnection?.species)) {
