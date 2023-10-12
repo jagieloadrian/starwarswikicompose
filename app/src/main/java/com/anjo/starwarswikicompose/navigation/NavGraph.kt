@@ -14,6 +14,7 @@ import com.anjo.starwarswikicompose.presentation.screens.details.specie.SpecieCo
 import com.anjo.starwarswikicompose.presentation.screens.details.starship.StarshipContentScreen
 import com.anjo.starwarswikicompose.presentation.screens.details.vehicle.VehicleContentScreen
 import com.anjo.starwarswikicompose.presentation.screens.home.HomeScreen
+import com.anjo.starwarswikicompose.presentation.screens.images.ImageScreen
 import com.anjo.starwarswikicompose.presentation.screens.welcome.WelcomeScreen
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_MOVIE_ARGUMENT_KEY
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_PERSON_ARGUMENT_KEY
@@ -82,6 +83,9 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String, mo
                         }
                 )) {
             VehicleContentScreen(navController)
+        }
+        composable(route = Screen.ImageSearch.route) {
+            ImageScreen()
         }
     }
 }

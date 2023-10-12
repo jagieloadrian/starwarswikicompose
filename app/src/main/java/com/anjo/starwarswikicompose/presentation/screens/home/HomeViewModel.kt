@@ -2,7 +2,7 @@ package com.anjo.starwarswikicompose.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.services.datafetcher.DataFetcherImpl
+import com.anjo.starwarswikicompose.services.apollofetcher.DataFetcherImpl
 import com.anjo.starwarswikicompose.utils.createAllFilmsEmptyObject
 import com.anjo.starwarswikicompose.utils.createAllPeopleEmptyObject
 import com.anjo.starwarswikicompose.utils.createAllPlanetsEmptyObject

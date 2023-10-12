@@ -1,4 +1,4 @@
-package com.anjo.starwarswikicompose.services.datafetcher
+package com.anjo.starwarswikicompose.services.apollofetcher
 
 import android.util.Log
 import com.anjo.GetAllFilmsQuery

@@ -59,7 +59,7 @@ fun CustomBottomAppBar(navHostController: NavHostController) {
                         color = MaterialTheme.colors.customTabTextColor)
             }
             Row(
-                    modifier = Modifier.clickable { navHostController.navigate(Screen.Home.route) },
+                    modifier = Modifier.clickable { navHostController.navigate(Screen.ImageSearch.route) },
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
             ) {

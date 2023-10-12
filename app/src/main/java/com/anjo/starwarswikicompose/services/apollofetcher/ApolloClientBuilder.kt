@@ -1,9 +1,8 @@
-package com.anjo.starwarswikicompose.services
+package com.anjo.starwarswikicompose.services.apollofetcher
 
 import android.content.Context
-import com.anjo.starwarswikicompose.services.datafetcher.DataFetcherImpl
 import com.anjo.starwarswikicompose.services.interceptor.NetworkConnectionInterceptor
-import com.anjo.starwarswikicompose.utils.Constants.BASE_URL
+import com.anjo.starwarswikicompose.utils.Constants.APOLLO_BASE_URL
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.network.okHttpClient
 import dagger.Module
@@ -22,7 +21,7 @@ object ApolloClientBuilder {
     @Provides
     fun apolloClient(okHttpClient: OkHttpClient): ApolloClient {
         return ApolloClient.Builder()
-                .serverUrl(BASE_URL)
+                .serverUrl(APOLLO_BASE_URL)
                 .okHttpClient(okHttpClient)
                 .build()
     }

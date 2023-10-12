@@ -1,4 +1,4 @@
-package com.anjo.starwarswikicompose.services.datafetcher
+package com.anjo.starwarswikicompose.services.apollofetcher
 
 import com.anjo.GetAllFilmsQuery
 import com.anjo.GetAllPeoplesQuery
