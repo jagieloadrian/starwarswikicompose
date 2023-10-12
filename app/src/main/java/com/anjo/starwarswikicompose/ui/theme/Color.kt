@@ -50,8 +50,5 @@ val Colors.buttonBackgroundColor
 val Colors.topAppBarContentColor: Color
     get() = if (isLight) Color.White else LightGray
 
-val Colors.topAppBarBackgroundColor: Color
-    get() = if (isLight) Purple500 else Color.Black
-
 val Colors.topAppBarHomeBackgroundColor: Color
     get() = if (isLight) GoldColor else GoldOrangeColor

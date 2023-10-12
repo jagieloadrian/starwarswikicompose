@@ -1,31 +1,31 @@
 package com.anjo.starwarswikicompose.services.imagefetcher
 
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_BASE_URL
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+
 
 @Module
 @InstallIn(SingletonComponent::class)
 object FlickrClientBuilder {
 
-    @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
     fun retrofitClient(okHttpClient: OkHttpClient): Retrofit {
-        val contentType = "application/json".toMediaType()
+        val gson = GsonBuilder()
+                .setLenient()
+                .create()
         return Retrofit.Builder()
                 .baseUrl(FLICKR_BASE_URL)
                 .client(okHttpClient)
-                .addConverterFactory(Json.asConverterFactory(contentType))
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
     }
 

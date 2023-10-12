@@ -14,9 +14,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ImageViewModel @Inject constructor(
         private val flickrApiImpl: FlickrApiImpl
-):ViewModel(){
+) : ViewModel() {
     private val _fetchedPhotoInfos = MutableStateFlow<FlickrResponse>(FlickrResponse())
     val fetchedPhotoInfos = _fetchedPhotoInfos
+
+    private val _fetchedRecentPhotos = MutableStateFlow<FlickrResponse>(FlickrResponse())
+    val fetchedRecentPhotos = _fetchedRecentPhotos
 
     private val _searchQuery = mutableStateOf("")
     val searchQuery = _searchQuery
@@ -25,9 +28,20 @@ class ImageViewModel @Inject constructor(
         _searchQuery.value = query
     }
 
+    init {
+        fetchRecentPhotos()
+    }
+
     fun fetchPhotoInfo() {
         viewModelScope.launch(Dispatchers.IO) {
-            flickrApiImpl.getSearchPhotosInfo(searchText = "nature").let { flickrResponse -> _fetchedPhotoInfos.value = flickrResponse }
+            flickrApiImpl.getSearchPhotosInfo(searchText = "nature")
+                    .let { flickrResponse -> _fetchedPhotoInfos.value = flickrResponse }
+        }
+    }
+
+    fun fetchRecentPhotos() {
+        viewModelScope.launch(Dispatchers.IO) {
+            flickrApiImpl.getRecentPhotos().let { response -> _fetchedRecentPhotos.value = response }
         }
     }
 }
