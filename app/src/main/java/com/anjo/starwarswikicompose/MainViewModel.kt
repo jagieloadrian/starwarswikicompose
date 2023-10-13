@@ -11,5 +11,7 @@ class MainViewModel @Inject constructor(): ViewModel() {
 
     fun playSound(context: Context) {
         val mp: MediaPlayer = MediaPlayer.create(context, R.raw.cantinaband)
+                mp.isLooping = true
+        mp.start()
     }
 }

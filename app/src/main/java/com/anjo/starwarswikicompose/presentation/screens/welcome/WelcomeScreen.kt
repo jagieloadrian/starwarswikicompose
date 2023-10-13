@@ -102,7 +102,6 @@ fun WelcomeScreen(
                 pagerState = pagerState
         ) {
             Log.i(this.javaClass.simpleName, "FinishButton clicked")
-            navController.popBackStack()
             navController.navigate(Screen.Home.route)
             welcomeViewModel.saveOnBoardingState(completed = true)
         }
