@@ -24,6 +24,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,14 +42,16 @@ import com.anjo.starwarswikicompose.ui.theme.NAME_PLACEHOLDER_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_SPACING
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_WIDTH
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
-import com.anjo.starwarswikicompose.ui.theme.buttonBackgroundColor
 import com.anjo.starwarswikicompose.ui.theme.descriptionColor
 import com.anjo.starwarswikicompose.ui.theme.titleColor
+import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
+import com.anjo.starwarswikicompose.ui.theme.welcomeImageBackground
 import com.anjo.starwarswikicompose.ui.theme.welcomeScreenBackgroundColor
 import com.anjo.starwarswikicompose.utils.Constants.GO_TO_APP
 import com.anjo.starwarswikicompose.utils.Constants.LAST_ON_BOARDING_PAGE
 import com.anjo.starwarswikicompose.utils.Constants.ON_BOARDING_PAGE_COUNT
 import com.anjo.starwarswikicompose.utils.OnboardingPage
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -66,6 +69,15 @@ fun WelcomeScreen(
             initialPageOffsetFraction = 0f
     ) {
        pages.size
+    }
+
+    val systemUiController = rememberSystemUiController()
+    val sytemBarColor = MaterialTheme.colors.topAppBarHomeBackgroundColor
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+                color = sytemBarColor
+        )
     }
 
     Column(
@@ -117,6 +129,7 @@ fun PagerScreen(onboardingPage: OnboardingPage) {
     ) {
         Image(
                 modifier = Modifier
+                        .background(MaterialTheme.colors.welcomeImageBackground)
                         .fillMaxWidth(0.5f)
                         .fillMaxHeight(0.7f),
                 painter = painterResource(onboardingPage.image),
@@ -166,7 +179,7 @@ fun FinishButton(
             Button(
                     onClick = onClick,
                     colors = ButtonDefaults.buttonColors(
-                            backgroundColor = MaterialTheme.colors.buttonBackgroundColor,
+                            backgroundColor = MaterialTheme.colors.topAppBarHomeBackgroundColor,
                             contentColor = Color.White
                     )
             ) {

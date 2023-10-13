@@ -23,8 +23,6 @@ val CLICKABLE_BOXES_COLORS = listOf(Color.Yellow, Color.Red)
 val RELATED_BOXES_COLORS = listOf(Color.Yellow, Color.Red, Color.Blue)
 
 
-val Colors.statusBarColor
-    get() = if (isLight) Purple700 else Color.Black
 
 val Colors.welcomeScreenBackgroundColor
     get() = if (isLight) Color.White else Color.Black
@@ -38,14 +36,8 @@ val Colors.titleColor
 val Colors.descriptionColor
     get() = if (isLight) DarkGray.copy(alpha = 0.5f) else LightGray.copy(0.5f)
 
-val Colors.activeIndicatorColor
-    get() = if (isLight) Purple500 else Purple700
-
-val Colors.inactiveIndicatorColor
-    get() = if (isLight) LightGray else DarkGray
-
-val Colors.buttonBackgroundColor
-    get() = if (isLight) Purple500 else Purple700
+val Colors.welcomeImageBackground
+    get() = if (isLight) Color.White else Color.Black
 
 val Colors.topAppBarContentColor: Color
     get() = if (isLight) Color.White else LightGray
