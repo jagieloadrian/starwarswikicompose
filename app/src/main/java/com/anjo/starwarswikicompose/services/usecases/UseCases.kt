@@ -1,4 +1,4 @@
-package com.anjo.starwarswikicompose.domain.usecases
+package com.anjo.starwarswikicompose.services.usecases
 
 data class UseCases(
         val saveOnboardingUseCase: SaveOnboardingUseCase,

@@ -26,4 +26,7 @@ object Constants {
 
     const val LESS_WHITE_BACKGROUND_COPY = 0.2f
     const val MEDIUM_WHITE_BACKGROUND_COPY = 0.8f
+
+    const val PREFERENCES_NAME = "sw_wiki_preferences"
+    const val PREFERENCES_KEY = "on_boarding-completed"
 }
