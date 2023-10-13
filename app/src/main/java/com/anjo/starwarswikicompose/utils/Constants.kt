@@ -23,4 +23,7 @@ object Constants {
     const val FLICKR_BASE_URL_IMAGE = "https://live.staticflickr.com"
 
     const val FLICKR_KEY="81db1beedc5982add055aa7d83136276"
+
+    const val LESS_WHITE_BACKGROUND_COPY = 0.2f
+    const val MEDIUM_WHITE_BACKGROUND_COPY = 0.8f
 }

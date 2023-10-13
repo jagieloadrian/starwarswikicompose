@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.utils
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
 import com.anjo.starwarswikicompose.domain.model.FlickrPhoto
@@ -23,8 +22,6 @@ fun getLocalHeight():Int {
     return configuration.screenHeightDp
 }
 
-fun buildImageUrl(photo: FlickrPhoto):String {
-    val url ="$FLICKR_BASE_URL_IMAGE/${photo.server}/${photo.id}_${photo.secret}.jpg"
-    Log.e("URL", "URL of photo: $url")
-    return url
+fun buildImageUrl(photo: FlickrPhoto): String {
+    return "$FLICKR_BASE_URL_IMAGE/${photo.server}/${photo.id}_${photo.secret}.jpg"
 }

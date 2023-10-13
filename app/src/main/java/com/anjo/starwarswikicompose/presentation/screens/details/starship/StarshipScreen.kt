@@ -114,15 +114,15 @@ private fun StarshipVisualisation(selectedStarship: GetStarshipQuery.Starship, n
                     horizontalArrangement = Arrangement.SpaceEvenly) {
                 InfoBox(
                         stringResource(R.string.cost_box_name),
-                        selectedStarship.costInCredits.toString(),
+                        selectedStarship.costInCredits,
                         width = thirdWidth)
                 InfoBox(
                         stringResource(R.string.length_box_name),
-                        selectedStarship.length.toString(),
+                        selectedStarship.length,
                         width = thirdWidth)
                 InfoBox(
                         stringResource(R.string.cargo_box_name),
-                        selectedStarship.cargoCapacity.toString(),
+                        selectedStarship.cargoCapacity,
                         width = thirdWidth)
             }
             Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -134,11 +134,11 @@ private fun StarshipVisualisation(selectedStarship: GetStarshipQuery.Starship, n
                         width = thirdWidth)
                 InfoBox(
                         stringResource(R.string.hyperdrive_box_name),
-                        selectedStarship.hyperdriveRating.toString(),
+                        selectedStarship.hyperdriveRating,
                         width = thirdWidth)
                 InfoBox(
                         stringResource(R.string.mglt_box_name),
-                        selectedStarship.MGLT.toString(),
+                        selectedStarship.MGLT,
                         width = thirdWidth)
             }
             Row(modifier = Modifier.height(INFO_BOX_HEIGHT)

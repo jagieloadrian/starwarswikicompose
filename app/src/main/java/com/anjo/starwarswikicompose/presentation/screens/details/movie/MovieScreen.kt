@@ -107,10 +107,9 @@ private fun MovieVisualisation(
                         stringResource(R.string.episode_id_box_name),
                         selectedMovie.episodeID,
                         width = thirdWidth)
-                InfoBoxColumn(
+                InfoBoxDialog(
                         stringResource(R.string.opening_crawl_box_name),
                         selectedMovie.openingCrawl,
-                        null,
                         width = twoThirdsWidth)
             }
             Row(modifier = Modifier.height(INFO_BOX_HEIGHT)

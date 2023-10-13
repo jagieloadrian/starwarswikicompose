@@ -1,5 +1,6 @@
 package com.anjo.starwarswikicompose.presentation.screens.images
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -31,12 +32,16 @@ import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.utils.Constants.MAX_LINES_NUMBER
+import com.anjo.starwarswikicompose.utils.Constants.MEDIUM_WHITE_BACKGROUND_COPY
 import com.anjo.starwarswikicompose.utils.buildImageUrl
 
 @Composable
 fun ImageBox(
         photo: FlickrPhoto,
 ) {
+
+    val descriptionName = if(photo.title.isEmpty()) "\uD83D\uDE4A" else photo.title
+    Log.e("PHOTO", "Title is: ${photo.title}")
     Box(modifier = Modifier.fillMaxSize()
             .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(SMALL_PADDING))) {
         Box(modifier = Modifier
@@ -52,18 +57,18 @@ fun ImageBox(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                                 .height(PICTURE_HEIGHT)
-                                .background(Color.White)
+                                .background(Color.White.copy(MEDIUM_WHITE_BACKGROUND_COPY))
                                 .align(alignment = Alignment.CenterHorizontally)
                                 .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
                 )
-                Text(text = photo.title,
+                Text(text = descriptionName,
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.body1,
                         maxLines = MAX_LINES_NUMBER,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                                 .fillMaxSize()
-                                .background(color = Color.White)
+                                .background(color = Color.White.copy(MEDIUM_WHITE_BACKGROUND_COPY))
                                 .padding(all = PAGING_INDICATOR_SPACING)
                 )
             }

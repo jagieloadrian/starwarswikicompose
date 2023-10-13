@@ -33,7 +33,6 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.model.FlickrPhoto
 import com.anjo.starwarswikicompose.domain.model.FlickrStatus
@@ -47,7 +46,6 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ImageScreen(
-        navHostController: NavHostController,
         imageViewModel: ImageViewModel = hiltViewModel()
 ) {
 

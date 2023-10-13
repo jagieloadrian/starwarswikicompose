@@ -85,7 +85,7 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String, mo
             VehicleContentScreen(navController)
         }
         composable(route = Screen.ImageSearch.route) {
-            ImageScreen(navController)
+            ImageScreen()
         }
     }
 }

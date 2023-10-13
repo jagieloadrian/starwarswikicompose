@@ -11,7 +11,6 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.anjo.GetAllFilmsQuery
 import com.anjo.GetAllPeoplesQuery
@@ -108,75 +106,3 @@ fun GenerateComposableContent(navController: NavHostController, enum: Category) 
         }
     }
 }
-
-@Composable
-fun collectData(enum: Category,
-                homeViewModel: HomeViewModel = hiltViewModel()): Any {
-    when (enum) {
-        Category.FILMS     -> {
-            homeViewModel.fetchFilms()
-            return homeViewModel.fetchedFilms.collectAsState().value
-        }
-
-        Category.PEOPLE    -> {
-            homeViewModel.fetchPeoples()
-            return homeViewModel.fetchedPeoples.collectAsState().value
-        }
-
-        Category.PLANETS   -> {
-            homeViewModel.fetchPlanets()
-            return homeViewModel.fetchedPlanets.collectAsState().value
-        }
-
-        Category.SPECIES   -> {
-            homeViewModel.fetchSpecies()
-            return homeViewModel.fetchedSpecies.collectAsState().value
-        }
-
-        Category.STARSHIPS -> {
-            homeViewModel.fetchStarships()
-            return homeViewModel.fetchedStarships.collectAsState().value
-        }
-
-        Category.VEHICLES  -> {
-            homeViewModel.fetchVehicles()
-            return homeViewModel.fetchedVehicles.collectAsState().value
-        }
-    }
-}
-
-fun checkIfBodyIsEmpty(items: Any, enum: Category): Boolean {
-    return when (enum) {
-        Category.FILMS     -> {
-            val currentItems = items as GetAllFilmsQuery.AllFilms
-            currentItems.totalCount == 0
-        }
-
-        Category.PEOPLE    -> {
-            val currentItems = items as GetAllPeoplesQuery.AllPeople
-            currentItems.totalCount == 0
-        }
-
-        Category.PLANETS   -> {
-            val currentItems = items as GetAllPlanetsQuery.AllPlanets
-            currentItems.totalCount == 0
-        }
-
-        Category.SPECIES   -> {
-            val currentItems = items as GetAllSpeciesQuery.AllSpecies
-            currentItems.totalCount == 0
-        }
-
-        Category.STARSHIPS -> {
-            val currentItems = items as GetAllStarshipsQuery.AllStarships
-            currentItems.totalCount == 0
-        }
-
-        Category.VEHICLES  -> {
-            val currentItems = items as GetAllVehiclesQuery.AllVehicles
-            currentItems.totalCount == 0
-        }
-    }
-}
-
-
