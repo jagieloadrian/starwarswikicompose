@@ -10,6 +10,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
 import androidx.compose.material.Text
@@ -28,6 +29,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.customTabTextColor
 import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
@@ -56,21 +59,27 @@ fun HomeScreen(navController: NavHostController) {
                 color = sytemBarColor
         )
     }
-    Column(modifier = Modifier.fillMaxSize()
-            .paint(painter = painterResource(R.drawable.stars_image),
-                    contentScale = ContentScale.FillBounds)) {
-        ScrollableTabRow(
-                selectedTabIndex = pagerState.currentPage,
-                backgroundColor = MaterialTheme.colors.topAppBarHomeBackgroundColor) {
-            tabs.forEachIndexed { index, category ->
-                val selected = selectedIndex == index
-                CustomTab(selected, category) {
-                    selectedIndex = index
-                    scope.launch { pagerState.animateScrollToPage(index) }
+    Scaffold (
+            topBar = {  CustomTopAppBar(navController)   },
+            bottomBar = { CustomBottomAppBar(navController) }
+    ){
+        Column(modifier = Modifier.fillMaxSize()
+                .padding(it)
+                .paint(painter = painterResource(R.drawable.stars_image),
+                        contentScale = ContentScale.FillBounds)) {
+            ScrollableTabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    backgroundColor = MaterialTheme.colors.topAppBarHomeBackgroundColor) {
+                tabs.forEachIndexed { index, category ->
+                    val selected = selectedIndex == index
+                    CustomTab(selected, category) {
+                        selectedIndex = index
+                        scope.launch { pagerState.animateScrollToPage(index) }
+                    }
                 }
             }
+            TabContent(navController, pagerState, tabs)
         }
-        TabContent(navController, pagerState, tabs)
     }
 }
 

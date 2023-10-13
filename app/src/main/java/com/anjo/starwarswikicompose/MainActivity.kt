@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -15,8 +13,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.anjo.starwarswikicompose.navigation.Screen
 import com.anjo.starwarswikicompose.navigation.SetupNavGraph
-import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
-import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.services.usecases.UseCases
 import com.anjo.starwarswikicompose.ui.theme.StarWarsWikiComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,14 +43,9 @@ class MainActivity : ComponentActivity() {
             StarWarsWikiComposeTheme {
                 Greeting()
                 navController = rememberNavController()
-                Scaffold(
-                        topBar = { if (completed){ CustomTopAppBar(navController) } else {} },
-                        bottomBar = { if (completed)CustomBottomAppBar(navController) else {} }
-                ) { innerPadding ->
-                    SetupNavGraph(navController = navController,
-                            startDestination = if (completed) Screen.Home.route else Screen.Welcome.route,
-                            modifier = Modifier.padding(innerPadding))
-                }
+                SetupNavGraph(navController = navController,
+                        startDestination = if (completed) Screen.Home.route else Screen.Welcome.route,
+                        modifier = Modifier)
             }
         }
         lifecycleScope.launch(Dispatchers.IO + coroutineExceptionHandler) {

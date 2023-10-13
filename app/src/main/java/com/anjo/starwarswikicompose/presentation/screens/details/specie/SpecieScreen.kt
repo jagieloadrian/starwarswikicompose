@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,6 +38,8 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.GetSpecieQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBoxColumn
 import com.anjo.starwarswikicompose.presentation.screens.common.RelatedBox
@@ -69,87 +73,92 @@ private fun SpecieVisualisation(selectedSpecie: GetSpecieQuery.Species, navContr
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
-    Box(modifier = Modifier.fillMaxSize()
-            .paint(painter = painterResource(R.drawable.stars_image),
-                    contentScale = ContentScale.FillBounds)) {
-        Column(modifier = Modifier.verticalScroll(state),
-                horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            AsyncImage(model = findImage(selectedSpecie.id, SPECIES),
-                    error = choosePainter(SPECIES),
-                    contentDescription = stringResource(R.string.species),
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                            .height(PICTURE_HEIGHT)
-                            .align(alignment = Alignment.CenterHorizontally)
-                            .clip(CircleShape)
-                            .background(Color.Magenta))
-            Text(text = selectedSpecie.name.orEmpty(),
-                    fontFamily = SOLOFontName,
-                    modifier = Modifier.fillMaxWidth()
-                            .height(NAME_PLACEHOLDER_HEIGHT)
-                            .basicMarquee(),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.h2,
-                    color = Color.White
-            )
-            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                InfoBox(
-                        stringResource(R.string.language_box_name),
-                        selectedSpecie.language,
-                        width = halfWidth)
-                InfoBox(
-                        stringResource(R.string.homeworld_box_name),
-                        selectedSpecie.homeworld?.name,
-                        id = selectedSpecie.homeworld?.id,
-                        category = Category.PLANETS,
-                        width = halfWidth,
-                        navController)
+    Scaffold(
+            topBar = { CustomTopAppBar(navController) },
+            bottomBar = { CustomBottomAppBar(navController) }
+    ) { padding ->
+        Box(modifier = Modifier.fillMaxSize().padding(padding)
+                .paint(painter = painterResource(R.drawable.stars_image),
+                        contentScale = ContentScale.FillBounds)) {
+            Column(modifier = Modifier.verticalScroll(state),
+                    horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AsyncImage(model = findImage(selectedSpecie.id, SPECIES),
+                        error = choosePainter(SPECIES),
+                        contentDescription = stringResource(R.string.species),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                                .height(PICTURE_HEIGHT)
+                                .align(alignment = Alignment.CenterHorizontally)
+                                .clip(CircleShape)
+                                .background(Color.Magenta))
+                Text(text = selectedSpecie.name.orEmpty(),
+                        fontFamily = SOLOFontName,
+                        modifier = Modifier.fillMaxWidth()
+                                .height(NAME_PLACEHOLDER_HEIGHT)
+                                .basicMarquee(),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.h2,
+                        color = Color.White
+                )
+                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                        .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly) {
+                    InfoBox(
+                            stringResource(R.string.language_box_name),
+                            selectedSpecie.language,
+                            width = halfWidth)
+                    InfoBox(
+                            stringResource(R.string.homeworld_box_name),
+                            selectedSpecie.homeworld?.name,
+                            id = selectedSpecie.homeworld?.id,
+                            category = Category.PLANETS,
+                            width = halfWidth,
+                            navController)
+                }
+                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                        .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly) {
+                    InfoBox(
+                            stringResource(R.string.classification_box_name),
+                            selectedSpecie.classification,
+                            width = halfWidth)
+                    InfoBox(
+                            stringResource(R.string.designation_box_name),
+                            selectedSpecie.designation,
+                            width = halfWidth)
+                }
+                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                        .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly) {
+                    InfoBox(
+                            stringResource(R.string.avr_height_box_name),
+                            selectedSpecie.averageHeight,
+                            width = halfWidth)
+                    InfoBox(
+                            stringResource(R.string.avr_lifespan_box_name),
+                            selectedSpecie.averageLifespan,
+                            width = halfWidth)
+                }
+                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                        .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly) {
+                    InfoBoxColumn(
+                            stringResource(R.string.eye_colors_box_name),
+                            null, selectedSpecie.eyeColors,
+                            width = thirdWidth)
+                    InfoBoxColumn(
+                            stringResource(R.string.hair_colors_box_name),
+                            null, selectedSpecie.hairColors,
+                            width = thirdWidth)
+                    InfoBoxColumn(
+                            stringResource(R.string.skin_colors_box_name),
+                            null, selectedSpecie.skinColors,
+                            width = thirdWidth)
+                }
+                ShowCharacters(selectedSpecie, halfWidth, navController)
+                ShowMovies(selectedSpecie, halfWidth, navController)
             }
-            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                InfoBox(
-                        stringResource(R.string.classification_box_name),
-                        selectedSpecie.classification,
-                        width = halfWidth)
-                InfoBox(
-                        stringResource(R.string.designation_box_name),
-                        selectedSpecie.designation,
-                        width = halfWidth)
-            }
-            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                InfoBox(
-                        stringResource(R.string.avr_height_box_name),
-                        selectedSpecie.averageHeight,
-                        width = halfWidth)
-                InfoBox(
-                        stringResource(R.string.avr_lifespan_box_name),
-                        selectedSpecie.averageLifespan,
-                        width = halfWidth)
-            }
-            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                InfoBoxColumn(
-                        stringResource(R.string.eye_colors_box_name),
-                        null, selectedSpecie.eyeColors,
-                        width = thirdWidth)
-                InfoBoxColumn(
-                        stringResource(R.string.hair_colors_box_name),
-                        null, selectedSpecie.hairColors,
-                        width = thirdWidth)
-                InfoBoxColumn(
-                        stringResource(R.string.skin_colors_box_name),
-                        null, selectedSpecie.skinColors,
-                        width = thirdWidth)
-            }
-            ShowCharacters(selectedSpecie, halfWidth, navController)
-            ShowMovies(selectedSpecie, halfWidth, navController)
         }
     }
 }

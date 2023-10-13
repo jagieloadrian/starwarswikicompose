@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,6 +38,8 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.GetFilmQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBoxColumn
 import com.anjo.starwarswikicompose.presentation.screens.common.RelatedBox
@@ -76,64 +80,70 @@ private fun MovieVisualisation(
     val thirdWidth = (width / 3).dp
     val twoThirdsWidth = thirdWidth * 2
     val state = rememberScrollState()
-    Box(modifier = Modifier.fillMaxSize()
-            .paint(painter = painterResource(R.drawable.stars_image),
-                    contentScale = ContentScale.FillBounds)) {
-        Column(modifier = Modifier.verticalScroll(state),
-                horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            AsyncImage(model = findImage(selectedMovie.id, FILMS),
-                    error = choosePainter(FILMS),
-                    contentDescription = stringResource(R.string.movies),
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                            .height(PICTURE_HEIGHT)
-                            .align(alignment = Alignment.CenterHorizontally)
-                            .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
-                            .background(Color.Magenta))
-            Text(text = selectedMovie.title.orEmpty(),
-                    fontFamily = SOLOFontName,
-                    modifier = Modifier.fillMaxWidth()
-                            .height(NAME_PLACEHOLDER_HEIGHT)
-                            .basicMarquee(),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.h2,
-                    color = Color.White
-            )
-            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround) {
-                InfoBox(
-                        stringResource(R.string.episode_id_box_name),
-                        selectedMovie.episodeID,
-                        width = thirdWidth)
-                InfoBoxDialog(
-                        stringResource(R.string.opening_crawl_box_name),
-                        selectedMovie.openingCrawl,
-                        width = twoThirdsWidth)
+
+    Scaffold(
+            topBar = { CustomTopAppBar(navController) },
+            bottomBar = { CustomBottomAppBar(navController) }
+    ) { padding ->
+        Box(modifier = Modifier.fillMaxSize().padding(padding)
+                .paint(painter = painterResource(R.drawable.stars_image),
+                        contentScale = ContentScale.FillBounds)) {
+            Column(modifier = Modifier.verticalScroll(state),
+                    horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AsyncImage(model = findImage(selectedMovie.id, FILMS),
+                        error = choosePainter(FILMS),
+                        contentDescription = stringResource(R.string.movies),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                                .height(PICTURE_HEIGHT)
+                                .align(alignment = Alignment.CenterHorizontally)
+                                .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
+                                .background(Color.Magenta))
+                Text(text = selectedMovie.title.orEmpty(),
+                        fontFamily = SOLOFontName,
+                        modifier = Modifier.fillMaxWidth()
+                                .height(NAME_PLACEHOLDER_HEIGHT)
+                                .basicMarquee(),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.h2,
+                        color = Color.White
+                )
+                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                        .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround) {
+                    InfoBox(
+                            stringResource(R.string.episode_id_box_name),
+                            selectedMovie.episodeID,
+                            width = thirdWidth)
+                    InfoBoxDialog(
+                            stringResource(R.string.opening_crawl_box_name),
+                            selectedMovie.openingCrawl,
+                            width = twoThirdsWidth)
+                }
+                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                        .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly) {
+                    InfoBoxColumn(
+                            stringResource(R.string.producers_box_name),
+                            null,
+                            selectedMovie.producers,
+                            width = thirdWidth)
+                    InfoBox(
+                            stringResource(R.string.director_box_name),
+                            selectedMovie.director,
+                            width = thirdWidth)
+                    InfoBox(
+                            stringResource(R.string.release_date_box_name),
+                            selectedMovie.releaseDate,
+                            width = thirdWidth)
+                }
+                ShowCharacters(selectedMovie, halfWidth, navController)
+                ShowPlanets(selectedMovie, halfWidth, navController)
+                ShowStarships(selectedMovie, halfWidth, navController)
+                ShowVehicles(selectedMovie, halfWidth, navController)
+                ShowSpecies(selectedMovie, halfWidth, navController)
             }
-            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                InfoBoxColumn(
-                        stringResource(R.string.producers_box_name),
-                        null,
-                        selectedMovie.producers,
-                        width = thirdWidth)
-                InfoBox(
-                        stringResource(R.string.director_box_name),
-                        selectedMovie.director,
-                        width = thirdWidth)
-                InfoBox(
-                        stringResource(R.string.release_date_box_name),
-                        selectedMovie.releaseDate,
-                        width = thirdWidth)
-            }
-            ShowCharacters(selectedMovie, halfWidth, navController)
-            ShowPlanets(selectedMovie, halfWidth, navController)
-            ShowStarships(selectedMovie, halfWidth, navController)
-            ShowVehicles(selectedMovie, halfWidth, navController)
-            ShowSpecies(selectedMovie, halfWidth, navController)
         }
     }
 }
