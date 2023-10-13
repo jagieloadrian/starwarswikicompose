@@ -44,7 +44,7 @@ fun CommonList(
     fun refresh() {
         refreshScope.launch {
             refreshing = true
-            delay(1500)
+            delay(2500)
             refreshing = false
         }
     }
@@ -54,7 +54,7 @@ fun CommonList(
     val alphaAnim by animateFloatAsState(
             targetValue = if (startAnimation) ContentAlpha.high else 0f,
             animationSpec = tween(
-                    durationMillis = 1000
+                    durationMillis = 2000
             )
     )
 

@@ -11,7 +11,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Singleton
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -29,8 +31,11 @@ object ApolloClientBuilder {
     @Singleton
     @Provides
     fun provideOkHttp3Client(@ApplicationContext appContext: Context): OkHttpClient {
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS)
         return OkHttpClient.Builder()
                 .addInterceptor(NetworkConnectionInterceptor(appContext))
+                .addInterceptor(interceptor)
                 .build()
     }
 

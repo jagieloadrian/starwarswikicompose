@@ -15,11 +15,9 @@ import javax.inject.Inject
 class ImageViewModel @Inject constructor(
         private val flickrApiImpl: FlickrApiImpl
 ) : ViewModel() {
-    private val _fetchedPhotoInfos = MutableStateFlow<FlickrResponse>(FlickrResponse())
+    private val _fetchedPhotoInfos = MutableStateFlow(FlickrResponse())
     val fetchedPhotoInfos = _fetchedPhotoInfos
 
-    private val _fetchedRecentPhotos = MutableStateFlow<FlickrResponse>(FlickrResponse())
-    val fetchedRecentPhotos = _fetchedRecentPhotos
 
     private val _searchQuery = mutableStateOf("")
     val searchQuery = _searchQuery
@@ -32,16 +30,16 @@ class ImageViewModel @Inject constructor(
         fetchRecentPhotos()
     }
 
-    fun fetchPhotoInfo() {
+    fun fetchPhotoInfo(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            flickrApiImpl.getSearchPhotosInfo(searchText = "nature")
+            flickrApiImpl.getSearchPhotosInfo(searchText = query)
                     .let { flickrResponse -> _fetchedPhotoInfos.value = flickrResponse }
         }
     }
 
     fun fetchRecentPhotos() {
         viewModelScope.launch(Dispatchers.IO) {
-            flickrApiImpl.getRecentPhotos().let { response -> _fetchedRecentPhotos.value = response }
+            flickrApiImpl.getRecentPhotos().let { response -> _fetchedPhotoInfos.value = response }
         }
     }
 }

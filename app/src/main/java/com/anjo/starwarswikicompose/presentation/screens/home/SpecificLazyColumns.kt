@@ -22,7 +22,6 @@ fun Movies(navController: NavHostController, films: GetAllFilmsQuery.AllFilms) {
             verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)) {
         items(items = films.films.orEmpty()) { film ->
             CommonButton(navController, film, FILMS)
-
         }
     }
 }

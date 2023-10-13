@@ -20,7 +20,7 @@ object Constants {
     const val FLICKR_METHOD_SEARCH_PHOTOS = "flickr.photos.search"
     const val FLICKR_METHOD_RECENT_PHOTOS = "flickr.photos.getRecent"
 
-    const val FLICKR_BASE_URL_IMAGE = "https://live.staticflickr.com/"
+    const val FLICKR_BASE_URL_IMAGE = "https://live.staticflickr.com"
 
     const val FLICKR_KEY="81db1beedc5982add055aa7d83136276"
 }
