@@ -19,6 +19,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
@@ -28,7 +29,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +41,7 @@ import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.navigation.Screen
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_LARGE_PADDING
+import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.NAME_PLACEHOLDER_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_SPACING
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_WIDTH
@@ -47,6 +51,7 @@ import com.anjo.starwarswikicompose.ui.theme.titleColor
 import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
 import com.anjo.starwarswikicompose.ui.theme.welcomeImageBackground
 import com.anjo.starwarswikicompose.ui.theme.welcomeScreenBackgroundColor
+import com.anjo.starwarswikicompose.ui.theme.welcomeScreenImageBackgroundColor
 import com.anjo.starwarswikicompose.utils.Constants.GO_TO_APP
 import com.anjo.starwarswikicompose.utils.Constants.LAST_ON_BOARDING_PAGE
 import com.anjo.starwarswikicompose.utils.Constants.ON_BOARDING_PAGE_COUNT
@@ -68,7 +73,7 @@ fun WelcomeScreen(
             initialPage = 0,
             initialPageOffsetFraction = 0f
     ) {
-       pages.size
+        pages.size
     }
 
     val systemUiController = rememberSystemUiController()
@@ -89,7 +94,7 @@ fun WelcomeScreen(
                 modifier = Modifier.weight(10f),
                 state = pagerState,
                 verticalAlignment = Alignment.Top
-                ){ page ->
+        ) { page ->
             PagerScreen(onboardingPage = pages[page])
 
         }
@@ -131,9 +136,15 @@ fun PagerScreen(onboardingPage: OnboardingPage) {
                 modifier = Modifier
                         .background(MaterialTheme.colors.welcomeImageBackground)
                         .fillMaxWidth(0.5f)
-                        .fillMaxHeight(0.7f),
+                        .fillMaxHeight(0.7f)
+                        .background(
+                                brush = Brush.radialGradient(MaterialTheme.colors.welcomeScreenImageBackgroundColor),
+                                shape = RoundedCornerShape(EXTRA_SMALL_PADDING),
+                                alpha = 0.8f),
                 painter = painterResource(onboardingPage.image),
-                contentDescription = stringResource(R.string.on_boarding_image)
+                contentDescription = stringResource(R.string.on_boarding_image),
+                contentScale = ContentScale.Fit
+
         )
         Text(
                 modifier = Modifier
