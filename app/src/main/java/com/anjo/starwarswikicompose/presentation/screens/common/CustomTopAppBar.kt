@@ -2,7 +2,6 @@ package com.anjo.starwarswikicompose.presentation.screens.common
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,9 +37,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.anjo.starwarswikicompose.MainViewModel
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.model.MenuItemData
 import com.anjo.starwarswikicompose.navigation.Screen
@@ -54,14 +50,8 @@ import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CustomTopAppBar(navHostController: NavHostController,
-                    mainViewModel: MainViewModel = hiltViewModel()) {
-
-    val muted  =  mainViewModel.mutedMusic.collectAsState()
-
-    Log.e("TopAppBar", "TopAppBar muted: ${mainViewModel.mutedMusic.value}")
-
-    val listItems = getMenuItemsList(muted.value)
+fun CustomTopAppBar(navHostController: NavHostController) {
+    val listItems = getMenuItemsList()
     val context = LocalContext.current
     var expanded by remember {
         mutableStateOf(false)
@@ -121,7 +111,7 @@ fun CustomTopAppBar(navHostController: NavHostController,
                     listItems.forEach { menuItemData ->
                         DropdownMenuItem(
                                 onClick = {
-                                    RunProperlyAction(menuItemData, context, mainViewModel)
+                                    RunProperlyAction(menuItemData, context)
                                     expanded = false
                                 },
                                 enabled = true
@@ -150,34 +140,25 @@ fun CustomTopAppBar(navHostController: NavHostController,
 }
 
 
-fun getMenuItemsList(muted:Boolean): ArrayList<MenuItemData> {
+fun getMenuItemsList(): ArrayList<MenuItemData> {
     val listItems = ArrayList<MenuItemData>()
 
     listItems.add(MenuItemData.Notes)
     listItems.add(MenuItemData.Mail)
     listItems.add(MenuItemData.Info)
 
-    if(muted) {
-        listItems.add(MenuItemData.SoundOn)
-    } else {
-        listItems.add(MenuItemData.Mute)
-    }
-
     return listItems
 }
 
-fun RunProperlyAction(menuItemData: MenuItemData, context: Context,
-             mainViewModel: MainViewModel          ) {
+fun RunProperlyAction(menuItemData: MenuItemData, context: Context) {
     when (menuItemData) {
-        MenuItemData.Notes   -> Toast.makeText(context, "You choose: ${MenuItemData.Notes.text}", Toast.LENGTH_SHORT).show()
-        MenuItemData.Mail    -> Toast.makeText(context, "You choose: ${MenuItemData.Mail.text}", Toast.LENGTH_SHORT).show()
-        MenuItemData.Info    -> Toast.makeText(context, "You choose: ${MenuItemData.Info.text}", Toast.LENGTH_SHORT).show()
-        MenuItemData.SoundOn -> {
-            mainViewModel.volumeUp()
-            Toast.makeText(context, "You choose: ${MenuItemData.SoundOn.text}", Toast.LENGTH_SHORT).show()}
-        MenuItemData.Mute    -> {
-            mainViewModel.muteMusic()
-            Toast.makeText(context, "You choose: ${MenuItemData.Mute.text}", Toast.LENGTH_SHORT).show()
-        }
+        MenuItemData.Notes -> Toast.makeText(context, "You choose: ${MenuItemData.Notes.text}", Toast.LENGTH_SHORT)
+                .show()
+
+        MenuItemData.Mail  -> Toast.makeText(context, "You choose: ${MenuItemData.Mail.text}", Toast.LENGTH_SHORT)
+                .show()
+
+        MenuItemData.Info  -> Toast.makeText(context, "You choose: ${MenuItemData.Info.text}", Toast.LENGTH_SHORT)
+                .show()
     }
 }

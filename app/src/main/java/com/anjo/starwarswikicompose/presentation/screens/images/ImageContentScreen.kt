@@ -125,7 +125,6 @@ fun ImageScreen(
                     if (photoResponse.stat == FlickrStatus.fail) {
                         EmptyScreen(null, text = "images")
                     } else {
-                        Log.e("IMAGE", extractPhotos.toString())
                         extractPhotos?.let { LazyColumnPhotos(extractPhotos, lazyListState) }
                     }
                 }

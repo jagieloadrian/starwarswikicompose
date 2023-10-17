@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.images
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -39,9 +38,6 @@ import com.anjo.starwarswikicompose.utils.buildImageUrl
 fun ImageBox(
         photo: FlickrPhoto,
 ) {
-
-    Log.e("PHOTO", photo.toString())
-
     val descriptionName = if(photo.title.isEmpty()) "\uD83D\uDE4A" else photo.title
     val authorName = if(photo.ownername.isEmpty())"\uD83D\uDE4A" else photo.ownername
 
