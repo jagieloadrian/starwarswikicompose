@@ -1,15 +1,12 @@
 package com.anjo.starwarswikicompose
 
 import android.annotation.SuppressLint
-import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -38,6 +35,8 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var useCases: UseCases
 
+    private val mainViewModel: MainViewModel by viewModels()
+
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
     }
@@ -50,10 +49,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val lifecycleOwner = LocalLifecycleOwner.current
             val current = LocalContext.current
-            val paused = remember{mutableStateOf(false)}
-            val player1: MediaPlayer = remember {MediaPlayer.create(current, R.raw.cantinaband)}
-
-            BackgroundMusic(lifecycleOwner, player1, paused)
+            mainViewModel.createMusic(current)
+            BackgroundMusicLaunching(lifecycleOwner, mainViewModel)
 
             StarWarsWikiComposeTheme {
                 navController = rememberNavController()
@@ -69,26 +66,24 @@ class MainActivity : ComponentActivity() {
         }
 
     }
+}
 
-    @Composable
-    private fun BackgroundMusic(lifecycleOwner: LifecycleOwner, player1: MediaPlayer,
-                          paused: MutableState<Boolean>) {
-        DisposableEffect(key1 = lifecycleOwner) {
-            val observer = LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_RESUME ||
-                        event == Lifecycle.Event.ON_CREATE ||
-                        event == Lifecycle.Event.ON_START) {
-                    player1.start()
-                    paused.value = false
-                } else if (event == Lifecycle.Event.ON_STOP) {
-                    player1.pause()
-                    paused.value = true
-                }
+@Composable
+private fun BackgroundMusicLaunching(lifecycleOwner: LifecycleOwner,
+                            mainViewModel: MainViewModel) {
+    DisposableEffect(key1 = lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME ||
+                    event == Lifecycle.Event.ON_CREATE ||
+                    event == Lifecycle.Event.ON_START) {
+                mainViewModel.playMusic()
+            } else if (event == Lifecycle.Event.ON_STOP) {
+                mainViewModel.pauseMusic()
             }
-            lifecycleOwner.lifecycle.addObserver(observer)
-            onDispose {
-                lifecycleOwner.lifecycle.removeObserver(observer)
-            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 }

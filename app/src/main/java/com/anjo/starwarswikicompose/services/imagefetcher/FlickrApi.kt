@@ -13,8 +13,11 @@ interface FlickrApi {
     suspend fun getSearchPhotosInfo(
             @Query("method") methodName: String = FLICKR_METHOD_SEARCH_PHOTOS,
             @Query("api_key") apiKey: String = FLICKR_KEY,
+            @Query("safe_search") safeSearch: Int = 2,
             @Query("text") searchText:String,
+            @Query("per_page") perPage: Int = 50,
             @Query("format") format:String = "json",
+            @Query("extras") extras:String = "owner_name",
             @Query("nojsoncallback") notJson:Int = 1
     ) : FlickrResponse
 
@@ -24,6 +27,7 @@ interface FlickrApi {
             @Query("api_key") apiKey: String = FLICKR_KEY,
             @Query("per_page") perPage: Int = 30,
             @Query("format") format:String = "json",
+            @Query("extras") extras:String = "owner_name",
             @Query("nojsoncallback") notJson:Int = 1
     ) : FlickrResponse
 }

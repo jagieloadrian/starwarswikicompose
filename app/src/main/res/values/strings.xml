@@ -11,6 +11,7 @@
     <string name="search_icon">search icon</string>
     <string name="close_icon">close icon</string>
     <string name="home_icon">home icon</string>
+    <string name="options">options</string>
     <string name="dictionary_icon">dictionary icon</string>
     <string name="image_icon">image icon</string>
     <string name="network_error_icon">network error icon</string>

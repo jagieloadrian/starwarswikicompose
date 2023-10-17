@@ -1,6 +1,7 @@
 package com.anjo.starwarswikicompose.presentation.screens.images
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -106,7 +107,11 @@ fun ImageScreen(
                 ) {
                     SearchBar(text = searchQuery,
                             onTextChange = { imageViewModel.updateSearchQuery(query = it) },
-                            onSearchClicked = { imageViewModel.fetchPhotoInfo(it) },
+                            onSearchClicked = { query ->  if (query.isEmpty()) {
+                                imageViewModel.fetchRecentPhotos()
+                            } else {
+                                imageViewModel.fetchPhotoInfo(query)
+                            } },
                             onClosedClicked = {
                                 enabled.value = false
                             },
@@ -120,6 +125,7 @@ fun ImageScreen(
                     if (photoResponse.stat == FlickrStatus.fail) {
                         EmptyScreen(null, text = "images")
                     } else {
+                        Log.e("IMAGE", extractPhotos.toString())
                         extractPhotos?.let { LazyColumnPhotos(extractPhotos, lazyListState) }
                     }
                 }

@@ -18,5 +18,6 @@ data class FlickrPhoto(
         @JsonNames("isfriend")
         val isFriend:Int,
         @JsonNames("isfamily")
-        val isFamily:Int
+        val isFamily:Int,
+        val ownername:String
 )

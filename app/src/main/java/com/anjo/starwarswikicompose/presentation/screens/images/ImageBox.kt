@@ -40,8 +40,11 @@ fun ImageBox(
         photo: FlickrPhoto,
 ) {
 
+    Log.e("PHOTO", photo.toString())
+
     val descriptionName = if(photo.title.isEmpty()) "\uD83D\uDE4A" else photo.title
-    Log.e("PHOTO", "Title is: ${photo.title}")
+    val authorName = if(photo.ownername.isEmpty())"\uD83D\uDE4A" else photo.ownername
+
     Box(modifier = Modifier.fillMaxSize()
             .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(SMALL_PADDING))) {
         Box(modifier = Modifier
@@ -62,6 +65,16 @@ fun ImageBox(
                                 .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
                 )
                 Text(text = descriptionName,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.body1,
+                        maxLines = MAX_LINES_NUMBER,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = Color.White.copy(MEDIUM_WHITE_BACKGROUND_COPY))
+                                .padding(all = PAGING_INDICATOR_SPACING)
+                )
+                Text(text = authorName,
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.body1,
                         maxLines = MAX_LINES_NUMBER,
