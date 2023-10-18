@@ -31,10 +31,20 @@ android {
     }
 
     buildTypes {
+        def FLICKR_API_KEY = "FLICKR_API"
+        def AUTHOR = "AUTHOR"
         release {
+
+            buildConfigField "String", FLICKR_API_KEY, "\"81db1beedc5982add055aa7d83136276\""
+            buildConfigField "String", AUTHOR, "\"d18\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            buildConfigField "String", FLICKR_API_KEY, "\"81db1beedc5982add055aa7d83136276\""
+            buildConfigField "String", AUTHOR, "\"d18\""
+        }
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

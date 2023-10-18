@@ -2,6 +2,8 @@ package com.anjo.starwarswikicompose.presentation.screens.common
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.media.AudioManager
+import android.media.AudioManager.STREAM_MUSIC
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -23,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,11 +54,17 @@ import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CustomTopAppBar(navHostController: NavHostController) {
-    val listItems = getMenuItemsList()
+    val muted = remember { mutableStateOf(false)}
+    val listItems = getMenuItemsList(muted)
+    val openDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
     var expanded by remember {
         mutableStateOf(false)
     }
+    if (openDialog.value) {
+        InfoDialog { openDialog.value = false }
+    }
+
     TopAppBar(modifier = Modifier.fillMaxWidth()
             .height(TOP_BAR_HEIGHT),
             backgroundColor = MaterialTheme.colors.topAppBarHomeBackgroundColor,
@@ -111,7 +120,7 @@ fun CustomTopAppBar(navHostController: NavHostController) {
                     listItems.forEach { menuItemData ->
                         DropdownMenuItem(
                                 onClick = {
-                                    RunProperlyAction(menuItemData, context)
+                                    RunProperlyAction(menuItemData, context, muted, openDialog)
                                     expanded = false
                                 },
                                 enabled = true
@@ -140,25 +149,41 @@ fun CustomTopAppBar(navHostController: NavHostController) {
 }
 
 
-fun getMenuItemsList(): ArrayList<MenuItemData> {
+fun getMenuItemsList(muted: MutableState<Boolean>): ArrayList<MenuItemData> {
     val listItems = ArrayList<MenuItemData>()
 
     listItems.add(MenuItemData.Notes)
     listItems.add(MenuItemData.Mail)
     listItems.add(MenuItemData.Info)
+    if(muted.value) {
+        listItems.add(MenuItemData.Sound)
+    } else {
+        listItems.add(MenuItemData.Mute)
+    }
 
     return listItems
 }
 
-fun RunProperlyAction(menuItemData: MenuItemData, context: Context) {
+fun RunProperlyAction(menuItemData: MenuItemData, context: Context, muted: MutableState<Boolean>,
+                      openDialog: MutableState<Boolean>) {
+    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    val maxVol: Int = audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)
     when (menuItemData) {
         MenuItemData.Notes -> Toast.makeText(context, "You choose: ${MenuItemData.Notes.text}", Toast.LENGTH_SHORT)
                 .show()
 
         MenuItemData.Mail  -> Toast.makeText(context, "You choose: ${MenuItemData.Mail.text}", Toast.LENGTH_SHORT)
                 .show()
-
-        MenuItemData.Info  -> Toast.makeText(context, "You choose: ${MenuItemData.Info.text}", Toast.LENGTH_SHORT)
-                .show()
+        MenuItemData.Info  -> {
+           openDialog.value = true
+        }
+        MenuItemData.Sound -> {
+            muted.value = false
+            audioManager.setStreamVolume(STREAM_MUSIC, maxVol, 0)
+        }
+        MenuItemData.Mute  -> {
+            muted.value = true
+            audioManager.setStreamVolume(STREAM_MUSIC, 0, 0)
+        }
     }
 }

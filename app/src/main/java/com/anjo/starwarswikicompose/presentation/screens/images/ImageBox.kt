@@ -2,8 +2,10 @@ package com.anjo.starwarswikicompose.presentation.screens.images
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,7 +40,7 @@ import com.anjo.starwarswikicompose.utils.buildImageUrl
 fun ImageBox(
         photo: FlickrPhoto,
 ) {
-    val descriptionName = if(photo.title.isEmpty()) "\uD83D\uDE4A" else photo.title
+    val title = if(photo.title.isEmpty()) "\uD83D\uDE4A" else photo.title
     val authorName = if(photo.ownername.isEmpty())"\uD83D\uDE4A" else photo.ownername
 
     Box(modifier = Modifier.fillMaxSize()
@@ -60,27 +62,37 @@ fun ImageBox(
                                 .align(alignment = Alignment.CenterHorizontally)
                                 .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
                 )
-                Text(text = descriptionName,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.body1,
-                        maxLines = MAX_LINES_NUMBER,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = Color.White.copy(MEDIUM_WHITE_BACKGROUND_COPY))
-                                .padding(all = PAGING_INDICATOR_SPACING)
-                )
-                Text(text = authorName,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.body1,
-                        maxLines = MAX_LINES_NUMBER,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = Color.White.copy(MEDIUM_WHITE_BACKGROUND_COPY))
-                                .padding(all = PAGING_INDICATOR_SPACING)
-                )
+               InfoRow("Title: ", title)
+               InfoRow("Author name: ", authorName)
             }
         }
+    }
+}
+
+
+@Composable
+private fun InfoRow(fieldName: String, description: String) {
+    Row(modifier = Modifier.fillMaxWidth()
+            .background(color = Color.White.copy(MEDIUM_WHITE_BACKGROUND_COPY))
+            .padding(all = PAGING_INDICATOR_SPACING),
+            horizontalArrangement = Arrangement.SpaceAround) {
+        Text(text = fieldName,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.body1,
+                maxLines = MAX_LINES_NUMBER,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+        )
+        Text(text = description,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.body1,
+                maxLines = MAX_LINES_NUMBER,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                        .fillMaxSize()
+                        .weight(4f)
+        )
     }
 }

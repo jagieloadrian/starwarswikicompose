@@ -53,6 +53,7 @@ fun InfoBoxDialog(cornerName: String,
 
     if (openDialog.value) {
         DialogWithOpeningCrawl(description = descriptionNotNull,
+                cornerName = cornerName,
                 onDismissAction = { openDialog.value = false })
     }
     Box(modifier = Modifier
@@ -92,6 +93,7 @@ fun InfoBoxDialog(cornerName: String,
 @Composable
 fun DialogWithOpeningCrawl(
         description: String,
+        cornerName: String,
         onDismissAction: () -> Unit
 ) {
     val scroll = rememberScrollState(0)
@@ -112,6 +114,12 @@ fun DialogWithOpeningCrawl(
                         .background(brush = Brush.linearGradient(BOXES_COLORS), alpha = 0.8f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceBetween) {
+                    Text(text = cornerName,
+                            textAlign = TextAlign.Left,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.weight(1f)
+                                    .fillMaxWidth()
+                                    .padding(SMALL_PADDING_FOR_INFOBOX))
                     Text(text = description,
                             overflow = TextOverflow.Ellipsis,
                             textAlign = TextAlign.Center,
