@@ -1,5 +1,6 @@
 package com.anjo.starwarswikicompose.presentation.screens.home
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anjo.starwarswikicompose.services.apollofetcher.DataFetcherImpl
@@ -11,59 +12,56 @@ import com.anjo.starwarswikicompose.utils.createAllStarshipsEmptyObject
 import com.anjo.starwarswikicompose.utils.createAllVehiclesEmptyObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val dataFetcherImpl: DataFetcherImpl) : ViewModel() {
 
-    private val _fetchedFilms = MutableStateFlow(createAllFilmsEmptyObject())
+    private val _fetchedFilms = mutableStateOf(createAllFilmsEmptyObject())
     val fetchedFilms = _fetchedFilms
-    private val _fetchedPeople = MutableStateFlow(createAllPeopleEmptyObject())
+    private val _fetchedPeople = mutableStateOf(createAllPeopleEmptyObject())
     val fetchedPeoples = _fetchedPeople
-    private val _fetchedPlanet = MutableStateFlow(createAllPlanetsEmptyObject())
+    private val _fetchedPlanet = mutableStateOf(createAllPlanetsEmptyObject())
     val fetchedPlanets = _fetchedPlanet
-    private val _fetchedSpecie = MutableStateFlow(createAllSpeciesEmptyObject())
+    private val _fetchedSpecie = mutableStateOf(createAllSpeciesEmptyObject())
     val fetchedSpecies = _fetchedSpecie
-    private val _fetchedStarship = MutableStateFlow(createAllStarshipsEmptyObject())
+    private val _fetchedStarship = mutableStateOf(createAllStarshipsEmptyObject())
     val fetchedStarships = _fetchedStarship
-    private val _fetchedVehicles = MutableStateFlow(createAllVehiclesEmptyObject())
+    private val _fetchedVehicles = mutableStateOf(createAllVehiclesEmptyObject())
     val fetchedVehicles = _fetchedVehicles
 
-    fun fetchFilms() {
+    fun fetchFilms() =
         viewModelScope.launch(Dispatchers.IO) {
             dataFetcherImpl.fetchFilms()?.let { _fetchedFilms.value = it }
         }
-    }
 
-    fun fetchPeoples() {
+    fun fetchPeoples() =
         viewModelScope.launch(Dispatchers.IO) {
             dataFetcherImpl.fetchPeoples()?.let { _fetchedPeople.value = it }
         }
-    }
 
-    fun fetchPlanets() {
+
+    fun fetchPlanets() =
         viewModelScope.launch(Dispatchers.IO) {
             dataFetcherImpl.fetchPlanets()?.let { _fetchedPlanet.value = it }
         }
-    }
 
-    fun fetchSpecies() {
+    fun fetchSpecies() =
         viewModelScope.launch(Dispatchers.IO) {
             dataFetcherImpl.fetchSpecies()?.let { _fetchedSpecie.value = it }
         }
-    }
 
-    fun fetchStarships() {
+
+    fun fetchStarships() =
         viewModelScope.launch(Dispatchers.IO) {
             dataFetcherImpl.fetchStarships()?.let { _fetchedStarship.value = it }
         }
-    }
 
-    fun fetchVehicles() {
+
+    fun fetchVehicles() =
         viewModelScope.launch(Dispatchers.IO) {
             dataFetcherImpl.fetchVehicles()?.let { _fetchedVehicles.value = it }
         }
-    }
+
 }

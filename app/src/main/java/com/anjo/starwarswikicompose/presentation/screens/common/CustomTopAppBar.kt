@@ -54,10 +54,11 @@ import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CustomTopAppBar(navHostController: NavHostController) {
-    val muted = remember { mutableStateOf(false)}
+    val muted = remember { mutableStateOf(false) }
     val listItems = getMenuItemsList(muted)
     val openDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     var expanded by remember {
         mutableStateOf(false)
     }
@@ -120,7 +121,7 @@ fun CustomTopAppBar(navHostController: NavHostController) {
                     listItems.forEach { menuItemData ->
                         DropdownMenuItem(
                                 onClick = {
-                                    RunProperlyAction(menuItemData, context, muted, openDialog)
+                                    RunProperlyAction(menuItemData, context, muted, openDialog, audioManager)
                                     expanded = false
                                 },
                                 enabled = true
@@ -155,7 +156,7 @@ fun getMenuItemsList(muted: MutableState<Boolean>): ArrayList<MenuItemData> {
     listItems.add(MenuItemData.Notes)
     listItems.add(MenuItemData.Mail)
     listItems.add(MenuItemData.Info)
-    if(muted.value) {
+    if (muted.value) {
         listItems.add(MenuItemData.Sound)
     } else {
         listItems.add(MenuItemData.Mute)
@@ -165,8 +166,9 @@ fun getMenuItemsList(muted: MutableState<Boolean>): ArrayList<MenuItemData> {
 }
 
 fun RunProperlyAction(menuItemData: MenuItemData, context: Context, muted: MutableState<Boolean>,
-                      openDialog: MutableState<Boolean>) {
-    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                      openDialog: MutableState<Boolean>,
+                      audioManager: AudioManager) {
+
     val maxVol: Int = audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)
     when (menuItemData) {
         MenuItemData.Notes -> Toast.makeText(context, "You choose: ${MenuItemData.Notes.text}", Toast.LENGTH_SHORT)
@@ -174,13 +176,16 @@ fun RunProperlyAction(menuItemData: MenuItemData, context: Context, muted: Mutab
 
         MenuItemData.Mail  -> Toast.makeText(context, "You choose: ${MenuItemData.Mail.text}", Toast.LENGTH_SHORT)
                 .show()
+
         MenuItemData.Info  -> {
-           openDialog.value = true
+            openDialog.value = true
         }
+
         MenuItemData.Sound -> {
             muted.value = false
             audioManager.setStreamVolume(STREAM_MUSIC, maxVol, 0)
         }
+
         MenuItemData.Mute  -> {
             muted.value = true
             audioManager.setStreamVolume(STREAM_MUSIC, 0, 0)

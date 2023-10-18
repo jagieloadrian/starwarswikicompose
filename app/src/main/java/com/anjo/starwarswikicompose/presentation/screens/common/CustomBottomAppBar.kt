@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -24,7 +25,6 @@ import com.anjo.starwarswikicompose.ui.theme.HOME_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
-import com.anjo.starwarswikicompose.ui.theme.customTabTextColor
 import com.anjo.starwarswikicompose.ui.theme.topAppBarContentColor
 import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
 
@@ -56,7 +56,7 @@ fun CustomBottomAppBar(navHostController: NavHostController) {
                         modifier = Modifier.padding(SMALL_PADDING),
                         textAlign = TextAlign.Center,
                         fontFamily = SOLOFontName,
-                        color = MaterialTheme.colors.customTabTextColor)
+                        color = White)
             }
             Row(
                     modifier = Modifier.clickable { navHostController.navigate(Screen.ImageSearch.route) },
@@ -72,7 +72,7 @@ fun CustomBottomAppBar(navHostController: NavHostController) {
                         modifier = Modifier.padding(SMALL_PADDING),
                         textAlign = TextAlign.Center,
                         fontFamily = SOLOFontName,
-                        color = MaterialTheme.colors.customTabTextColor)
+                        color = White)
             }
         }
     }

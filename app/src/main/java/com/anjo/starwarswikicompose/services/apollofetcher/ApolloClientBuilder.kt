@@ -1,6 +1,7 @@
 package com.anjo.starwarswikicompose.services.apollofetcher
 
 import android.content.Context
+import android.os.Looper
 import com.anjo.starwarswikicompose.services.interceptor.NetworkConnectionInterceptor
 import com.anjo.starwarswikicompose.utils.Constants.APOLLO_BASE_URL
 import com.apollographql.apollo3.ApolloClient
@@ -26,6 +27,9 @@ object ApolloClientBuilder {
     @Provides
     fun apolloClient(okHttpClient: OkHttpClient): ApolloClient {
         val cacheFactory = MemoryCacheFactory(maxSizeBytes = 10*10*1024)
+        check(Looper.myLooper() == Looper.getMainLooper()) {
+            "Only the main thread can get the apolloClient instance"
+        }
         return ApolloClient.Builder()
                 .dispatcher(Dispatchers.Unconfined)
                 .serverUrl(APOLLO_BASE_URL)

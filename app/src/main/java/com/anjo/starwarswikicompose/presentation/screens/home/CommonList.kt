@@ -53,7 +53,7 @@ fun CommonList(
             targetValue = if (startAnimation) ContentAlpha.high else 0f,
             animationSpec = tween(
                     durationMillis = 2000
-            )
+            ), label = ""
     )
 
     LaunchedEffect(key1 = true) {

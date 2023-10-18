@@ -1,7 +1,6 @@
 package com.anjo.starwarswikicompose.presentation.screens.home
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.anjo.GetAllFilmsQuery
 import com.anjo.GetAllPeoplesQuery
@@ -18,32 +17,32 @@ fun collectData(enum: Category,
     when (enum) {
         Category.FILMS     -> {
             homeViewModel.fetchFilms()
-            return homeViewModel.fetchedFilms.collectAsState().value
+            return homeViewModel.fetchedFilms.value
         }
 
         Category.PEOPLE    -> {
             homeViewModel.fetchPeoples()
-            return homeViewModel.fetchedPeoples.collectAsState().value
+            return homeViewModel.fetchedPeoples.value
         }
 
         Category.PLANETS   -> {
             homeViewModel.fetchPlanets()
-            return homeViewModel.fetchedPlanets.collectAsState().value
+            return homeViewModel.fetchedPlanets.value
         }
 
         Category.SPECIES   -> {
             homeViewModel.fetchSpecies()
-            return homeViewModel.fetchedSpecies.collectAsState().value
+            return homeViewModel.fetchedSpecies.value
         }
 
         Category.STARSHIPS -> {
             homeViewModel.fetchStarships()
-            return homeViewModel.fetchedStarships.collectAsState().value
+            return homeViewModel.fetchedStarships.value
         }
 
         Category.VEHICLES  -> {
             homeViewModel.fetchVehicles()
-            return homeViewModel.fetchedVehicles.collectAsState().value
+            return homeViewModel.fetchedVehicles.value
         }
     }
 }
