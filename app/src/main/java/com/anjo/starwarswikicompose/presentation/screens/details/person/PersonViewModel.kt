@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anjo.GetPersonQuery
-import com.anjo.starwarswikicompose.services.datafetcher.DataFetcherImpl
+import com.anjo.starwarswikicompose.services.apollofetcher.DataFetcherImpl
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_PERSON_ARGUMENT_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

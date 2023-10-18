@@ -71,7 +71,7 @@ fun RelatedBox(id: String,
                modifier: Modifier = Modifier,
                width: Dp,
                navController: NavHostController) {
-    val descriptionName = name ?: "U+1FAE2"
+    val descriptionName = name ?: "\uD83D\uDE4A"
     Box(modifier = Modifier
             .padding(EXTRA_SMALL_PADDING)
             .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))) {

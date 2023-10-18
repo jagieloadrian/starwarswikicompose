@@ -33,4 +33,5 @@ sealed class Screen(val route: String) {
             return "details_vehicle/$vehicleId"
         }
     }
+    object ImageSearch:Screen("image_search_screen")
 }

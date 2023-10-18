@@ -3,14 +3,24 @@ package com.anjo.starwarswikicompose.presentation.common
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -26,10 +36,13 @@ import com.anjo.starwarswikicompose.utils.Category
 
 @Composable
 fun EmptyScreen(
-        category: Category
+        category: Category?,
+        text : String = ""
 ) {
+    val textFiller = category?.categoryName ?: text
+
     val message by remember {
-        mutableStateOf("Find your favorite ${category.categoryName.lowercase()}!")
+        mutableStateOf("Find your favorite ${textFiller.lowercase()}!")
     }
     val icon by remember {
         mutableIntStateOf(R.drawable.ic_search_document)
@@ -37,9 +50,9 @@ fun EmptyScreen(
 
     var startAnimation by remember { mutableStateOf(false) }
     val alphaAnim by animateFloatAsState(
-            targetValue = if (startAnimation) ContentAlpha.medium else 0f,
+            targetValue = if (startAnimation) ContentAlpha.medium else 1f,
             animationSpec = tween(
-                    durationMillis = 1000
+                    durationMillis = 2500
             )
     )
     LaunchedEffect(key1 = true) {

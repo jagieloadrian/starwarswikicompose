@@ -11,7 +11,12 @@
     <string name="search_icon">search icon</string>
     <string name="close_icon">close icon</string>
     <string name="home_icon">home icon</string>
+    <string name="options">options</string>
+    <string name="dictionary_icon">dictionary icon</string>
+    <string name="image_icon">image icon</string>
     <string name="network_error_icon">network error icon</string>
+    <string name="placeholder_search">Search images…</string>
+    <string name="flickr_image">image from flickr</string>
 
 
     <string name="homeworld_box_name">Home World</string>
@@ -59,5 +64,9 @@
     <string name="mglt_box_name">Megalight</string>
     <string name="cargo_box_name">Cargo</string>
     <string name="consumables_box_name">Consumables</string>
+
+    <string name="wiki_bottom_bar">WIKI</string>
+    <string name="images_bottom_bar">IMAGES</string>
+
 
 </resources>

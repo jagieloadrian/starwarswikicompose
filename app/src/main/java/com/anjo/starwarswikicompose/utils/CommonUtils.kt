@@ -2,7 +2,9 @@ package com.anjo.starwarswikicompose.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
+import com.anjo.starwarswikicompose.domain.model.FlickrPhoto
 import com.anjo.starwarswikicompose.utils.Constants.ASSETS_PATH
+import com.anjo.starwarswikicompose.utils.Constants.FLICKR_BASE_URL_IMAGE
 
 fun calculatePathToImage(category: Category, id:String):String {
     return "$ASSETS_PATH/${category.categoryName.lowercase()}/$id.jpg"
@@ -18,4 +20,8 @@ fun getLocalWidth():Int {
 fun getLocalHeight():Int {
     val configuration = LocalConfiguration.current
     return configuration.screenHeightDp
+}
+
+fun buildImageUrl(photo: FlickrPhoto): String {
+    return "$FLICKR_BASE_URL_IMAGE/${photo.server}/${photo.id}_${photo.secret}.jpg"
 }

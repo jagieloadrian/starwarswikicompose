@@ -16,13 +16,13 @@ sealed class OnboardingPage(
     )
 
     object Second : OnboardingPage(
-            image = R.drawable.tieandx,
+            image = R.drawable.tiefighter,
             title = "Fly",
             description = "Find your favorite heroes and learn some of the things that you didn't know about."
     )
 
     object Third : OnboardingPage(
-            image = R.drawable.darthvader,
+            image = R.drawable.darth_vader,
             title = "Explore",
             description = "Check out your favourite things in Star Wars, be always prepared."
     )

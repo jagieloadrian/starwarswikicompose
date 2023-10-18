@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.home
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -25,23 +24,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
-import com.anjo.starwarswikicompose.ui.theme.customTabTextColor
 import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
 import com.anjo.starwarswikicompose.utils.Category
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(navController: NavHostController) {
-    val tabs = Category.values()
+    val tabs = Category.entries.toTypedArray()
     var selectedIndex by remember { mutableIntStateOf(0) }
     val pagerState = rememberPagerState(
             initialPage = 0,
@@ -59,11 +59,12 @@ fun HomeScreen(navController: NavHostController) {
                 color = sytemBarColor
         )
     }
-
-    Scaffold(
-            topBar = { HomeTopBar() }
-    ) {
+    Scaffold (
+            topBar = {  CustomTopAppBar(navController)   },
+            bottomBar = { CustomBottomAppBar(navController) }
+    ){
         Column(modifier = Modifier.fillMaxSize()
+                .padding(it)
                 .paint(painter = painterResource(R.drawable.stars_image),
                         contentScale = ContentScale.FillBounds)) {
             ScrollableTabRow(
@@ -96,7 +97,7 @@ private fun CustomTab(selected: Boolean,
                         text = enum.categoryName,
                         modifier = Modifier.padding(SMALL_PADDING),
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colors.customTabTextColor
+                        color = Color.White
                 )
             }
     )
