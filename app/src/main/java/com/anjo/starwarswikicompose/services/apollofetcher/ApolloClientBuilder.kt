@@ -15,6 +15,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -41,12 +42,12 @@ object ApolloClientBuilder {
     @Singleton
     @Provides
     fun provideOkHttp3Client(@ApplicationContext appContext: Context): OkHttpClient {
-//        val interceptor = HttpLoggingInterceptor()
-//        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC)
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC)
         return OkHttpClient.Builder()
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .addInterceptor(NetworkConnectionInterceptor(appContext))
-//                .addInterceptor(interceptor)
+                .addInterceptor(interceptor)
                 .build()
     }
 
@@ -54,7 +55,7 @@ object ApolloClientBuilder {
     @Provides
     fun provideDataFetcher(
             apolloClient: ApolloClient
-    ): DataFetcherImpl {
+    ): DataFetcher {
         return DataFetcherImpl(
                 apolloClient = apolloClient
         )

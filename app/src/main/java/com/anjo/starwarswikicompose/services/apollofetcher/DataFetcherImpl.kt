@@ -18,11 +18,10 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.api.Query
-import kotlinx.coroutines.flow.Flow
 
 class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
-    override suspend fun fetchFilms(): GetAllFilmsQuery.AllFilms? {
-        return getResponse(GetAllFilmsQuery(), Category.FILMS)?.data?.allFilms
+    override suspend fun fetchFilms(): List<GetAllFilmsQuery.Film?>? {
+        return getResponse(GetAllFilmsQuery(), Category.FILMS)?.data?.allFilms?.films
     }
 
     override suspend fun fetchOneFilm(id: String): GetFilmQuery.Film? {
@@ -31,9 +30,8 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
         return getFilm?.data?.film
     }
 
-    override suspend fun fetchPeoples(): GetAllPeoplesQuery.AllPeople? {
-        val getPeoples = getResponse(GetAllPeoplesQuery(), Category.PEOPLE)
-        return getPeoples?.data?.allPeople
+    override suspend fun fetchPeoples(): List<GetAllPeoplesQuery.Person?>? {
+        return getResponse(GetAllPeoplesQuery(), Category.PEOPLE)?.data?.allPeople?.people
     }
 
     override suspend fun fetchOnePerson(id: String): GetPersonQuery.Person? {
@@ -42,9 +40,9 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
         return getPerson?.data?.person
     }
 
-    override suspend fun fetchPlanets(): GetAllPlanetsQuery.AllPlanets? {
+    override suspend fun fetchPlanets(): List<GetAllPlanetsQuery.Planet?>? {
         val getPlanets = getResponse(GetAllPlanetsQuery(), Category.PLANETS)
-        return getPlanets?.data?.allPlanets
+        return getPlanets?.data?.allPlanets?.planets
     }
 
     override suspend fun fetchOnePlanet(id: String): GetPlanetQuery.Planet? {
@@ -53,9 +51,9 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
         return getPlanet?.data?.planet
     }
 
-    override suspend fun fetchSpecies(): GetAllSpeciesQuery.AllSpecies? {
+    override suspend fun fetchSpecies(): List<GetAllSpeciesQuery.Species?>? {
         val getSpecies = getResponse(GetAllSpeciesQuery(), Category.SPECIES)
-        return getSpecies?.data?.allSpecies
+        return getSpecies?.data?.allSpecies?.species
     }
 
     override suspend fun fetchOneSpecie(id: String): GetSpecieQuery.Species? {
@@ -64,9 +62,9 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
         return getSpecie?.data?.species
     }
 
-    override suspend fun fetchStarships(): GetAllStarshipsQuery.AllStarships? {
+    override suspend fun fetchStarships(): List<GetAllStarshipsQuery.Starship?>? {
         val getStarships = getResponse(GetAllStarshipsQuery(), Category.STARSHIPS)
-        return getStarships?.data?.allStarships
+        return getStarships?.data?.allStarships?.starships
     }
 
     override suspend fun fetchOneStarship(id: String): GetStarshipQuery.Starship? {
@@ -75,9 +73,9 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
         return getStarship?.data?.starship
     }
 
-    override suspend fun fetchVehicles(): GetAllVehiclesQuery.AllVehicles? {
+    override suspend fun fetchVehicles(): List<GetAllVehiclesQuery.Vehicle?>? {
         val getVehicles = getResponse(GetAllVehiclesQuery(), Category.VEHICLES)
-        return getVehicles?.data?.allVehicles
+        return getVehicles?.data?.allVehicles?.vehicles
     }
 
     override suspend fun fetchOneVehicle(id: String): GetVehicleQuery.Vehicle? {
@@ -88,16 +86,8 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
 
     private suspend fun <D : Query.Data> getResponse(query: Query<D>, enum: Category): ApolloResponse<D>? {
         try {
+            Log.e("Query", "Query for ${enum.name}")
             return apolloClient.query(query = query).execute()
-        } catch (exc: Exception) {
-            Log.e("exception", "$exc for ${enum.name}")
-        }
-        return null
-    }
-
-    private suspend fun <D : Query.Data> getResponseFlow(query: Query<D>, enum: Category): Flow<ApolloResponse<D>>? {
-        try {
-            return apolloClient.query(query = query).toFlow()
         } catch (exc: Exception) {
             Log.e("exception", "$exc for ${enum.name}")
         }

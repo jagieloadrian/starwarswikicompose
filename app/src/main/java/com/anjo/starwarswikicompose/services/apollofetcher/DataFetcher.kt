@@ -14,16 +14,16 @@ import com.anjo.GetStarshipQuery
 import com.anjo.GetVehicleQuery
 
 interface DataFetcher {
-    suspend fun fetchFilms(): GetAllFilmsQuery.AllFilms?
+    suspend fun fetchFilms(): List<GetAllFilmsQuery.Film?>?
     suspend fun fetchOneFilm(id: String): GetFilmQuery.Film?
-    suspend fun fetchPeoples(): GetAllPeoplesQuery.AllPeople?
+    suspend fun fetchPeoples(): List<GetAllPeoplesQuery.Person?>?
     suspend fun fetchOnePerson(id: String): GetPersonQuery.Person?
-    suspend fun fetchPlanets(): GetAllPlanetsQuery.AllPlanets?
+    suspend fun fetchPlanets(): List<GetAllPlanetsQuery.Planet?>?
     suspend fun fetchOnePlanet(id: String): GetPlanetQuery.Planet?
-    suspend fun fetchSpecies(): GetAllSpeciesQuery.AllSpecies?
+    suspend fun fetchSpecies(): List<GetAllSpeciesQuery.Species?>?
     suspend fun fetchOneSpecie(id: String): GetSpecieQuery.Species?
-    suspend fun fetchStarships(): GetAllStarshipsQuery.AllStarships?
+    suspend fun fetchStarships(): List<GetAllStarshipsQuery.Starship?>?
     suspend fun fetchOneStarship(id: String): GetStarshipQuery.Starship?
-    suspend fun fetchVehicles(): GetAllVehiclesQuery.AllVehicles?
+    suspend fun fetchVehicles(): List<GetAllVehiclesQuery.Vehicle?>?
     suspend fun fetchOneVehicle(id: String): GetVehicleQuery.Vehicle?
 }

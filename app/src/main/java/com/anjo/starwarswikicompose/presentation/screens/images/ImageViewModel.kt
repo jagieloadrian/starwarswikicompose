@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anjo.starwarswikicompose.domain.model.FlickrResponse
-import com.anjo.starwarswikicompose.services.imagefetcher.FlickrApiImpl
+import com.anjo.starwarswikicompose.services.usecases.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ImageViewModel @Inject constructor(
-        private val flickrApiImpl: FlickrApiImpl
+        private val useCases: UseCases
 ) : ViewModel() {
     private val _fetchedPhotoInfos = MutableStateFlow(FlickrResponse())
     val fetchedPhotoInfos = _fetchedPhotoInfos
@@ -32,14 +32,14 @@ class ImageViewModel @Inject constructor(
 
     fun fetchPhotoInfo(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            flickrApiImpl.getSearchPhotosInfo(searchText = query)
+            useCases.getSearchImagesUseCase(searchText = query)
                     .let { flickrResponse -> _fetchedPhotoInfos.value = flickrResponse }
         }
     }
 
     fun fetchRecentPhotos() {
         viewModelScope.launch(Dispatchers.IO) {
-            flickrApiImpl.getRecentPhotos().let { response -> _fetchedPhotoInfos.value = response }
+            useCases.getRecentImagesUseCase().let { response -> _fetchedPhotoInfos.value = response }
         }
     }
 }

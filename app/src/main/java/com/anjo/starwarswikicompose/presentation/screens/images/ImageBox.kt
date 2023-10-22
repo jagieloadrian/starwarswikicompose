@@ -40,8 +40,8 @@ import com.anjo.starwarswikicompose.utils.buildImageUrl
 fun ImageBox(
         photo: FlickrPhoto,
 ) {
-    val title = if(photo.title.isEmpty()) "\uD83D\uDE4A" else photo.title
-    val authorName = if(photo.ownername.isEmpty())"\uD83D\uDE4A" else photo.ownername
+    val title = if (photo.title.isEmpty()) "\uD83D\uDE4A" else photo.title
+    val authorName = if (photo.ownername.isEmpty()) "\uD83D\uDE4A" else photo.ownername
 
     Box(modifier = Modifier.fillMaxSize()
             .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(SMALL_PADDING))) {
@@ -62,8 +62,8 @@ fun ImageBox(
                                 .align(alignment = Alignment.CenterHorizontally)
                                 .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
                 )
-               InfoRow("Title: ", title)
-               InfoRow("Author name: ", authorName)
+                InfoRow("Title: ", title)
+                InfoRow("Author name: ", authorName)
             }
         }
     }

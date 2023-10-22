@@ -150,7 +150,7 @@ fun InfoBox(
                                 .align(Alignment.CenterHorizontally)
                                 .padding(vertical = if (name != null) 8.dp else 0.dp),
                         fontSize = if (name != null) TextUnit.Unspecified else 36.sp,
-                        fontWeight = if(shouldBeClickable) FontWeight.ExtraBold else FontWeight.Normal,
+                        fontWeight = if (shouldBeClickable) FontWeight.ExtraBold else FontWeight.Normal,
                         textDecoration = if (shouldBeClickable) TextDecoration.Underline else TextDecoration.None)
             }
         }
