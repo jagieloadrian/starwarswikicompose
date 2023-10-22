@@ -34,11 +34,4 @@ object FlickrClientBuilder {
     fun provideFlickrApi(retrofitClient: Retrofit): FlickrApi {
         return retrofitClient.create(FlickrApi::class.java)
     }
-
-    @Provides
-    @Singleton
-    fun provideFlickrFetcher(retrofitClient: Retrofit) : FlickrApiImpl {
-        return FlickrApiImpl(retrofitClient)
-    }
-
 }

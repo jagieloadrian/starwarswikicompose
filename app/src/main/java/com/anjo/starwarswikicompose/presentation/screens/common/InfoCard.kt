@@ -61,14 +61,14 @@ fun InfoDialog(onDismissAction: () -> Unit) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceBetween) {
                     Spacer(modifier = Modifier)
-                    Text(text= appName,
+                    Text(text = appName,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.ExtraBold,
                             color = Color.White)
                     InfoRow("Version name: ", versionName)
                     InfoRow("Version code: ", versionCode.toString())
                     InfoRow("Is in debug mode: ", debug.toString())
-                    Text(text= copyright,
+                    Text(text = copyright,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.ExtraBold,
                             color = Color.White)

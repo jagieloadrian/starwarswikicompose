@@ -35,11 +35,11 @@ fun CustomBottomAppBar(navHostController: NavHostController) {
                     .height(TOP_BAR_HEIGHT),
             backgroundColor = MaterialTheme.colors.topAppBarHomeBackgroundColor,
     ) {
-        Row (
+        Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Row(modifier = Modifier
                     .clickable { navHostController.navigate(Screen.Home.route) },
                     horizontalArrangement = Arrangement.SpaceBetween,

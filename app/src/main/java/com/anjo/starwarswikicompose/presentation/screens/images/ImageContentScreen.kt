@@ -1,7 +1,6 @@
 package com.anjo.starwarswikicompose.presentation.screens.images
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -52,7 +51,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ImageScreen(
-        navController:NavHostController,
+        navController: NavHostController,
         imageViewModel: ImageViewModel = hiltViewModel()
 ) {
 
@@ -93,7 +92,7 @@ fun ImageScreen(
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) }
-    ) {padding ->
+    ) { padding ->
         Box(modifier = Modifier
                 .padding(padding)
                 .pullRefresh(state)
@@ -107,11 +106,13 @@ fun ImageScreen(
                 ) {
                     SearchBar(text = searchQuery,
                             onTextChange = { imageViewModel.updateSearchQuery(query = it) },
-                            onSearchClicked = { query ->  if (query.isEmpty()) {
-                                imageViewModel.fetchRecentPhotos()
-                            } else {
-                                imageViewModel.fetchPhotoInfo(query)
-                            } },
+                            onSearchClicked = { query ->
+                                if (query.isEmpty()) {
+                                    imageViewModel.fetchRecentPhotos()
+                                } else {
+                                    imageViewModel.fetchPhotoInfo(query)
+                                }
+                            },
                             onClosedClicked = {
                                 enabled.value = false
                             },

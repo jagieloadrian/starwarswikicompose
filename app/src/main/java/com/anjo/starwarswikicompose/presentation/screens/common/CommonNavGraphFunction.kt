@@ -1,7 +1,12 @@
 package com.anjo.starwarswikicompose.presentation.screens.common
 
 import androidx.navigation.NavHostController
-import com.anjo.*
+import com.anjo.GetAllFilmsQuery
+import com.anjo.GetAllPeoplesQuery
+import com.anjo.GetAllPlanetsQuery
+import com.anjo.GetAllSpeciesQuery
+import com.anjo.GetAllStarshipsQuery
+import com.anjo.GetAllVehiclesQuery
 import com.anjo.starwarswikicompose.navigation.Screen
 import com.anjo.starwarswikicompose.utils.Category
 
@@ -45,7 +50,7 @@ fun <T> navigateToProperlyCompose(navController: NavHostController, item: T, cat
     }
 }
 
-fun  navigateToProperlyCompose(navController: NavHostController, itemId: String, category: Category) {
+fun navigateToProperlyCompose(navController: NavHostController, itemId: String, category: Category) {
     when (category) {
         Category.FILMS     -> {
             navController.navigate(Screen.MovieDetail.passMovieId(itemId))

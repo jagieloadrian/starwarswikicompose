@@ -59,10 +59,10 @@ fun HomeScreen(navController: NavHostController) {
                 color = sytemBarColor
         )
     }
-    Scaffold (
-            topBar = {  CustomTopAppBar(navController)   },
+    Scaffold(
+            topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) }
-    ){
+    ) {
         Column(modifier = Modifier.fillMaxSize()
                 .padding(it)
                 .paint(painter = painterResource(R.drawable.stars_image),
@@ -107,7 +107,8 @@ private fun CustomTab(selected: Boolean,
 @Composable
 fun TabContent(navController: NavHostController, state: PagerState, tabs: Array<Category>) {
     HorizontalPager(
-            modifier = Modifier,
+            modifier = Modifier
+                    .fillMaxSize(),
             state = state) { page ->
         CommonList(navController, tabs[page])
     }

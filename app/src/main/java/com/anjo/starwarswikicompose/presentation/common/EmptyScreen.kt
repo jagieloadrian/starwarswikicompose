@@ -53,7 +53,7 @@ fun EmptyScreen(
             targetValue = if (startAnimation) ContentAlpha.medium else 1f,
             animationSpec = tween(
                     durationMillis = 2500
-            )
+            ), label = ""
     )
     LaunchedEffect(key1 = true) {
         startAnimation = true
