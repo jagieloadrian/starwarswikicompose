@@ -8,9 +8,10 @@ variables:
 before_script:
   - apt-get --quiet update --yes
   - apt-get --quiet install --yes wget unzip
+  - apt-get install tree
   - export ANDROID_HOME="${PWD}/android-sdk-root"
   - install -d $ANDROID_HOME
-  - install tree ${PWD}
+
 
   - wget --no-verbose --output-document=$ANDROID_HOME/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip
   - unzip -q -d "$ANDROID_HOME/cmdline-tools" "$ANDROID_HOME/cmdline-tools.zip"
