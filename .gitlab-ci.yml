@@ -38,5 +38,5 @@ assembleDebug:
     - echo "Publish artifact!"  
   artifacts:
     paths:
-    - app/build/outputs/apk/debug/*-.apk
+    - /builds/jagieloadrian/starwarswikicompose/app/build/outputs/apk/debug/*-.apk
     expire_in: 30 days
