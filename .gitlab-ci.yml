@@ -32,13 +32,13 @@ before_script:
 stages:
   - build
 
-assembleDebug:
+build:
   stage: build
   script:
     - ./gradlew build
     - echo "Publish artifact!"
   artifacts:
-    name: 'SW_COMPOSE-$CI_COMMIT_REF_NAME'
+    name: 'SW_COMPOSE-$CI_PIPELINE_IID'
     paths:
     - /builds/jagieloadrian/starwarswikicompose/app/build/outputs/apk/debug/*.apk
     expire_in: 30 days
