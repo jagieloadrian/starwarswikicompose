@@ -8,7 +8,6 @@ variables:
 before_script:
   - apt-get --quiet update --yes
   - apt-get --quiet install --yes wget unzip
-  - apt-get install tree
   - export ANDROID_HOME="${PWD}/android-sdk-root"
   - install -d $ANDROID_HOME
 
@@ -38,8 +37,8 @@ assembleDebug:
   script:
     - ./gradlew build
     - echo "Publish artifact!"
-    - tree /builds/jagieloadrian/starwarswikicompose/app
   artifacts:
+    name: 'SW_COMPOSE-$CI_COMMIT_REF_NAME'
     paths:
-    - /builds/jagieloadrian/starwarswikicompose/*-.apk
+    - /builds/jagieloadrian/starwarswikicompose/app/build/outputs/apk/debug/*.apk
     expire_in: 30 days
