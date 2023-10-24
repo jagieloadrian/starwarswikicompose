@@ -1,6 +1,6 @@
 package com.anjo.starwarswikicompose.services.imagefetcher
 
-import com.anjo.starwarswikicompose.domain.model.FlickrResponse
+import com.anjo.starwarswikicompose.domain.model.flickr.FlickrResponse
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_KEY
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_METHOD_RECENT_PHOTOS
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_METHOD_SEARCH_PHOTOS

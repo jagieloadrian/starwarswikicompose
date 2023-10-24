@@ -20,14 +20,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +44,8 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.GetPersonQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.presentation.common.GallerySlider
+import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFab
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
@@ -61,25 +69,44 @@ import com.anjo.starwarswikicompose.utils.getLocalWidth
 @Composable
 fun PersonContentScreen(
         navController: NavHostController,
-        personViewModel: PersonViewModel = hiltViewModel()
+        personViewModel: PersonViewModel = hiltViewModel(),
 ) {
     val selectedPerson by personViewModel.selectedPerson.collectAsState()
-    selectedPerson?.let { PersonVisualisation(it, navController) }
+    selectedPerson?.let { PersonVisualisation(it, navController, personViewModel) }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PersonVisualisation(
-        selectedPerson: GetPersonQuery.Person,
-        navController: NavHostController) {
+        selected: GetPersonQuery.Person,
+        navController: NavHostController,
+        personViewModel: PersonViewModel,
+) {
     val width = getLocalWidth()
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
+    var fabExtended by remember { mutableStateOf(true) }
+    val images = personViewModel.images.collectAsState()
+    val clipManager = LocalClipboardManager.current
+
+    LaunchedEffect(state) {
+        var prev = 0
+        snapshotFlow { state.value }.collect {
+            fabExtended = it <= prev
+            prev = it
+        }
+    }
 
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
-            bottomBar = { CustomBottomAppBar(navController) }
+            bottomBar = { CustomBottomAppBar(navController) },
+            floatingActionButton = {
+                AddImageFab(extended = fabExtended) {
+                    val photoUrl = clipManager.getText()?.text
+                    photoUrl?.let { personViewModel.saveInDatabase(selected, it) }
+                }
+            }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)
                 .paint(painter = painterResource(R.drawable.stars_image),
@@ -87,7 +114,7 @@ private fun PersonVisualisation(
             Column(modifier = Modifier.verticalScroll(state),
                     horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AsyncImage(model = findImage(selectedPerson.id, PEOPLE),
+                AsyncImage(model = findImage(selected.id, PEOPLE),
                         error = choosePainter(PEOPLE),
                         contentDescription = stringResource(R.string.people),
                         contentScale = ContentScale.Fit,
@@ -96,7 +123,7 @@ private fun PersonVisualisation(
                                 .align(alignment = Alignment.CenterHorizontally)
                                 .clip(CircleShape)
                                 .background(Color.Magenta))
-                Text(text = selectedPerson.name.orEmpty(),
+                Text(text = selected.name.orEmpty(),
                         fontFamily = SOLOFontName,
                         modifier = Modifier.fillMaxWidth()
                                 .height(NAME_PLACEHOLDER_HEIGHT)
@@ -110,15 +137,15 @@ private fun PersonVisualisation(
                         horizontalArrangement = Arrangement.SpaceAround) {
                     InfoBox(
                             stringResource(R.string.homeworld_box_name),
-                            selectedPerson.homeworld?.name,
-                            id = selectedPerson.homeworld?.id,
+                            selected.homeworld?.name,
+                            id = selected.homeworld?.id,
                             category = PLANETS,
                             width = halfWidth,
                             navController)
                     InfoBox(
                             stringResource(R.string.species_box_name),
-                            selectedPerson.species?.name,
-                            id = selectedPerson.species?.id,
+                            selected.species?.name,
+                            id = selected.species?.id,
                             category = SPECIES,
                             width = halfWidth,
                             navController)
@@ -128,15 +155,15 @@ private fun PersonVisualisation(
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.birth_box_name),
-                            selectedPerson.birthYear,
+                            selected.birthYear,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.height_box_name),
-                            selectedPerson.height,
+                            selected.height,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.mass_box_name),
-                            selectedPerson.mass,
+                            selected.mass,
                             width = thirdWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -144,20 +171,23 @@ private fun PersonVisualisation(
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.gender_box_name),
-                            selectedPerson.gender,
+                            selected.gender,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.hair_box_name),
-                            selectedPerson.hairColor,
+                            selected.hairColor,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.skin_box_name),
-                            selectedPerson.skinColor,
+                            selected.skinColor,
                             width = thirdWidth)
                 }
-                ShowMovies(selectedPerson, halfWidth, navController)
-                ShowStarships(selectedPerson, halfWidth, navController)
-                ShowVehicles(selectedPerson, halfWidth, navController)
+                ShowMovies(selected, halfWidth, navController)
+                ShowStarships(selected, halfWidth, navController)
+                ShowVehicles(selected, halfWidth, navController)
+                if (images.value.isNotEmpty()) {
+                    GallerySlider(images = images.value)
+                }
             }
         }
     }

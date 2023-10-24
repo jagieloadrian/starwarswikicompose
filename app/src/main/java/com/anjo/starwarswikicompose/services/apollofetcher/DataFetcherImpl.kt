@@ -86,7 +86,6 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
 
     private suspend fun <D : Query.Data> getResponse(query: Query<D>, enum: Category): ApolloResponse<D>? {
         try {
-            Log.e("Query", "Query for ${enum.name}")
             return apolloClient.query(query = query).execute()
         } catch (exc: Exception) {
             Log.e("exception", "$exc for ${enum.name}")

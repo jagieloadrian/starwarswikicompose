@@ -3,7 +3,7 @@ package com.anjo.starwarswikicompose.services.interceptor
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import com.anjo.starwarswikicompose.exception.NoConnectivityException
+import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -13,7 +13,7 @@ class NetworkConnectionInterceptor(
 ) : Interceptor{
     override fun intercept(chain: Interceptor.Chain): Response {
         if(!isInternetAvailable()){
-            throw NoConnectivityException("No internet :(")
+           Log.e("NETWORK_SW_WIKI", "Network is not available")
         }
         val builder:Request.Builder = chain.request().newBuilder()
         return chain.proceed(builder.build())

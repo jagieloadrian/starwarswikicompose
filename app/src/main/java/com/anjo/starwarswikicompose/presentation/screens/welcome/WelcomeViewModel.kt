@@ -2,7 +2,7 @@ package com.anjo.starwarswikicompose.presentation.screens.welcome
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.services.usecases.UseCases
+import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

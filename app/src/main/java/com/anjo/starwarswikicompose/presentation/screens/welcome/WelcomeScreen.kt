@@ -6,19 +6,15 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -28,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -40,11 +35,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.navigation.Screen
+import com.anjo.starwarswikicompose.presentation.common.DotsIndicator
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_LARGE_PADDING
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
-import com.anjo.starwarswikicompose.ui.theme.NAME_PLACEHOLDER_HEIGHT
-import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_SPACING
-import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_WIDTH
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.descriptionColor
 import com.anjo.starwarswikicompose.ui.theme.titleColor
@@ -62,7 +55,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @Composable
 fun WelcomeScreen(
         navController: NavHostController,
-        welcomeViewModel: WelcomeViewModel = hiltViewModel()) {
+        welcomeViewModel: WelcomeViewModel = hiltViewModel(),
+) {
 
     val pages = listOf(
             OnboardingPage.First,
@@ -98,22 +92,13 @@ fun WelcomeScreen(
             PagerScreen(onboardingPage = pages[page])
 
         }
-        Row(
-                modifier = Modifier.height(NAME_PLACEHOLDER_HEIGHT)
-                        .fillMaxWidth()
-                        .align(Alignment.CenterHorizontally),
-                horizontalArrangement = Arrangement.Center,
-        ) {
-            repeat(ON_BOARDING_PAGE_COUNT) { iteration ->
-                val color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
-                Box(
-                        modifier = Modifier.padding(PAGING_INDICATOR_SPACING)
-                                .clip(CircleShape)
-                                .background(color)
-                                .size(PAGING_INDICATOR_WIDTH)
-                )
-            }
-        }
+        DotsIndicator(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                totalDots = ON_BOARDING_PAGE_COUNT,
+                selectedIndex = pagerState.currentPage,
+                selectedColor = Color.LightGray,
+                unSelectedColor = Color.DarkGray
+        )
         FinishButton(
                 modifier = Modifier.weight(1f),
                 pagerState = pagerState
@@ -174,7 +159,7 @@ fun PagerScreen(onboardingPage: OnboardingPage) {
 fun FinishButton(
         modifier: Modifier,
         pagerState: PagerState,
-        onClick: () -> Unit
+        onClick: () -> Unit,
 ) {
     Row(
             modifier = modifier

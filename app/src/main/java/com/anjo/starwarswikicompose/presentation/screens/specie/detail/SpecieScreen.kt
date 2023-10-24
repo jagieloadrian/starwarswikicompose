@@ -20,14 +20,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +44,8 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.GetSpecieQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.presentation.common.GallerySlider
+import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFab
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
@@ -63,19 +71,39 @@ fun SpecieContentScreen(
         specieViewModel: SpecieViewModel = hiltViewModel()
 ) {
     val selectedSpecie by specieViewModel.selectedSpecie.collectAsState()
-    selectedSpecie?.let { SpecieVisualisation(it, navController) }
+    selectedSpecie?.let { SpecieVisualisation(it, navController, specieViewModel) }
 }
 
 @ExperimentalFoundationApi
 @Composable
-private fun SpecieVisualisation(selectedSpecie: GetSpecieQuery.Species, navController: NavHostController) {
+private fun SpecieVisualisation(selected: GetSpecieQuery.Species, navController: NavHostController,
+                                specieViewModel: SpecieViewModel) {
     val width = getLocalWidth()
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
+    var fabExtended by remember { mutableStateOf(true) }
+    val images = specieViewModel.images.collectAsState()
+    val clipManager = LocalClipboardManager.current
+
+
+    LaunchedEffect(state) {
+        var prev = 0
+        snapshotFlow { state.value }.collect {
+            fabExtended = it <= prev
+            prev = it
+        }
+    }
+
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
-            bottomBar = { CustomBottomAppBar(navController) }
+            bottomBar = { CustomBottomAppBar(navController) },
+            floatingActionButton = {
+                AddImageFab(extended = fabExtended) {
+                    val photoUrl = clipManager.getText()?.text
+                    photoUrl?.let { specieViewModel.saveInDatabase(selected, it) }
+                }
+            }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)
                 .paint(painter = painterResource(R.drawable.stars_image),
@@ -83,7 +111,7 @@ private fun SpecieVisualisation(selectedSpecie: GetSpecieQuery.Species, navContr
             Column(modifier = Modifier.verticalScroll(state),
                     horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AsyncImage(model = findImage(selectedSpecie.id, SPECIES),
+                AsyncImage(model = findImage(selected.id, SPECIES),
                         error = choosePainter(SPECIES),
                         contentDescription = stringResource(R.string.species),
                         contentScale = ContentScale.Fit,
@@ -92,7 +120,7 @@ private fun SpecieVisualisation(selectedSpecie: GetSpecieQuery.Species, navContr
                                 .align(alignment = Alignment.CenterHorizontally)
                                 .clip(CircleShape)
                                 .background(Color.Magenta))
-                Text(text = selectedSpecie.name.orEmpty(),
+                Text(text = selected.name.orEmpty(),
                         fontFamily = SOLOFontName,
                         modifier = Modifier.fillMaxWidth()
                                 .height(NAME_PLACEHOLDER_HEIGHT)
@@ -106,12 +134,12 @@ private fun SpecieVisualisation(selectedSpecie: GetSpecieQuery.Species, navContr
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.language_box_name),
-                            selectedSpecie.language,
+                            selected.language,
                             width = halfWidth)
                     InfoBox(
                             stringResource(R.string.homeworld_box_name),
-                            selectedSpecie.homeworld?.name,
-                            id = selectedSpecie.homeworld?.id,
+                            selected.homeworld?.name,
+                            id = selected.homeworld?.id,
                             category = Category.PLANETS,
                             width = halfWidth,
                             navController)
@@ -121,11 +149,11 @@ private fun SpecieVisualisation(selectedSpecie: GetSpecieQuery.Species, navContr
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.classification_box_name),
-                            selectedSpecie.classification,
+                            selected.classification,
                             width = halfWidth)
                     InfoBox(
                             stringResource(R.string.designation_box_name),
-                            selectedSpecie.designation,
+                            selected.designation,
                             width = halfWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -133,11 +161,11 @@ private fun SpecieVisualisation(selectedSpecie: GetSpecieQuery.Species, navContr
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.avr_height_box_name),
-                            selectedSpecie.averageHeight,
+                            selected.averageHeight,
                             width = halfWidth)
                     InfoBox(
                             stringResource(R.string.avr_lifespan_box_name),
-                            selectedSpecie.averageLifespan,
+                            selected.averageLifespan,
                             width = halfWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -145,19 +173,22 @@ private fun SpecieVisualisation(selectedSpecie: GetSpecieQuery.Species, navContr
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBoxColumn(
                             stringResource(R.string.eye_colors_box_name),
-                            null, selectedSpecie.eyeColors,
+                            null, selected.eyeColors,
                             width = thirdWidth)
                     InfoBoxColumn(
                             stringResource(R.string.hair_colors_box_name),
-                            null, selectedSpecie.hairColors,
+                            null, selected.hairColors,
                             width = thirdWidth)
                     InfoBoxColumn(
                             stringResource(R.string.skin_colors_box_name),
-                            null, selectedSpecie.skinColors,
+                            null, selected.skinColors,
                             width = thirdWidth)
                 }
-                ShowCharacters(selectedSpecie, halfWidth, navController)
-                ShowMovies(selectedSpecie, halfWidth, navController)
+                ShowCharacters(selected, halfWidth, navController)
+                ShowMovies(selected, halfWidth, navController)
+                if (images.value.isNotEmpty()) {
+                    GallerySlider(images = images.value)
+                }
             }
         }
     }

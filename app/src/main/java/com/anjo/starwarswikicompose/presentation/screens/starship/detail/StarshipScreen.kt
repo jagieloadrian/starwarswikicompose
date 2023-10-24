@@ -20,14 +20,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +44,8 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.GetStarshipQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.presentation.common.GallerySlider
+import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFab
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
@@ -63,19 +71,38 @@ fun StarshipContentScreen(
         starshipViewModel: StarshipViewModel = hiltViewModel()
 ) {
     val selectedStarship by starshipViewModel.selectedStarship.collectAsState()
-    selectedStarship?.let { StarshipVisualisation(it, navController) }
+    selectedStarship?.let { StarshipVisualisation(it, navController, starshipViewModel) }
 }
 
 @ExperimentalFoundationApi
 @Composable
-private fun StarshipVisualisation(selectedStarship: GetStarshipQuery.Starship, navController: NavHostController) {
+private fun StarshipVisualisation(selected: GetStarshipQuery.Starship, navController: NavHostController,
+                                  starshipViewModel: StarshipViewModel) {
     val width = getLocalWidth()
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
+    var fabExtended by remember { mutableStateOf(true) }
+    val images = starshipViewModel.images.collectAsState()
+    val clipManager = LocalClipboardManager.current
+
+    LaunchedEffect(state) {
+        var prev = 0
+        snapshotFlow { state.value }.collect {
+            fabExtended = it <= prev
+            prev = it
+        }
+    }
+
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
-            bottomBar = { CustomBottomAppBar(navController) }
+            bottomBar = { CustomBottomAppBar(navController) },
+            floatingActionButton = {
+                AddImageFab(extended = fabExtended) {
+                    val photoUrl = clipManager.getText()?.text
+                    photoUrl?.let { starshipViewModel.saveInDatabase(selected, it) }
+                }
+            }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)
                 .paint(painter = painterResource(R.drawable.stars_image),
@@ -83,7 +110,7 @@ private fun StarshipVisualisation(selectedStarship: GetStarshipQuery.Starship, n
             Column(modifier = Modifier.verticalScroll(state),
                     horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AsyncImage(model = findImage(selectedStarship.id, STARSHIPS),
+                AsyncImage(model = findImage(selected.id, STARSHIPS),
                         error = choosePainter(STARSHIPS),
                         contentDescription = stringResource(R.string.starships),
                         contentScale = ContentScale.Fit,
@@ -92,7 +119,7 @@ private fun StarshipVisualisation(selectedStarship: GetStarshipQuery.Starship, n
                                 .align(alignment = Alignment.CenterHorizontally)
                                 .clip(CircleShape)
                                 .background(Color.Magenta))
-                Text(text = selectedStarship.name.orEmpty(),
+                Text(text = selected.name.orEmpty(),
                         fontFamily = SOLOFontName,
                         modifier = Modifier.fillMaxWidth()
                                 .height(NAME_PLACEHOLDER_HEIGHT)
@@ -106,15 +133,15 @@ private fun StarshipVisualisation(selectedStarship: GetStarshipQuery.Starship, n
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.model_box_name),
-                            selectedStarship.model,
+                            selected.model,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.starship_class_box_name),
-                            selectedStarship.starshipClass,
+                            selected.starshipClass,
                             width = thirdWidth)
                     InfoBoxColumn(
                             stringResource(R.string.manufacturers_box_name),
-                            null, selectedStarship.manufacturers,
+                            null, selected.manufacturers,
                             width = thirdWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -122,15 +149,15 @@ private fun StarshipVisualisation(selectedStarship: GetStarshipQuery.Starship, n
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.cost_box_name),
-                            selectedStarship.costInCredits,
+                            selected.costInCredits,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.length_box_name),
-                            selectedStarship.length,
+                            selected.length,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.cargo_box_name),
-                            selectedStarship.cargoCapacity,
+                            selected.cargoCapacity,
                             width = thirdWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -138,15 +165,15 @@ private fun StarshipVisualisation(selectedStarship: GetStarshipQuery.Starship, n
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.v_max_box_name),
-                            selectedStarship.maxAtmospheringSpeed,
+                            selected.maxAtmospheringSpeed,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.hyperdrive_box_name),
-                            selectedStarship.hyperdriveRating,
+                            selected.hyperdriveRating,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.mglt_box_name),
-                            selectedStarship.MGLT,
+                            selected.MGLT,
                             width = thirdWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -154,19 +181,22 @@ private fun StarshipVisualisation(selectedStarship: GetStarshipQuery.Starship, n
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.crew_box_name),
-                            selectedStarship.crew,
+                            selected.crew,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.passengers_box_name),
-                            selectedStarship.passengers,
+                            selected.passengers,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.consumables_box_name),
-                            selectedStarship.consumables,
+                            selected.consumables,
                             width = thirdWidth)
                 }
-                ShowPilots(selectedStarship, halfWidth, navController)
-                ShowMovies(selectedStarship, halfWidth, navController)
+                ShowPilots(selected, halfWidth, navController)
+                ShowMovies(selected, halfWidth, navController)
+                if (images.value.isNotEmpty()) {
+                    GallerySlider(images = images.value)
+                }
             }
         }
     }

@@ -18,7 +18,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.anjo.starwarswikicompose.navigation.Screen
 import com.anjo.starwarswikicompose.navigation.SetupNavGraph
-import com.anjo.starwarswikicompose.services.usecases.UseCases
+import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import com.anjo.starwarswikicompose.ui.theme.StarWarsWikiComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineExceptionHandler

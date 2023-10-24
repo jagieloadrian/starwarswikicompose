@@ -37,9 +37,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
-import com.anjo.starwarswikicompose.domain.model.FlickrPhoto
-import com.anjo.starwarswikicompose.domain.model.FlickrStatus
+import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhoto
+import com.anjo.starwarswikicompose.domain.model.flickr.FlickrStatus
 import com.anjo.starwarswikicompose.presentation.common.EmptyScreen
+import com.anjo.starwarswikicompose.presentation.common.ErrorScreen
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.ui.theme.LARGE_PADDING
@@ -83,7 +84,7 @@ fun ImageScreen(
             targetValue = if (startAnimation) ContentAlpha.high else 0f,
             animationSpec = tween(
                     durationMillis = 2000
-            )
+            ), label = ""
     )
 
     LaunchedEffect(key1 = true) {
@@ -123,10 +124,10 @@ fun ImageScreen(
                                     enabled.value = true
                                 }
                             })
-                    if (photoResponse.stat == FlickrStatus.fail) {
-                        EmptyScreen(null, text = "images")
-                    } else {
-                        extractPhotos?.let { LazyColumnPhotos(extractPhotos, lazyListState) }
+                    when(photoResponse.stat) {
+                        FlickrStatus.error -> ErrorScreen(photoResponse.message)
+                        FlickrStatus.fail  ->  EmptyScreen(null, text = "images")
+                        FlickrStatus.ok    -> extractPhotos?.let { LazyColumnPhotos(extractPhotos, lazyListState, navController) }
                     }
                 }
             }
@@ -138,13 +139,14 @@ fun ImageScreen(
 @Composable
 fun LazyColumnPhotos(
         photos: List<FlickrPhoto>,
-        lazyListState: LazyListState) {
+        lazyListState: LazyListState,
+        navController: NavHostController) {
     LazyColumn(state = lazyListState,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(LARGE_PADDING),
             contentPadding = PaddingValues(all = SMALL_PADDING)) {
         items(photos) { photo ->
-            ImageBox(photo)
+            ImageBox(photo = photo, navHostController = navController)
         }
     }
 }

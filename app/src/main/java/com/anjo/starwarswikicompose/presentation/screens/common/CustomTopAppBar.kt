@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.common
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
@@ -50,7 +49,6 @@ import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.topAppBarContentColor
 import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CustomTopAppBar(navHostController: NavHostController) {
@@ -165,9 +163,11 @@ fun getMenuItemsList(muted: MutableState<Boolean>): ArrayList<MenuItemData> {
     return listItems
 }
 
-fun RunProperlyAction(menuItemData: MenuItemData, context: Context, muted: MutableState<Boolean>,
-                      openDialog: MutableState<Boolean>,
-                      audioManager: AudioManager) {
+fun RunProperlyAction(
+        menuItemData: MenuItemData, context: Context, muted: MutableState<Boolean>,
+        openDialog: MutableState<Boolean>,
+        audioManager: AudioManager,
+) {
 
     val maxVol: Int = audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)
     when (menuItemData) {
