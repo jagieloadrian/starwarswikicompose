@@ -10,6 +10,7 @@ before_script:
   - apt-get --quiet install --yes wget unzip
   - export ANDROID_HOME="${PWD}/android-sdk-root"
   - install -d $ANDROID_HOME
+  - install tree
 
   - wget --no-verbose --output-document=$ANDROID_HOME/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip
   - unzip -q -d "$ANDROID_HOME/cmdline-tools" "$ANDROID_HOME/cmdline-tools.zip"
@@ -34,9 +35,10 @@ stages:
 assembleDebug:
   stage: build
   script:
+    - tree /builds
     - ./gradlew build
     - echo "Publish artifact!"  
   artifacts:
     paths:
-    - /builds/jagieloadrian/starwarswikicompose/app/build/outputs/apk/debug/*-.apk
+    - /builds/jagieloadrian/starwarswikicompose/*-.apk
     expire_in: 30 days
