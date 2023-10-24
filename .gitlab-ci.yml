@@ -36,9 +36,9 @@ stages:
 assembleDebug:
   stage: build
   script:
-    - tree /builds
     - ./gradlew build
-    - echo "Publish artifact!"  
+    - echo "Publish artifact!"
+    - tree /builds/jagieloadrian/starwarswikicompose/app
   artifacts:
     paths:
     - /builds/jagieloadrian/starwarswikicompose/*-.apk
