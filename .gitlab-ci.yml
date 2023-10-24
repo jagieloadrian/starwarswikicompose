@@ -1,4 +1,4 @@
-image: openjdk:17-oracle
+image: eclipse-temurin:17-jdk-jammy
 
 variables:
   ANDROID_COMPILE_SDK: "33"
