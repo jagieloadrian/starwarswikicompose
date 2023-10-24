@@ -20,14 +20,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +44,8 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.GetVehicleQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.presentation.common.GallerySlider
+import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFab
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
@@ -63,20 +71,38 @@ fun VehicleContentScreen(
         vehicleViewModel: VehicleViewModel = hiltViewModel()
 ) {
     val selectedVehicle by vehicleViewModel.selectedVehicle.collectAsState()
-    selectedVehicle?.let { VehicleVisualisation(it, navController) }
+    selectedVehicle?.let { VehicleVisualisation(it, navController, vehicleViewModel) }
 }
 
 @ExperimentalFoundationApi
 @Composable
-fun VehicleVisualisation(selectedVehicle: GetVehicleQuery.Vehicle, navController: NavHostController) {
+fun VehicleVisualisation(selected: GetVehicleQuery.Vehicle, navController: NavHostController,
+                         vehicleViewModel: VehicleViewModel) {
     val width = getLocalWidth()
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
+    var fabExtended by remember { mutableStateOf(true) }
+    val images = vehicleViewModel.images.collectAsState()
+    val clipManager = LocalClipboardManager.current
+
+    LaunchedEffect(state) {
+        var prev = 0
+        snapshotFlow { state.value }.collect {
+            fabExtended = it <= prev
+            prev = it
+        }
+    }
 
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
-            bottomBar = { CustomBottomAppBar(navController) }
+            bottomBar = { CustomBottomAppBar(navController) },
+                    floatingActionButton = {
+                AddImageFab(extended = fabExtended) {
+                    val photoUrl = clipManager.getText()?.text
+                    photoUrl?.let { vehicleViewModel.saveInDatabase(selected, it) }
+                }
+            }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize()
                 .padding(padding)
@@ -85,7 +111,7 @@ fun VehicleVisualisation(selectedVehicle: GetVehicleQuery.Vehicle, navController
             Column(modifier = Modifier.verticalScroll(state),
                     horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AsyncImage(model = findImage(selectedVehicle.id, VEHICLES),
+                AsyncImage(model = findImage(selected.id, VEHICLES),
                         error = choosePainter(VEHICLES),
                         contentDescription = stringResource(R.string.vehicles),
                         contentScale = ContentScale.Fit,
@@ -94,7 +120,7 @@ fun VehicleVisualisation(selectedVehicle: GetVehicleQuery.Vehicle, navController
                                 .align(alignment = Alignment.CenterHorizontally)
                                 .clip(CircleShape)
                                 .background(Color.Magenta))
-                Text(text = selectedVehicle.name.orEmpty(),
+                Text(text = selected.name.orEmpty(),
                         fontFamily = SOLOFontName,
                         modifier = Modifier.fillMaxWidth()
                                 .height(NAME_PLACEHOLDER_HEIGHT)
@@ -108,11 +134,11 @@ fun VehicleVisualisation(selectedVehicle: GetVehicleQuery.Vehicle, navController
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.model_box_name),
-                            selectedVehicle.model,
+                            selected.model,
                             width = halfWidth)
                     InfoBox(
                             stringResource(R.string.vehicle_class_box_name),
-                            selectedVehicle.vehicleClass,
+                            selected.vehicleClass,
                             width = halfWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -120,11 +146,11 @@ fun VehicleVisualisation(selectedVehicle: GetVehicleQuery.Vehicle, navController
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBoxColumn(
                             stringResource(R.string.manufacturers_box_name),
-                            null, selectedVehicle.manufacturers,
+                            null, selected.manufacturers,
                             width = halfWidth)
                     InfoBox(
                             stringResource(R.string.cost_box_name),
-                            selectedVehicle.costInCredits,
+                            selected.costInCredits,
                             width = halfWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -132,15 +158,15 @@ fun VehicleVisualisation(selectedVehicle: GetVehicleQuery.Vehicle, navController
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.length_box_name),
-                            selectedVehicle.length,
+                            selected.length,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.crew_box_name),
-                            selectedVehicle.crew,
+                            selected.crew,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.passengers_box_name),
-                            selectedVehicle.passengers,
+                            selected.passengers,
                             width = thirdWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -148,19 +174,22 @@ fun VehicleVisualisation(selectedVehicle: GetVehicleQuery.Vehicle, navController
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.v_max_box_name),
-                            selectedVehicle.maxAtmospheringSpeed,
+                            selected.maxAtmospheringSpeed,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.cargo_box_name),
-                            selectedVehicle.cargoCapacity,
+                            selected.cargoCapacity,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.consumables_box_name),
-                            selectedVehicle.consumables,
+                            selected.consumables,
                             width = thirdWidth)
                 }
-                ShowPilots(selectedVehicle, halfWidth, navController)
-                ShowMovies(selectedVehicle, halfWidth, navController)
+                ShowPilots(selected, halfWidth, navController)
+                ShowMovies(selected, halfWidth, navController)
+                if (images.value.isNotEmpty()) {
+                    GallerySlider(images = images.value)
+                }
             }
         }
     }

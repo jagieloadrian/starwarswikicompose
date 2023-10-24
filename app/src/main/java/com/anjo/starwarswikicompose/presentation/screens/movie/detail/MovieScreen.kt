@@ -20,14 +20,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +44,8 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.GetFilmQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.presentation.common.GallerySlider
+import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFab
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
@@ -64,26 +72,45 @@ import com.anjo.starwarswikicompose.utils.getLocalWidth
 @Composable
 fun MovieContentScreen(
         navController: NavHostController,
-        movieViewModel: MovieViewModel = hiltViewModel()
+        movieViewModel: MovieViewModel = hiltViewModel(),
 ) {
     val selectedMovie by movieViewModel.selectedMovie.collectAsState()
-    selectedMovie?.let { MovieVisualisation(it, navController) }
+    selectedMovie?.let { MovieVisualisation(it, navController, movieViewModel) }
 }
 
 @ExperimentalFoundationApi
 @Composable
 private fun MovieVisualisation(
-        selectedMovie: GetFilmQuery.Film,
-        navController: NavHostController) {
+        selected: GetFilmQuery.Film,
+        navController: NavHostController,
+        movieViewModel: MovieViewModel,
+) {
     val width = getLocalWidth()
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val twoThirdsWidth = thirdWidth * 2
     val state = rememberScrollState()
+    var fabExtended by remember { mutableStateOf(true) }
+    val images = movieViewModel.images.collectAsState()
+    val clipManager = LocalClipboardManager.current
+
+    LaunchedEffect(state) {
+        var prev = 0
+        snapshotFlow { state.value }.collect {
+            fabExtended = it <= prev
+            prev = it
+        }
+    }
 
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
-            bottomBar = { CustomBottomAppBar(navController) }
+            bottomBar = { CustomBottomAppBar(navController) },
+            floatingActionButton = {
+                AddImageFab(extended = fabExtended) {
+                    val photoUrl = clipManager.getText()?.text
+                    photoUrl?.let { movieViewModel.saveInDatabase(selected, it) }
+                }
+            }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)
                 .paint(painter = painterResource(R.drawable.stars_image),
@@ -91,7 +118,7 @@ private fun MovieVisualisation(
             Column(modifier = Modifier.verticalScroll(state),
                     horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AsyncImage(model = findImage(selectedMovie.id, FILMS),
+                AsyncImage(model = findImage(selected.id, FILMS),
                         error = choosePainter(FILMS),
                         contentDescription = stringResource(R.string.movies),
                         contentScale = ContentScale.Fit,
@@ -100,7 +127,7 @@ private fun MovieVisualisation(
                                 .align(alignment = Alignment.CenterHorizontally)
                                 .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
                                 .background(Color.Magenta))
-                Text(text = selectedMovie.title.orEmpty(),
+                Text(text = selected.title.orEmpty(),
                         fontFamily = SOLOFontName,
                         modifier = Modifier.fillMaxWidth()
                                 .height(NAME_PLACEHOLDER_HEIGHT)
@@ -114,11 +141,11 @@ private fun MovieVisualisation(
                         horizontalArrangement = Arrangement.SpaceAround) {
                     InfoBox(
                             stringResource(R.string.episode_id_box_name),
-                            selectedMovie.episodeID,
+                            selected.episodeID,
                             width = thirdWidth)
                     InfoBoxDialog(
                             stringResource(R.string.opening_crawl_box_name),
-                            selectedMovie.openingCrawl,
+                            selected.openingCrawl,
                             width = twoThirdsWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -127,22 +154,25 @@ private fun MovieVisualisation(
                     InfoBoxColumn(
                             stringResource(R.string.producers_box_name),
                             null,
-                            selectedMovie.producers,
+                            selected.producers,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.director_box_name),
-                            selectedMovie.director,
+                            selected.director,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.release_date_box_name),
-                            selectedMovie.releaseDate,
+                            selected.releaseDate,
                             width = thirdWidth)
                 }
-                ShowCharacters(selectedMovie, halfWidth, navController)
-                ShowPlanets(selectedMovie, halfWidth, navController)
-                ShowStarships(selectedMovie, halfWidth, navController)
-                ShowVehicles(selectedMovie, halfWidth, navController)
-                ShowSpecies(selectedMovie, halfWidth, navController)
+                ShowCharacters(selected, halfWidth, navController)
+                ShowPlanets(selected, halfWidth, navController)
+                ShowStarships(selected, halfWidth, navController)
+                ShowVehicles(selected, halfWidth, navController)
+                ShowSpecies(selected, halfWidth, navController)
+                if (images.value.isNotEmpty()) {
+                    GallerySlider(images = images.value)
+                }
             }
         }
     }

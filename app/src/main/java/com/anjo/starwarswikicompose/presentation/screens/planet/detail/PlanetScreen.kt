@@ -20,14 +20,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +44,8 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.GetPlanetQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.presentation.common.GallerySlider
+import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFab
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
@@ -64,20 +72,39 @@ fun PlanetContentScreen(
         planetViewModel: PlanetViewModel = hiltViewModel()
 ) {
     val selectedPlanet by planetViewModel.selectedPlanet.collectAsState()
-    selectedPlanet?.let { PlanetVisualisation(it, navController) }
+    selectedPlanet?.let { PlanetVisualisation(it, navController, planetViewModel) }
 }
 
 @ExperimentalFoundationApi
 @Composable
-private fun PlanetVisualisation(selectedPlanet: GetPlanetQuery.Planet, navController: NavHostController) {
+private fun PlanetVisualisation(selected: GetPlanetQuery.Planet, navController: NavHostController,
+                                planetViewModel: PlanetViewModel) {
     val width = getLocalWidth()
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
+    var fabExtended by remember { mutableStateOf(true) }
+    val images = planetViewModel.images.collectAsState()
+    val clipManager = LocalClipboardManager.current
+
+    LaunchedEffect(state) {
+        var prev = 0
+        snapshotFlow { state.value }.collect {
+            fabExtended = it <= prev
+            prev = it
+        }
+    }
 
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
-            bottomBar = { CustomBottomAppBar(navController) }
+            bottomBar = { CustomBottomAppBar(navController) },
+            floatingActionButton = {
+                AddImageFab(extended = fabExtended) {
+                    val photoUrl = clipManager.getText()?.text
+                    photoUrl?.let { planetViewModel.saveInDatabase(selected, it) }
+                }
+            }
+
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)
                 .paint(painter = painterResource(R.drawable.stars_image),
@@ -85,7 +112,7 @@ private fun PlanetVisualisation(selectedPlanet: GetPlanetQuery.Planet, navContro
             Column(modifier = Modifier.verticalScroll(state),
                     horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AsyncImage(model = findImage(selectedPlanet.id, PLANETS),
+                AsyncImage(model = findImage(selected.id, PLANETS),
                         error = choosePainter(PLANETS),
                         contentDescription = stringResource(R.string.planets),
                         contentScale = ContentScale.Fit,
@@ -94,7 +121,7 @@ private fun PlanetVisualisation(selectedPlanet: GetPlanetQuery.Planet, navContro
                                 .align(alignment = Alignment.CenterHorizontally)
                                 .clip(CircleShape)
                                 .background(Color.Magenta))
-                Text(text = selectedPlanet.name.orEmpty(),
+                Text(text = selected.name.orEmpty(),
                         fontFamily = SOLOFontName,
                         modifier = Modifier.fillMaxWidth()
                                 .height(NAME_PLACEHOLDER_HEIGHT)
@@ -108,15 +135,15 @@ private fun PlanetVisualisation(selectedPlanet: GetPlanetQuery.Planet, navContro
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBox(
                             stringResource(R.string.diameter_box_name),
-                            selectedPlanet.diameter,
+                            selected.diameter,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.gravity_box_name),
-                            selectedPlanet.gravity,
+                            selected.gravity,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.population_box_name),
-                            formatPopulation(selectedPlanet.population),
+                            formatPopulation(selected.population),
                             width = thirdWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -124,11 +151,11 @@ private fun PlanetVisualisation(selectedPlanet: GetPlanetQuery.Planet, navContro
                         horizontalArrangement = Arrangement.SpaceAround) {
                     InfoBox(
                             stringResource(R.string.rotation_period_box_name),
-                            selectedPlanet.rotationPeriod,
+                            selected.rotationPeriod,
                             width = halfWidth)
                     InfoBox(
                             stringResource(R.string.orbital_period_box_name),
-                            selectedPlanet.orbitalPeriod,
+                            selected.orbitalPeriod,
                             width = halfWidth)
                 }
                 Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -136,19 +163,22 @@ private fun PlanetVisualisation(selectedPlanet: GetPlanetQuery.Planet, navContro
                         horizontalArrangement = Arrangement.SpaceEvenly) {
                     InfoBoxColumn(
                             stringResource(R.string.climates_box_name),
-                            null, selectedPlanet.climates,
+                            null, selected.climates,
                             width = thirdWidth)
                     InfoBox(
                             stringResource(R.string.surface_water_box_name),
-                            selectedPlanet.surfaceWater,
+                            selected.surfaceWater,
                             width = thirdWidth)
                     InfoBoxColumn(
                             stringResource(R.string.terrains_box_name),
-                            null, selectedPlanet.terrains,
+                            null, selected.terrains,
                             width = thirdWidth)
                 }
-                ShowCharacters(selectedPlanet, halfWidth, navController)
-                ShowMovies(selectedPlanet, halfWidth, navController)
+                ShowCharacters(selected, halfWidth, navController)
+                ShowMovies(selected, halfWidth, navController)
+                if (images.value.isNotEmpty()) {
+                    GallerySlider(images = images.value)
+                }
             }
         }
     }

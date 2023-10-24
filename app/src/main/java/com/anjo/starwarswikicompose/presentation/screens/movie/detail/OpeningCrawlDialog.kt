@@ -29,12 +29,14 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.ui.theme.BOXES_COLORS
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
@@ -66,7 +68,8 @@ fun InfoBoxDialog(cornerName: String,
         Box(modifier = Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
         ) {
-            Column(modifier = Modifier.fillMaxSize().align(Alignment.Center)
+            Column(modifier = Modifier.fillMaxSize()
+                    .align(Alignment.Center)
                     .background(brush = Brush.linearGradient(BOXES_COLORS), alpha = 0.8f),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceBetween) {
@@ -110,7 +113,8 @@ fun DialogWithOpeningCrawl(
             Box(modifier = Modifier.fillMaxSize()
                     .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
             ) {
-                Column(modifier = Modifier.fillMaxSize().align(Alignment.Center)
+                Column(modifier = Modifier.fillMaxSize()
+                        .align(Alignment.Center)
                         .background(brush = Brush.linearGradient(BOXES_COLORS), alpha = 0.8f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceBetween) {
@@ -145,7 +149,7 @@ fun DialogWithOpeningCrawl(
                                 shape = RoundedCornerShape(SMALL_PADDING),
                                 colors = ButtonDefaults.buttonColors(Color.White.copy(LESS_WHITE_BACKGROUND_COPY))
                         ) {
-                            Text(text = "Close",
+                            Text(text = stringResource(R.string.close_text),
                                     textAlign = TextAlign.Center,
                                     style = MaterialTheme.typography.body1)
                         }

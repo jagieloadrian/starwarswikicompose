@@ -47,7 +47,6 @@ fun <T> CommonButton(navController: NavHostController, item: T, category: Catego
                     .background(brush = Brush.linearGradient(listOf(
                             Color.Yellow, Color.Red, Color.Blue
                     )))
-                    .clip(shape = RoundedCornerShape(50.dp))
                     .clickable { navigateToProperlyCompose(navController, item, category) },
     ) {
         Row(horizontalArrangement = Arrangement.SpaceBetween,

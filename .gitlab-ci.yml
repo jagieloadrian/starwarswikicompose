@@ -1,3 +1,7 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
 image: eclipse-temurin:17-jdk-jammy
 
 variables:
@@ -26,9 +30,6 @@ before_script:
 
   # Not necessary, but just for surity
   - chmod +x ./gradlew
-workflow:
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
 
 
 stages:

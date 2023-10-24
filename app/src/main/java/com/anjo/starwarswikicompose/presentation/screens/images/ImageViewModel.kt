@@ -1,10 +1,11 @@
 package com.anjo.starwarswikicompose.presentation.screens.images
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.domain.model.FlickrResponse
-import com.anjo.starwarswikicompose.services.usecases.UseCases
+import com.anjo.starwarswikicompose.domain.model.flickr.FlickrResponse
+import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ImageViewModel @Inject constructor(
-        private val useCases: UseCases
+        private val useCases: UseCases,
 ) : ViewModel() {
     private val _fetchedPhotoInfos = MutableStateFlow(FlickrResponse())
     val fetchedPhotoInfos = _fetchedPhotoInfos
@@ -32,14 +33,25 @@ class ImageViewModel @Inject constructor(
 
     fun fetchPhotoInfo(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            useCases.getSearchImagesUseCase(searchText = query)
-                    .let { flickrResponse -> _fetchedPhotoInfos.value = flickrResponse }
+            try {
+                useCases.getSearchImagesUseCase(searchText = query)
+                        .let { flickrResponse -> _fetchedPhotoInfos.value = flickrResponse }
+            } catch (exc: Exception) {
+                Log.e("EXCEPTION", exc.toString())
+                _fetchedPhotoInfos.value = FlickrResponse(message = exc.javaClass.simpleName)
+            }
         }
     }
 
     fun fetchRecentPhotos() {
         viewModelScope.launch(Dispatchers.IO) {
-            useCases.getRecentImagesUseCase().let { response -> _fetchedPhotoInfos.value = response }
+            try {
+                useCases.getRecentImagesUseCase().let { response -> _fetchedPhotoInfos.value = response }
+
+            } catch (exc: Exception) {
+                Log.e("EXCEPTION", exc.toString())
+                _fetchedPhotoInfos.value = FlickrResponse(message = exc.javaClass.simpleName)
+            }
         }
     }
 }
