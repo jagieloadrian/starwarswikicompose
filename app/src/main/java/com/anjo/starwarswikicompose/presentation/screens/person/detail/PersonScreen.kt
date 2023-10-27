@@ -16,15 +16,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -64,7 +68,10 @@ import com.anjo.starwarswikicompose.utils.Category.PLANETS
 import com.anjo.starwarswikicompose.utils.Category.SPECIES
 import com.anjo.starwarswikicompose.utils.Category.STARSHIPS
 import com.anjo.starwarswikicompose.utils.Category.VEHICLES
+import com.anjo.starwarswikicompose.utils.addImageFunction
 import com.anjo.starwarswikicompose.utils.getLocalWidth
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun PersonContentScreen(
@@ -75,7 +82,7 @@ fun PersonContentScreen(
     selectedPerson?.let { PersonVisualisation(it, navController, personViewModel) }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun PersonVisualisation(
         selected: GetPersonQuery.Person,
@@ -87,8 +94,25 @@ private fun PersonVisualisation(
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
     var fabExtended by remember { mutableStateOf(true) }
-    val images = personViewModel.images.collectAsState()
+    val imagesState = personViewModel.images.toMutableList()
+    val imagesStateRefresh = remember { mutableStateOf(true) }
     val clipManager = LocalClipboardManager.current
+
+    LaunchedEffect(imagesStateRefresh.value) {
+        personViewModel.refreshImages(selected.id)
+        imagesStateRefresh.value = false
+    }
+
+    val refreshScope = rememberCoroutineScope()
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
+        isRefreshing = true
+        refreshScope.launch {
+            personViewModel.refreshImages(selected.id)
+            delay(1500)
+            isRefreshing = false
+        }
+    })
 
     LaunchedEffect(state) {
         var prev = 0
@@ -103,92 +127,100 @@ private fun PersonVisualisation(
             bottomBar = { CustomBottomAppBar(navController) },
             floatingActionButton = {
                 AddImageFab(extended = fabExtended) {
-                    val photoUrl = clipManager.getText()?.text
-                    photoUrl?.let { personViewModel.saveInDatabase(selected, it) }
+                    addImageFunction(clipManager, navController) {
+                        personViewModel.saveInDatabase(selected, it)
+                        imagesStateRefresh.value = true
+                    }
                 }
-            }
-    ) { padding ->
+            }) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)
                 .paint(painter = painterResource(R.drawable.stars_image),
                         contentScale = ContentScale.FillBounds)) {
             Column(modifier = Modifier.verticalScroll(state),
-                    horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                AsyncImage(model = findImage(selected.id, PEOPLE),
-                        error = choosePainter(PEOPLE),
-                        contentDescription = stringResource(R.string.people),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                                .height(PICTURE_HEIGHT)
-                                .align(alignment = Alignment.CenterHorizontally)
-                                .clip(CircleShape)
-                                .background(Color.Magenta))
-                Text(text = selected.name.orEmpty(),
-                        fontFamily = SOLOFontName,
-                        modifier = Modifier.fillMaxWidth()
-                                .height(NAME_PLACEHOLDER_HEIGHT)
-                                .basicMarquee(),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.h2,
-                        color = Color.White
-                )
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround) {
-                    InfoBox(
-                            stringResource(R.string.homeworld_box_name),
-                            selected.homeworld?.name,
-                            id = selected.homeworld?.id,
-                            category = PLANETS,
-                            width = halfWidth,
-                            navController)
-                    InfoBox(
-                            stringResource(R.string.species_box_name),
-                            selected.species?.name,
-                            id = selected.species?.id,
-                            category = SPECIES,
-                            width = halfWidth,
-                            navController)
-                }
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBox(
-                            stringResource(R.string.birth_box_name),
-                            selected.birthYear,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.height_box_name),
-                            selected.height,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.mass_box_name),
-                            selected.mass,
-                            width = thirdWidth)
-                }
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBox(
-                            stringResource(R.string.gender_box_name),
-                            selected.gender,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.hair_box_name),
-                            selected.hairColor,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.skin_box_name),
-                            selected.skinColor,
-                            width = thirdWidth)
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                if (!isRefreshing) {
+                    AsyncImage(model = findImage(selected.id, PEOPLE),
+                            error = choosePainter(PEOPLE),
+                            contentDescription = stringResource(R.string.people),
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                    .height(PICTURE_HEIGHT)
+                                    .align(alignment = Alignment.CenterHorizontally)
+                                    .clip(CircleShape)
+                                    .background(Color.Magenta))
+                    Text(text = selected.name.orEmpty(),
+                            fontFamily = SOLOFontName,
+                            modifier = Modifier.fillMaxWidth()
+                                    .height(NAME_PLACEHOLDER_HEIGHT)
+                                    .basicMarquee(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.h2,
+                            color = Color.White
+                    )
+                    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                            .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround) {
+                        InfoBox(
+                                stringResource(R.string.homeworld_box_name),
+                                selected.homeworld?.name,
+                                id = selected.homeworld?.id,
+                                category = PLANETS,
+                                width = halfWidth,
+                                navController)
+                        InfoBox(
+                                stringResource(R.string.species_box_name),
+                                selected.species?.name,
+                                id = selected.species?.id,
+                                category = SPECIES,
+                                width = halfWidth,
+                                navController)
+                    }
+                    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                            .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly) {
+                        InfoBox(
+                                stringResource(R.string.birth_box_name),
+                                selected.birthYear,
+                                width = thirdWidth)
+                        InfoBox(
+                                stringResource(R.string.height_box_name),
+                                selected.height,
+                                width = thirdWidth)
+                        InfoBox(
+                                stringResource(R.string.mass_box_name),
+                                selected.mass,
+                                width = thirdWidth)
+                    }
+                    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                            .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly) {
+                        InfoBox(
+                                stringResource(R.string.gender_box_name),
+                                selected.gender,
+                                width = thirdWidth)
+                        InfoBox(
+                                stringResource(R.string.hair_box_name),
+                                selected.hairColor,
+                                width = thirdWidth)
+                        InfoBox(
+                                stringResource(R.string.skin_box_name),
+                                selected.skinColor,
+                                width = thirdWidth)
+                    }
                 }
                 ShowMovies(selected, halfWidth, navController)
                 ShowStarships(selected, halfWidth, navController)
                 ShowVehicles(selected, halfWidth, navController)
-                if (images.value.isNotEmpty()) {
-                    GallerySlider(images = images.value)
-                }
+                GallerySlider(images = imagesState,
+                        onCLickLeft = {
+                            personViewModel.deleteFromDatabase(it)
+                            imagesStateRefresh.value = true
+                        },
+                        onCLickRight = {
+                            personViewModel.refreshImages(selected.id)
+                        })
             }
+            PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
         }
     }
 }

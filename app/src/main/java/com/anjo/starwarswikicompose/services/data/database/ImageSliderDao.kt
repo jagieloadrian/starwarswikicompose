@@ -8,12 +8,11 @@ import androidx.room.Query
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.utils.Category
 import com.anjo.starwarswikicompose.utils.Constants.IMAGE_SLIDER_TABLE
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ImageSliderDao {
     @Query("SELECT * FROM $IMAGE_SLIDER_TABLE WHERE objectId = :objectId and objectType = :category")
-    fun getImagesForObjectFromRoom(objectId: String, category: Category): Flow<List<ImageSliderModel>>
+    fun getImagesForObjectFromRoom(objectId: String, category: Category): List<ImageSliderModel>
 
     @Insert(onConflict = REPLACE)
     suspend fun addImageToRoom(imageSliderModel: ImageSliderModel)

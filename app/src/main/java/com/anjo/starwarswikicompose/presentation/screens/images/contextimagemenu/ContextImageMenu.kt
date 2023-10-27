@@ -8,12 +8,9 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.domain.model.imageslider.ActionType
 import com.anjo.starwarswikicompose.domain.model.imageslider.ClipBoardAction
 import com.anjo.starwarswikicompose.utils.getLocalWidth
@@ -22,17 +19,14 @@ import com.anjo.starwarswikicompose.utils.getLocalWidth
 @Composable
 fun ImageItemMenu(
         modifier: Modifier = Modifier,
-        photoUrl: String,
-        navHostController: NavHostController,
         isContextMenuVisible: Boolean,
         pressOffset: DpOffset,
         onDismissRequest: () -> Unit,
         itemHeight: Dp,
-        contextImageModelView: ContextImageModelView = hiltViewModel(),
+        onClick:(ClipBoardAction)->Unit,
+        dropdownItems: List<ClipBoardAction>
 ) {
-    val context = LocalContext.current.applicationContext
     val localWidth = (getLocalWidth() / 2).dp
-    val dropdownItems = generateActions(navHostController, photoUrl)
 
     DropdownMenu(
             expanded = isContextMenuVisible,
@@ -42,10 +36,7 @@ fun ImageItemMenu(
             )
     ) {
         dropdownItems.forEach { objectItem ->
-            DropdownMenuItem(onClick = {
-                runContextAction(objectItem, context, contextImageModelView)
-                onDismissRequest()
-            }) {
+            DropdownMenuItem(onClick = { onClick(objectItem) }) {
                 Text(text = objectItem.actionName,
                         maxLines = 2,
                         modifier = modifier
@@ -53,8 +44,6 @@ fun ImageItemMenu(
             }
         }
     }
-
-
 }
 
 fun runContextAction(

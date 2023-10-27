@@ -1,5 +1,7 @@
 package com.anjo.starwarswikicompose.presentation.screens.starship.detail
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +9,7 @@ import com.anjo.GetStarshipQuery
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.services.usecases.imagesliderusecase.ImageSliderUseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
+import com.anjo.starwarswikicompose.utils.Category
 import com.anjo.starwarswikicompose.utils.Category.STARSHIPS
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_STARSHIP_ARGUMENT_KEY
 import com.anjo.starwarswikicompose.utils.toImageSliderModel
@@ -26,8 +29,8 @@ class StarshipViewModel @Inject constructor(
     private val _selectedStarship: MutableStateFlow<GetStarshipQuery.Starship?> = MutableStateFlow(null)
     val selectedStarship: StateFlow<GetStarshipQuery.Starship?> = _selectedStarship
 
-    private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
-    val images: StateFlow<List<ImageSliderModel>> = _images
+    private var _images = mutableStateListOf<ImageSliderModel>()
+    val images :List<ImageSliderModel> = _images
 
 
     init {
@@ -36,9 +39,6 @@ class StarshipViewModel @Inject constructor(
             _selectedStarship.value = starshipId?.let { useCase.getStarshipUseCase(id = it) }
             starshipId?.let {
                 imageSliderUseCases.getImagesForObjectUseCase(starshipId, STARSHIPS)
-                        .collect {
-                            _images.value = it
-                        }
             }
         }
     }
@@ -47,6 +47,19 @@ class StarshipViewModel @Inject constructor(
         val modelObject = selected.toImageSliderModel(photoUrl)
         viewModelScope.launch(Dispatchers.IO) {
             imageSliderUseCases.addImageToRoomUseCase(modelObject)
+        }
+    }
+
+    fun refreshImages(starshipId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val anotherList = imageSliderUseCases.getImagesForObjectUseCase(starshipId, Category.FILMS)
+            _images = anotherList.toMutableStateList()
+        }
+    }
+
+    fun deleteFromDatabase(image: ImageSliderModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            imageSliderUseCases.deleteImageFromRoomUseCase(image)
         }
     }
 }

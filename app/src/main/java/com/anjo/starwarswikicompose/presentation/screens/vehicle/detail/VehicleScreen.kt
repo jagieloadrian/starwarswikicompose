@@ -16,15 +16,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -61,7 +65,10 @@ import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.VEHICLE_PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.utils.Category
 import com.anjo.starwarswikicompose.utils.Category.VEHICLES
+import com.anjo.starwarswikicompose.utils.addImageFunction
 import com.anjo.starwarswikicompose.utils.getLocalWidth
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -74,6 +81,7 @@ fun VehicleContentScreen(
     selectedVehicle?.let { VehicleVisualisation(it, navController, vehicleViewModel) }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @ExperimentalFoundationApi
 @Composable
 fun VehicleVisualisation(selected: GetVehicleQuery.Vehicle, navController: NavHostController,
@@ -83,8 +91,26 @@ fun VehicleVisualisation(selected: GetVehicleQuery.Vehicle, navController: NavHo
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
     var fabExtended by remember { mutableStateOf(true) }
-    val images = vehicleViewModel.images.collectAsState()
+    val imagesState = vehicleViewModel.images.toMutableList()
+    val imagesStateRefresh = remember { mutableStateOf(true) }
     val clipManager = LocalClipboardManager.current
+
+    LaunchedEffect(imagesStateRefresh.value) {
+        vehicleViewModel.refreshImages(selected.id)
+        delay(1000)
+        imagesStateRefresh.value = false
+    }
+
+    val refreshScope = rememberCoroutineScope()
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
+        isRefreshing = true
+        refreshScope.launch {
+            vehicleViewModel.refreshImages(selected.id)
+            delay(1500)
+            isRefreshing = false
+        }
+    })
 
     LaunchedEffect(state) {
         var prev = 0
@@ -99,8 +125,9 @@ fun VehicleVisualisation(selected: GetVehicleQuery.Vehicle, navController: NavHo
             bottomBar = { CustomBottomAppBar(navController) },
                     floatingActionButton = {
                 AddImageFab(extended = fabExtended) {
-                    val photoUrl = clipManager.getText()?.text
-                    photoUrl?.let { vehicleViewModel.saveInDatabase(selected, it) }
+                    addImageFunction(clipManager, navController) {
+                        vehicleViewModel.saveInDatabase(selected, it)
+                    }
                 }
             }
     ) { padding ->
@@ -111,6 +138,7 @@ fun VehicleVisualisation(selected: GetVehicleQuery.Vehicle, navController: NavHo
             Column(modifier = Modifier.verticalScroll(state),
                     horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                if (!isRefreshing) {
                 AsyncImage(model = findImage(selected.id, VEHICLES),
                         error = choosePainter(VEHICLES),
                         contentDescription = stringResource(R.string.vehicles),
@@ -187,11 +215,18 @@ fun VehicleVisualisation(selected: GetVehicleQuery.Vehicle, navController: NavHo
                 }
                 ShowPilots(selected, halfWidth, navController)
                 ShowMovies(selected, halfWidth, navController)
-                if (images.value.isNotEmpty()) {
-                    GallerySlider(images = images.value)
-                }
+                GallerySlider(images = imagesState,
+                        onCLickLeft = {
+                            vehicleViewModel.deleteFromDatabase(it)
+                            imagesStateRefresh.value = true
+                        },
+                        onCLickRight = {
+                            vehicleViewModel.refreshImages(selected.id)
+                        })
             }
         }
+        PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
+    }
     }
 }
 

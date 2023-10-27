@@ -28,6 +28,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,10 +49,14 @@ import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.topAppBarContentColor
 import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CustomTopAppBar(navHostController: NavHostController) {
+    val scope = rememberCoroutineScope()
     val muted = remember { mutableStateOf(false) }
     val listItems = getMenuItemsList(muted)
     val openDialog = remember { mutableStateOf(false) }
@@ -119,7 +124,8 @@ fun CustomTopAppBar(navHostController: NavHostController) {
                     listItems.forEach { menuItemData ->
                         DropdownMenuItem(
                                 onClick = {
-                                    RunProperlyAction(menuItemData, context, muted, openDialog, audioManager)
+                                    runProperlyAction(menuItemData, context,
+                                            muted, openDialog, audioManager, scope)
                                     expanded = false
                                 },
                                 enabled = true
@@ -163,13 +169,13 @@ fun getMenuItemsList(muted: MutableState<Boolean>): ArrayList<MenuItemData> {
     return listItems
 }
 
-fun RunProperlyAction(
+fun runProperlyAction(
         menuItemData: MenuItemData, context: Context, muted: MutableState<Boolean>,
         openDialog: MutableState<Boolean>,
         audioManager: AudioManager,
+        scope: CoroutineScope,
 ) {
-
-    val maxVol: Int = audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)
+    val maxVol: Int = audioManager.getStreamMaxVolume(STREAM_MUSIC)
     when (menuItemData) {
         MenuItemData.Notes -> Toast.makeText(context, "You choose: ${MenuItemData.Notes.text}", Toast.LENGTH_SHORT)
                 .show()
@@ -182,13 +188,42 @@ fun RunProperlyAction(
         }
 
         MenuItemData.Sound -> {
+            volumeUpMusic(scope, audioManager, maxVol)
             muted.value = false
-            audioManager.setStreamVolume(STREAM_MUSIC, maxVol, 0)
         }
 
         MenuItemData.Mute  -> {
+            muteMusic(scope, audioManager)
             muted.value = true
-            audioManager.setStreamVolume(STREAM_MUSIC, 0, 0)
+        }
+    }
+
+}
+
+private fun volumeUpMusic(
+        scope: CoroutineScope, audioManager: AudioManager, maxVol: Int,
+) {
+    scope.launch {
+        if (audioManager.getStreamVolume(STREAM_MUSIC) == 0) {
+            var currentVol = 0
+            while (currentVol != (maxVol + 1)) {
+                audioManager.setStreamVolume(STREAM_MUSIC, currentVol, 0)
+                currentVol += 1
+                delay(100)
+            }
+        }
+    }
+}
+
+private fun muteMusic(scope: CoroutineScope, audioManager: AudioManager) {
+    scope.launch {
+        if (audioManager.getStreamVolume(STREAM_MUSIC) != 0) {
+            var currentVol = audioManager.getStreamVolume(STREAM_MUSIC)
+            while (currentVol != -1) {
+                audioManager.setStreamVolume(STREAM_MUSIC, currentVol, 0)
+                currentVol -= 1
+                delay(100)
+            }
         }
     }
 }

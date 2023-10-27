@@ -43,7 +43,7 @@ fun AddImageFab(
             AnimatedVisibility(visible = extended) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Spacer(Modifier.padding(PAGING_INDICATOR_WIDTH))
-                    Text(text = "Add Image",
+                    Text(text = "Add Image from Clipboard",
                             color = MaterialTheme.colors.topAppBarContentColor)
                 }
             }
