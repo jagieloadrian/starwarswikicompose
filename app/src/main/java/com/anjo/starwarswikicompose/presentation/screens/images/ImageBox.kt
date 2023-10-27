@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,11 +39,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhoto
+import com.anjo.starwarswikicompose.presentation.screens.images.contextimagemenu.ContextImageModelView
 import com.anjo.starwarswikicompose.presentation.screens.images.contextimagemenu.ImageItemMenu
+import com.anjo.starwarswikicompose.presentation.screens.images.contextimagemenu.generateActions
+import com.anjo.starwarswikicompose.presentation.screens.images.contextimagemenu.runContextAction
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.MEDIUM_PADDING
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_SPACING
@@ -56,29 +61,40 @@ import com.anjo.starwarswikicompose.utils.buildImageUrl
 @Composable
 fun ImageBox(
         photo: FlickrPhoto,
-        navHostController: NavHostController
+        navHostController: NavHostController,
 ) {
     val title = if (photo.title.isEmpty()) "\uD83D\uDE4A" else photo.title
     val authorName = if (photo.ownername.isEmpty()) "\uD83D\uDE4A" else photo.ownername
     val interactionSource = remember {
-        MutableInteractionSource()}
+        MutableInteractionSource()
+    }
     var isContextMenuVisible by rememberSaveable {
-        mutableStateOf(false)}
+        mutableStateOf(false)
+    }
     var pressOffset by remember {
-        mutableStateOf(DpOffset.Zero)}
+        mutableStateOf(DpOffset.Zero)
+    }
     var itemHeight by remember {
-        mutableStateOf(0.dp)}
+        mutableStateOf(0.dp)
+    }
     val density = LocalDensity.current
     val photoUrl = buildImageUrl(photo)
+    val context = LocalContext.current
+    val contextImageModelView = hiltViewModel<ContextImageModelView>()
+    val dropdownItems = generateActions(navHostController, photoUrl, contextImageModelView)
 
     if (isContextMenuVisible) {
-        ImageItemMenu(photoUrl = photoUrl, navHostController = navHostController,
-                isContextMenuVisible = isContextMenuVisible,
+        ImageItemMenu(isContextMenuVisible = isContextMenuVisible,
                 pressOffset = pressOffset,
                 onDismissRequest = {
                     isContextMenuVisible = false
                 },
-                itemHeight = itemHeight)
+                itemHeight = itemHeight,
+                onClick = {
+                    runContextAction(it, context, contextImageModelView)
+                    isContextMenuVisible = false
+                },
+                dropdownItems = dropdownItems)
     }
 
     Box(modifier = Modifier.fillMaxSize()
@@ -118,8 +134,10 @@ fun ImageBox(
 }
 
 @Composable
-private fun ShowImage(photoUrl: String,
-                      modifier: Modifier = Modifier) {
+private fun ShowImage(
+        photoUrl: String,
+        modifier: Modifier = Modifier,
+) {
     AsyncImage(model = photoUrl,
             placeholder = painterResource(R.drawable.image_icon),
             error = painterResource(R.drawable.ic_network_error),

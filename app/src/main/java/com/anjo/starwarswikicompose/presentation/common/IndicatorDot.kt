@@ -3,8 +3,6 @@ package com.anjo.starwarswikicompose.presentation.common
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,10 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import com.anjo.starwarswikicompose.ui.theme.NAME_PLACEHOLDER_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_SPACING
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_WIDTH
+import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
 
 @Composable
 fun IndicatorDot(
@@ -43,8 +40,7 @@ fun DotsIndicator(
         selectedColor: Color = Color.Yellow,
         unSelectedColor: Color = Color.LightGray) {
     LazyRow(
-            modifier = modifier.height(NAME_PLACEHOLDER_HEIGHT)
-                    .fillMaxWidth(),
+            modifier = modifier.height(TOP_BAR_HEIGHT),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
     ) {
@@ -53,9 +49,6 @@ fun DotsIndicator(
             IndicatorDot(isSelected,
                     selectedColor,
                     unSelectedColor)
-            if (selectedIndex != totalDots - 1) {
-                Spacer(modifier = Modifier.padding(horizontal = 2.dp))
-            }
         }
     }
 }

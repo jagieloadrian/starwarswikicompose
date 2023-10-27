@@ -16,15 +16,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -63,29 +67,41 @@ import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.utils.Category
 import com.anjo.starwarswikicompose.utils.Category.PEOPLE
 import com.anjo.starwarswikicompose.utils.Category.PLANETS
+import com.anjo.starwarswikicompose.utils.addImageFunction
 import com.anjo.starwarswikicompose.utils.getLocalWidth
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PlanetContentScreen(
         navController: NavHostController,
-        planetViewModel: PlanetViewModel = hiltViewModel()
+        planetViewModel: PlanetViewModel = hiltViewModel(),
 ) {
     val selectedPlanet by planetViewModel.selectedPlanet.collectAsState()
     selectedPlanet?.let { PlanetVisualisation(it, navController, planetViewModel) }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @ExperimentalFoundationApi
 @Composable
-private fun PlanetVisualisation(selected: GetPlanetQuery.Planet, navController: NavHostController,
-                                planetViewModel: PlanetViewModel) {
+private fun PlanetVisualisation(
+        selected: GetPlanetQuery.Planet, navController: NavHostController,
+        planetViewModel: PlanetViewModel,
+) {
     val width = getLocalWidth()
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
     var fabExtended by remember { mutableStateOf(true) }
-    val images = planetViewModel.images.collectAsState()
+    val imagesState = planetViewModel.images.toMutableList()
+    val imagesStateRefresh = remember { mutableStateOf(true) }
     val clipManager = LocalClipboardManager.current
+
+    LaunchedEffect(imagesStateRefresh.value) {
+        planetViewModel.refreshImages(selected.id)
+        imagesStateRefresh.value = false
+    }
 
     LaunchedEffect(state) {
         var prev = 0
@@ -95,16 +111,28 @@ private fun PlanetVisualisation(selected: GetPlanetQuery.Planet, navController: 
         }
     }
 
+    val refreshScope = rememberCoroutineScope()
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
+        isRefreshing = true
+        refreshScope.launch {
+            planetViewModel.refreshImages(selected.id)
+            delay(1500)
+            isRefreshing = false
+        }
+    })
+
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) },
             floatingActionButton = {
                 AddImageFab(extended = fabExtended) {
-                    val photoUrl = clipManager.getText()?.text
-                    photoUrl?.let { planetViewModel.saveInDatabase(selected, it) }
+                    addImageFunction(clipManager, navController) {
+                        planetViewModel.saveInDatabase(selected, it)
+                        imagesStateRefresh.value = true
+                    }
                 }
             }
-
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)
                 .paint(painter = painterResource(R.drawable.stars_image),
@@ -112,74 +140,82 @@ private fun PlanetVisualisation(selected: GetPlanetQuery.Planet, navController: 
             Column(modifier = Modifier.verticalScroll(state),
                     horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AsyncImage(model = findImage(selected.id, PLANETS),
-                        error = choosePainter(PLANETS),
-                        contentDescription = stringResource(R.string.planets),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                                .height(PICTURE_HEIGHT)
-                                .align(alignment = Alignment.CenterHorizontally)
-                                .clip(CircleShape)
-                                .background(Color.Magenta))
-                Text(text = selected.name.orEmpty(),
-                        fontFamily = SOLOFontName,
-                        modifier = Modifier.fillMaxWidth()
-                                .height(NAME_PLACEHOLDER_HEIGHT)
-                                .basicMarquee(),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.h2,
-                        color = Color.White
-                )
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBox(
-                            stringResource(R.string.diameter_box_name),
-                            selected.diameter,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.gravity_box_name),
-                            selected.gravity,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.population_box_name),
-                            formatPopulation(selected.population),
-                            width = thirdWidth)
-                }
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround) {
-                    InfoBox(
-                            stringResource(R.string.rotation_period_box_name),
-                            selected.rotationPeriod,
-                            width = halfWidth)
-                    InfoBox(
-                            stringResource(R.string.orbital_period_box_name),
-                            selected.orbitalPeriod,
-                            width = halfWidth)
-                }
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBoxColumn(
-                            stringResource(R.string.climates_box_name),
-                            null, selected.climates,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.surface_water_box_name),
-                            selected.surfaceWater,
-                            width = thirdWidth)
-                    InfoBoxColumn(
-                            stringResource(R.string.terrains_box_name),
-                            null, selected.terrains,
-                            width = thirdWidth)
-                }
-                ShowCharacters(selected, halfWidth, navController)
-                ShowMovies(selected, halfWidth, navController)
-                if (images.value.isNotEmpty()) {
-                    GallerySlider(images = images.value)
+                if (!isRefreshing) {
+                    AsyncImage(model = findImage(selected.id, PLANETS),
+                            error = choosePainter(PLANETS),
+                            contentDescription = stringResource(R.string.planets),
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                    .height(PICTURE_HEIGHT)
+                                    .align(alignment = Alignment.CenterHorizontally)
+                                    .clip(CircleShape)
+                                    .background(Color.Magenta))
+                    Text(text = selected.name.orEmpty(),
+                            fontFamily = SOLOFontName,
+                            modifier = Modifier.fillMaxWidth()
+                                    .height(NAME_PLACEHOLDER_HEIGHT)
+                                    .basicMarquee(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.h2,
+                            color = Color.White
+                    )
+                    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                            .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly) {
+                        InfoBox(
+                                stringResource(R.string.diameter_box_name),
+                                selected.diameter,
+                                width = thirdWidth)
+                        InfoBox(
+                                stringResource(R.string.gravity_box_name),
+                                selected.gravity,
+                                width = thirdWidth)
+                        InfoBox(
+                                stringResource(R.string.population_box_name),
+                                formatPopulation(selected.population),
+                                width = thirdWidth)
+                    }
+                    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                            .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround) {
+                        InfoBox(
+                                stringResource(R.string.rotation_period_box_name),
+                                selected.rotationPeriod,
+                                width = halfWidth)
+                        InfoBox(
+                                stringResource(R.string.orbital_period_box_name),
+                                selected.orbitalPeriod,
+                                width = halfWidth)
+                    }
+                    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                            .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly) {
+                        InfoBoxColumn(
+                                stringResource(R.string.climates_box_name),
+                                null, selected.climates,
+                                width = thirdWidth)
+                        InfoBox(
+                                stringResource(R.string.surface_water_box_name),
+                                selected.surfaceWater,
+                                width = thirdWidth)
+                        InfoBoxColumn(
+                                stringResource(R.string.terrains_box_name),
+                                null, selected.terrains,
+                                width = thirdWidth)
+                    }
+                    ShowCharacters(selected, halfWidth, navController)
+                    ShowMovies(selected, halfWidth, navController)
+                    GallerySlider(images = imagesState,
+                            onCLickLeft = {
+                                planetViewModel.deleteFromDatabase(it)
+                                imagesStateRefresh.value = true
+                            },
+                            onCLickRight = {
+                                planetViewModel.refreshImages(selected.id)
+                            })
                 }
             }
+            PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
         }
     }
 }

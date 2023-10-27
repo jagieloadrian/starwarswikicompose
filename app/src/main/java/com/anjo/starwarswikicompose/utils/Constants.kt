@@ -15,7 +15,7 @@ object Constants {
     const val DETAILS_SPECIE_ARGUMENT_KEY = "specieId"
     const val DETAILS_STARSHIP_ARGUMENT_KEY = "starshipId"
     const val DETAILS_VEHICLE_ARGUMENT_KEY = "vehicleId"
-    const val AUTO_SLIDE_DURATION = 3000L
+    const val AUTO_SLIDE_DURATION = 5000L
     const val ASSETS_PATH = "file:///android_asset"
     const val APOLLO_BASE_URL = "https://swapi-graphql.eskerda.vercel.app/"
     const val FLICKR_BASE_URL = "https://www.flickr.com/"
@@ -23,6 +23,7 @@ object Constants {
     const val FLICKR_METHOD_RECENT_PHOTOS = "flickr.photos.getRecent"
 
     const val FLICKR_BASE_URL_IMAGE = "https://live.staticflickr.com"
+    const val FLICKR_EXT = ".jpg"
 
     const val FLICKR_KEY = BuildConfig.FLICKR_API
 
@@ -34,5 +35,8 @@ object Constants {
 
     const val IMAGE_SLIDER_TABLE = "image_slider_table"
 
-    //TODO zaimplementować usuwanie zdjęc, customowe toasty, wyciszanie czasowo muzyki
+    const val SAVE_IN_PREFIX = "Save in "
+    const val CLOPY_CLIPBOARD = "Copy to clipboard"
+
+    //TODO zaimplementować usuwanie zdjęc, customowe toasty, dostosować guzik add image
 }
