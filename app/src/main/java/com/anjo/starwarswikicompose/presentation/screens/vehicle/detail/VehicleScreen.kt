@@ -19,6 +19,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -49,12 +51,12 @@ import coil.compose.AsyncImage
 import com.anjo.GetVehicleQuery
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.presentation.common.GallerySlider
-import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFab
-import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
-import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFabWrap
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBoxColumn
 import com.anjo.starwarswikicompose.presentation.screens.common.RelatedBox
+import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.choosePainter
 import com.anjo.starwarswikicompose.presentation.screens.common.clickableArrangementInLazyRow
 import com.anjo.starwarswikicompose.presentation.screens.common.findImage
@@ -65,7 +67,8 @@ import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.VEHICLE_PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.utils.Category
 import com.anjo.starwarswikicompose.utils.Category.VEHICLES
-import com.anjo.starwarswikicompose.utils.addImageFunction
+import com.anjo.starwarswikicompose.utils.Constants.DELETE_AND_REFRESH_IMAGES
+import com.anjo.starwarswikicompose.utils.Constants.REFRESH_IMAGES
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -75,7 +78,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun VehicleContentScreen(
         navController: NavHostController,
-        vehicleViewModel: VehicleViewModel = hiltViewModel()
+        vehicleViewModel: VehicleViewModel = hiltViewModel(),
 ) {
     val selectedVehicle by vehicleViewModel.selectedVehicle.collectAsState()
     selectedVehicle?.let { VehicleVisualisation(it, navController, vehicleViewModel) }
@@ -84,23 +87,19 @@ fun VehicleContentScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalFoundationApi
 @Composable
-fun VehicleVisualisation(selected: GetVehicleQuery.Vehicle, navController: NavHostController,
-                         vehicleViewModel: VehicleViewModel) {
+fun VehicleVisualisation(
+        selected: GetVehicleQuery.Vehicle, navController: NavHostController,
+        vehicleViewModel: VehicleViewModel,
+) {
     val width = getLocalWidth()
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
     var fabExtended by remember { mutableStateOf(true) }
-    val imagesState = vehicleViewModel.images.toMutableList()
+    val imagesState = remember { mutableStateOf(vehicleViewModel.images.value) }
     val imagesStateRefresh = remember { mutableStateOf(true) }
     val clipManager = LocalClipboardManager.current
-
-    LaunchedEffect(imagesStateRefresh.value) {
-        vehicleViewModel.refreshImages(selected.id)
-        delay(1000)
-        imagesStateRefresh.value = false
-    }
-
+    val snackBarHostState = remember { SnackbarHostState() }
     val refreshScope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
     val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
@@ -111,6 +110,13 @@ fun VehicleVisualisation(selected: GetVehicleQuery.Vehicle, navController: NavHo
             isRefreshing = false
         }
     })
+
+    LaunchedEffect(imagesStateRefresh.value) {
+        vehicleViewModel.refreshImages(selected.id)
+        delay(1000)
+        imagesState.value = vehicleViewModel.images.value
+        imagesStateRefresh.value = false
+    }
 
     LaunchedEffect(state) {
         var prev = 0
@@ -123,13 +129,13 @@ fun VehicleVisualisation(selected: GetVehicleQuery.Vehicle, navController: NavHo
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) },
-                    floatingActionButton = {
-                AddImageFab(extended = fabExtended) {
-                    addImageFunction(clipManager, navController) {
-                        vehicleViewModel.saveInDatabase(selected, it)
-                    }
-                }
-            }
+            floatingActionButton = {
+                AddImageFabWrap(fabExtended, clipManager, navController, selected.name.orEmpty(), {
+                    vehicleViewModel.saveInDatabase(selected, it)
+                    imagesStateRefresh.value = true
+                }, refreshScope, snackBarHostState)
+            },
+            snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize()
                 .padding(padding)
@@ -139,94 +145,100 @@ fun VehicleVisualisation(selected: GetVehicleQuery.Vehicle, navController: NavHo
                     horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (!isRefreshing) {
-                AsyncImage(model = findImage(selected.id, VEHICLES),
-                        error = choosePainter(VEHICLES),
-                        contentDescription = stringResource(R.string.vehicles),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                                .height(VEHICLE_PICTURE_HEIGHT)
-                                .align(alignment = Alignment.CenterHorizontally)
-                                .clip(CircleShape)
-                                .background(Color.Magenta))
-                Text(text = selected.name.orEmpty(),
-                        fontFamily = SOLOFontName,
-                        modifier = Modifier.fillMaxWidth()
-                                .height(NAME_PLACEHOLDER_HEIGHT)
-                                .basicMarquee(),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.h2,
-                        color = Color.White
-                )
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBox(
-                            stringResource(R.string.model_box_name),
-                            selected.model,
-                            width = halfWidth)
-                    InfoBox(
-                            stringResource(R.string.vehicle_class_box_name),
-                            selected.vehicleClass,
-                            width = halfWidth)
+                    AsyncImage(model = findImage(selected.id, VEHICLES),
+                            error = choosePainter(VEHICLES),
+                            contentDescription = stringResource(R.string.vehicles),
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                    .height(VEHICLE_PICTURE_HEIGHT)
+                                    .align(alignment = Alignment.CenterHorizontally)
+                                    .clip(CircleShape)
+                                    .background(Color.Magenta))
+                    Text(text = selected.name.orEmpty(),
+                            fontFamily = SOLOFontName,
+                            modifier = Modifier.fillMaxWidth()
+                                    .height(NAME_PLACEHOLDER_HEIGHT)
+                                    .basicMarquee(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.h2,
+                            color = Color.White
+                    )
+                    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                            .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly) {
+                        InfoBox(
+                                stringResource(R.string.model_box_name),
+                                selected.model,
+                                width = halfWidth)
+                        InfoBox(
+                                stringResource(R.string.vehicle_class_box_name),
+                                selected.vehicleClass,
+                                width = halfWidth)
+                    }
+                    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                            .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly) {
+                        InfoBoxColumn(
+                                stringResource(R.string.manufacturers_box_name),
+                                null, selected.manufacturers,
+                                width = halfWidth)
+                        InfoBox(
+                                stringResource(R.string.cost_box_name),
+                                selected.costInCredits,
+                                width = halfWidth)
+                    }
+                    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                            .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly) {
+                        InfoBox(
+                                stringResource(R.string.length_box_name),
+                                selected.length,
+                                width = thirdWidth)
+                        InfoBox(
+                                stringResource(R.string.crew_box_name),
+                                selected.crew,
+                                width = thirdWidth)
+                        InfoBox(
+                                stringResource(R.string.passengers_box_name),
+                                selected.passengers,
+                                width = thirdWidth)
+                    }
+                    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                            .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly) {
+                        InfoBox(
+                                stringResource(R.string.v_max_box_name),
+                                selected.maxAtmospheringSpeed,
+                                width = thirdWidth)
+                        InfoBox(
+                                stringResource(R.string.cargo_box_name),
+                                selected.cargoCapacity,
+                                width = thirdWidth)
+                        InfoBox(
+                                stringResource(R.string.consumables_box_name),
+                                selected.consumables,
+                                width = thirdWidth)
+                    }
+                    ShowPilots(selected, halfWidth, navController)
+                    ShowMovies(selected, halfWidth, navController)
+                    GallerySlider(images = imagesState.value,
+                            onCLickLeft = {
+                                refreshScope.launch {
+                                    snackBarHostState.showSnackbar(REFRESH_IMAGES)
+                                }
+                                imagesStateRefresh.value = true
+                            },
+                            onCLickRight = {
+                                refreshScope.launch {
+                                    snackBarHostState.showSnackbar(DELETE_AND_REFRESH_IMAGES)
+                                }
+                                vehicleViewModel.deleteFromDatabase(it)
+                                imagesStateRefresh.value = true
+                            })
                 }
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBoxColumn(
-                            stringResource(R.string.manufacturers_box_name),
-                            null, selected.manufacturers,
-                            width = halfWidth)
-                    InfoBox(
-                            stringResource(R.string.cost_box_name),
-                            selected.costInCredits,
-                            width = halfWidth)
-                }
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBox(
-                            stringResource(R.string.length_box_name),
-                            selected.length,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.crew_box_name),
-                            selected.crew,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.passengers_box_name),
-                            selected.passengers,
-                            width = thirdWidth)
-                }
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBox(
-                            stringResource(R.string.v_max_box_name),
-                            selected.maxAtmospheringSpeed,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.cargo_box_name),
-                            selected.cargoCapacity,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.consumables_box_name),
-                            selected.consumables,
-                            width = thirdWidth)
-                }
-                ShowPilots(selected, halfWidth, navController)
-                ShowMovies(selected, halfWidth, navController)
-                GallerySlider(images = imagesState,
-                        onCLickLeft = {
-                            vehicleViewModel.deleteFromDatabase(it)
-                            imagesStateRefresh.value = true
-                        },
-                        onCLickRight = {
-                            vehicleViewModel.refreshImages(selected.id)
-                        })
             }
+            PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
         }
-        PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
-    }
     }
 }
 

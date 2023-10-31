@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -41,10 +43,11 @@ import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhoto
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrStatus
 import com.anjo.starwarswikicompose.presentation.common.EmptyScreen
 import com.anjo.starwarswikicompose.presentation.common.ErrorScreen
-import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
-import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.ui.theme.LARGE_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
+import com.anjo.starwarswikicompose.utils.Constants.COPIED_TO_CLIPBOARD
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -53,7 +56,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ImageScreen(
         navController: NavHostController,
-        imageViewModel: ImageViewModel = hiltViewModel()
+        imageViewModel: ImageViewModel = hiltViewModel(),
 ) {
 
     val searchQuery by imageViewModel.searchQuery
@@ -77,7 +80,7 @@ fun ImageScreen(
             refreshing = false
         }
     }
-
+    val snackBarHostState = remember { SnackbarHostState() }
     val state = rememberPullRefreshState(refreshing, ::refresh)
     var startAnimation by remember { mutableStateOf(false) }
     val alphaAnim by animateFloatAsState(
@@ -92,7 +95,8 @@ fun ImageScreen(
     }
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
-            bottomBar = { CustomBottomAppBar(navController) }
+            bottomBar = { CustomBottomAppBar(navController) },
+            snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { padding ->
         Box(modifier = Modifier
                 .padding(padding)
@@ -124,10 +128,17 @@ fun ImageScreen(
                                     enabled.value = true
                                 }
                             })
-                    when(photoResponse.stat) {
+                    when (photoResponse.stat) {
                         FlickrStatus.error -> ErrorScreen(photoResponse.message)
-                        FlickrStatus.fail  ->  EmptyScreen(null, text = "images")
-                        FlickrStatus.ok    -> extractPhotos?.let { LazyColumnPhotos(extractPhotos, lazyListState, navController) }
+                        FlickrStatus.fail  -> EmptyScreen(null, text = "images")
+                        FlickrStatus.ok    -> extractPhotos?.let {
+                            LazyColumnPhotos(extractPhotos,
+                                    lazyListState) {
+                                refreshScope.launch {
+                                    snackBarHostState.showSnackbar(COPIED_TO_CLIPBOARD)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -140,13 +151,14 @@ fun ImageScreen(
 fun LazyColumnPhotos(
         photos: List<FlickrPhoto>,
         lazyListState: LazyListState,
-        navController: NavHostController) {
+        addCopyAction: () -> Unit,
+) {
     LazyColumn(state = lazyListState,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(LARGE_PADDING),
             contentPadding = PaddingValues(all = SMALL_PADDING)) {
         items(photos) { photo ->
-            ImageBox(photo = photo, navHostController = navController)
+            ImageBox(photo = photo) {addCopyAction()}
         }
     }
 }

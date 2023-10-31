@@ -2,8 +2,8 @@ package com.anjo.starwarswikicompose.services.di
 
 import android.content.Context
 import androidx.room.Room
-import com.anjo.starwarswikicompose.services.data.database.ImageSliderDao
-import com.anjo.starwarswikicompose.services.data.database.ImageSliderDb
+import com.anjo.starwarswikicompose.services.data.database.image.ImageSliderDao
+import com.anjo.starwarswikicompose.services.data.database.image.ImageSliderDb
 import com.anjo.starwarswikicompose.services.data.repository.image.ImageSliderRepository
 import com.anjo.starwarswikicompose.services.data.repository.image.ImageSliderService
 import com.anjo.starwarswikicompose.services.usecases.imagesliderusecase.AddImageToRoomUseCase

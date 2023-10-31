@@ -13,7 +13,7 @@ interface FlickrApi {
     suspend fun getSearchPhotosInfo(
             @Query("method") methodName: String = FLICKR_METHOD_SEARCH_PHOTOS,
             @Query("api_key") apiKey: String = FLICKR_KEY,
-            @Query("safe_search") safeSearch: Int = 2,
+            @Query("safe_search") safeSearch: Int = 1,
             @Query("text") searchText:String,
             @Query("per_page") perPage: Int = 50,
             @Query("format") format:String = "json",

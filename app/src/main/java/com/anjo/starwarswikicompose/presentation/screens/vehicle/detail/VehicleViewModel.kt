@@ -1,7 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.vehicle.detail
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,15 +27,15 @@ class VehicleViewModel @Inject constructor(
     private val _selectedVehicle: MutableStateFlow<GetVehicleQuery.Vehicle?> = MutableStateFlow(null)
     val selectedVehicle: StateFlow<GetVehicleQuery.Vehicle?> = _selectedVehicle
 
-    private var _images = mutableStateListOf<ImageSliderModel>()
-    val images :List<ImageSliderModel> = _images
+    private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
+    val images: StateFlow<List<ImageSliderModel>> = _images
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             val vehicleId = savedStateHandle.get<String>(Constants.DETAILS_VEHICLE_ARGUMENT_KEY)
             _selectedVehicle.value = vehicleId?.let { useCase.getVehicleUseCase(id = it) }
             vehicleId?.let {
-                _images += imageSliderUseCases.getImagesForObjectUseCase(vehicleId, Category.FILMS)
+                _images.value = imageSliderUseCases.getImagesForObjectUseCase(vehicleId, Category.VEHICLES)
             }
         }
     }
@@ -51,8 +49,8 @@ class VehicleViewModel @Inject constructor(
 
     fun refreshImages(movieId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val anotherList = imageSliderUseCases.getImagesForObjectUseCase(movieId, Category.FILMS)
-            _images = anotherList.toMutableStateList()
+            val anotherList = imageSliderUseCases.getImagesForObjectUseCase(movieId, Category.VEHICLES)
+            _images.value = anotherList
         }
     }
 

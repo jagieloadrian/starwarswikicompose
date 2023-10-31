@@ -15,7 +15,6 @@ object Constants {
     const val DETAILS_SPECIE_ARGUMENT_KEY = "specieId"
     const val DETAILS_STARSHIP_ARGUMENT_KEY = "starshipId"
     const val DETAILS_VEHICLE_ARGUMENT_KEY = "vehicleId"
-    const val AUTO_SLIDE_DURATION = 5000L
     const val ASSETS_PATH = "file:///android_asset"
     const val APOLLO_BASE_URL = "https://swapi-graphql.eskerda.vercel.app/"
     const val FLICKR_BASE_URL = "https://www.flickr.com/"
@@ -34,9 +33,12 @@ object Constants {
     const val PREFERENCES_KEY = "on_boarding-completed"
 
     const val IMAGE_SLIDER_TABLE = "image_slider_table"
+    const val NOTES_TABLE = "notes_table"
 
     const val SAVE_IN_PREFIX = "Save in "
-    const val CLOPY_CLIPBOARD = "Copy to clipboard"
+    const val IMAGE_NOT_FOUND = "Image not found, go to searcher!"
+    const val REFRESH_IMAGES = "Refresh images"
+    const val DELETE_AND_REFRESH_IMAGES = "Delete image and refresh images"
+    const val COPIED_TO_CLIPBOARD = "Copied to clipboard"
 
-    //TODO zaimplementować usuwanie zdjęc, customowe toasty, dostosować guzik add image
 }

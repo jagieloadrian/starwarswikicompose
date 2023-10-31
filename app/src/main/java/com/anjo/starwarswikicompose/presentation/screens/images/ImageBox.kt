@@ -1,12 +1,11 @@
 package com.anjo.starwarswikicompose.presentation.screens.images
 
-import androidx.compose.foundation.LocalIndication
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,37 +16,29 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
+import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhoto
-import com.anjo.starwarswikicompose.presentation.screens.images.contextimagemenu.ContextImageModelView
-import com.anjo.starwarswikicompose.presentation.screens.images.contextimagemenu.ImageItemMenu
-import com.anjo.starwarswikicompose.presentation.screens.images.contextimagemenu.generateActions
-import com.anjo.starwarswikicompose.presentation.screens.images.contextimagemenu.runContextAction
+import com.anjo.starwarswikicompose.presentation.common.CornerButton
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.MEDIUM_PADDING
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_SPACING
@@ -58,67 +49,22 @@ import com.anjo.starwarswikicompose.utils.Constants.MAX_LINES_NUMBER
 import com.anjo.starwarswikicompose.utils.Constants.MEDIUM_WHITE_BACKGROUND_COPY
 import com.anjo.starwarswikicompose.utils.buildImageUrl
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ImageBox(
         photo: FlickrPhoto,
-        navHostController: NavHostController,
+        addCopyAction:() -> Unit
 ) {
-    val title = if (photo.title.isEmpty()) "\uD83D\uDE4A" else photo.title
-    val authorName = if (photo.ownername.isEmpty()) "\uD83D\uDE4A" else photo.ownername
-    val interactionSource = remember {
-        MutableInteractionSource()
-    }
-    var isContextMenuVisible by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var pressOffset by remember {
-        mutableStateOf(DpOffset.Zero)
-    }
-    var itemHeight by remember {
-        mutableStateOf(0.dp)
-    }
-    val density = LocalDensity.current
-    val photoUrl = buildImageUrl(photo)
+    val title = photo.title.ifEmpty { "\uD83D\uDE4A" }
+    val authorName = photo.ownername.ifEmpty { "\uD83D\uDE4A" }
     val context = LocalContext.current
-    val contextImageModelView = hiltViewModel<ContextImageModelView>()
-    val dropdownItems = generateActions(navHostController, photoUrl, contextImageModelView)
-
-    if (isContextMenuVisible) {
-        ImageItemMenu(isContextMenuVisible = isContextMenuVisible,
-                pressOffset = pressOffset,
-                onDismissRequest = {
-                    isContextMenuVisible = false
-                },
-                itemHeight = itemHeight,
-                onClick = {
-                    runContextAction(it, context, contextImageModelView)
-                    isContextMenuVisible = false
-                },
-                dropdownItems = dropdownItems)
-    }
+    val clipboardManager = LocalClipboardManager.current
+    val photoUrl = buildImageUrl(photo)
 
     Box(modifier = Modifier.fillMaxSize()
-            .onSizeChanged {
-                itemHeight = with(density) { it.height.toDp() }
-            }
             .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(SMALL_PADDING))) {
         Box(modifier = Modifier
                 .fillMaxSize()
-                .indication(interactionSource, LocalIndication.current)
-                .pointerInput(true) {
-                    detectTapGestures(
-                            onLongPress = {
-                                isContextMenuVisible = true
-                                pressOffset = DpOffset(it.x.toDp(), it.y.toDp())
-                            },
-                            onPress = {
-                                val press = PressInteraction.Press(it)
-                                interactionSource.emit(press)
-                                tryAwaitRelease()
-                                interactionSource.emit(PressInteraction.Release(press))
-                            }
-                    )
-                }
                 .clip(RoundedCornerShape(SMALL_PADDING))) {
             Column(modifier = Modifier.fillMaxSize()
                     .clip(RoundedCornerShape(MEDIUM_PADDING)),
@@ -128,6 +74,22 @@ fun ImageBox(
                                 .align(alignment = Alignment.CenterHorizontally))
                 InfoRow(stringResource(R.string.title_text), title)
                 InfoRow(stringResource(R.string.author_text), authorName)
+            }
+            Surface(modifier = Modifier.background(Color.Transparent)
+                    .align(Alignment.TopEnd),
+                    color = Color.Transparent) {
+                CornerButton(imageVector = Icons.Filled.Share) {
+                    sendIntent(photoUrl = photoUrl, context = context)
+                }
+
+            }
+            Surface(modifier = Modifier.background(Color.Transparent)
+                    .align(Alignment.TopStart),
+                    color = Color.Transparent) {
+                CornerButton(painter = painterResource(R.drawable.baseline_content_copy_24)) {
+                    addCopyAction()
+                    copyToClipBoard(clipboardManager = clipboardManager, text = photoUrl)
+                }
             }
         }
     }
@@ -149,7 +111,6 @@ private fun ShowImage(
                     .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
     )
 }
-
 
 @Composable
 private fun InfoRow(fieldName: String, description: String) {
@@ -176,4 +137,25 @@ private fun InfoRow(fieldName: String, description: String) {
                         .weight(4f)
         )
     }
+}
+
+
+fun copyToClipBoard(clipboardManager: ClipboardManager, text: String) {
+    val annotatedString = AnnotatedString(text)
+    clipboardManager.setText(annotatedString)
+}
+
+
+fun sendIntent(photoUrl: String, context: Context) {
+    val uri = Uri.parse(photoUrl)
+    val sendIntent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, "Wow, look at this awesome image from Star Wars Wiki!")
+        putExtra(Intent.EXTRA_STREAM, uri)
+        type = "image/*"
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+
+    val shareIntent = Intent.createChooser(sendIntent, "share image")
+    startActivity(context, shareIntent, null)
 }

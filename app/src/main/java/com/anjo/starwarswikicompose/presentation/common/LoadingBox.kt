@@ -2,7 +2,6 @@ package com.anjo.starwarswikicompose.presentation.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,7 +32,7 @@ fun LoadingBox() {
                         .padding(MEDIUM_PADDING)
                         .background(Color.Transparent),
         ) {
-            CircularProgressIndicator(modifier = Modifier.fillMaxSize()
+            CircularProgressIndicator(modifier = Modifier
                     .padding(LARGE_PADDING),
                     color = MaterialTheme.colors.topAppBarHomeBackgroundColor,
                     backgroundColor = Color.Transparent,

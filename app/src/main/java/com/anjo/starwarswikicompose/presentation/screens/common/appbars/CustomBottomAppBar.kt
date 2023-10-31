@@ -1,4 +1,4 @@
-package com.anjo.starwarswikicompose.presentation.screens.common
+package com.anjo.starwarswikicompose.presentation.screens.common.appbars
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

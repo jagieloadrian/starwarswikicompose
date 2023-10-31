@@ -1,4 +1,4 @@
-package com.anjo.starwarswikicompose.services.data.database
+package com.anjo.starwarswikicompose.services.data.database.image
 
 import androidx.room.Dao
 import androidx.room.Delete
