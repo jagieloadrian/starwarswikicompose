@@ -1,4 +1,4 @@
-package com.anjo.starwarswikicompose.presentation.screens.common
+package com.anjo.starwarswikicompose.presentation.screens.common.appbars
 
 import android.content.Context
 import android.media.AudioManager
@@ -44,6 +44,8 @@ import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.model.MenuItemData
 import com.anjo.starwarswikicompose.navigation.Screen
+import com.anjo.starwarswikicompose.presentation.screens.common.InfoDialog
+import com.anjo.starwarswikicompose.presentation.screens.notes.CardNote
 import com.anjo.starwarswikicompose.ui.theme.HOME_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
@@ -60,6 +62,7 @@ fun CustomTopAppBar(navHostController: NavHostController) {
     val muted = remember { mutableStateOf(false) }
     val listItems = getMenuItemsList(muted)
     val openDialog = remember { mutableStateOf(false) }
+    val openNotes = remember { mutableStateOf(false) }
     val context = LocalContext.current
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     var expanded by remember {
@@ -67,6 +70,9 @@ fun CustomTopAppBar(navHostController: NavHostController) {
     }
     if (openDialog.value) {
         InfoDialog { openDialog.value = false }
+    }
+    if (openNotes.value) {
+        CardNote(onDismissAction = { openNotes.value = false })
     }
 
     TopAppBar(modifier = Modifier.fillMaxWidth()
@@ -119,26 +125,22 @@ fun CustomTopAppBar(navHostController: NavHostController) {
                         offset = DpOffset(x = (-102).dp, y = (-64).dp),
                         properties = PopupProperties()
                 ) {
-
-
                     listItems.forEach { menuItemData ->
                         DropdownMenuItem(
                                 onClick = {
                                     runProperlyAction(menuItemData, context,
-                                            muted, openDialog, audioManager, scope)
+                                            muted, openNotes, openDialog,
+                                            audioManager, scope)
                                     expanded = false
                                 },
                                 enabled = true
                         ) {
-
                             Icon(
                                     painter = menuItemData.icon,
                                     contentDescription = menuItemData.text,
                                     tint = MaterialTheme.colors.topAppBarContentColor,
                             )
-
                             Spacer(modifier = Modifier.width(width = 8.dp))
-
                             Text(
                                     text = menuItemData.text,
                                     fontWeight = FontWeight.Medium,
@@ -171,14 +173,16 @@ fun getMenuItemsList(muted: MutableState<Boolean>): ArrayList<MenuItemData> {
 
 fun runProperlyAction(
         menuItemData: MenuItemData, context: Context, muted: MutableState<Boolean>,
+        openNotes: MutableState<Boolean>,
         openDialog: MutableState<Boolean>,
         audioManager: AudioManager,
         scope: CoroutineScope,
 ) {
-    val maxVol: Int = audioManager.getStreamMaxVolume(STREAM_MUSIC)
+    val maxVol: Int = audioManager.getStreamMaxVolume((STREAM_MUSIC * 0.8).toInt())
     when (menuItemData) {
-        MenuItemData.Notes -> Toast.makeText(context, "You choose: ${MenuItemData.Notes.text}", Toast.LENGTH_SHORT)
-                .show()
+        MenuItemData.Notes -> {
+            openNotes.value = true
+        }
 
         MenuItemData.Mail  -> Toast.makeText(context, "You choose: ${MenuItemData.Mail.text}", Toast.LENGTH_SHORT)
                 .show()

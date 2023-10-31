@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -38,6 +39,7 @@ fun SearchBar(modifier: Modifier = Modifier,
               enabled: Boolean,
               lazyListState: LazyListState
 ) {
+    val focusManager = LocalFocusManager.current
     Surface(modifier = modifier) {
         TextField(
                 modifier = modifier
@@ -50,7 +52,9 @@ fun SearchBar(modifier: Modifier = Modifier,
                 leadingIcon = {
                     IconButton(
                             modifier = Modifier.alpha(alpha = ContentAlpha.medium),
-                            onClick = { onSearchClicked(text) }
+                            onClick = { onSearchClicked(text)
+                            focusManager.clearFocus()
+                            }
                     ) {
                         Icon(
                                 imageVector = Icons.Default.Search,
@@ -85,7 +89,9 @@ fun SearchBar(modifier: Modifier = Modifier,
                     Text(stringResource(R.string.placeholder_search))
                 },
                 keyboardActions = KeyboardActions(
-                        onSearch = { onSearchClicked(text) }
+                        onSearch = { onSearchClicked(text)
+                        focusManager.clearFocus()
+                        }
                 ),
                 keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Search

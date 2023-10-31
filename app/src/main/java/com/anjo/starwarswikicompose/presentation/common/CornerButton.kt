@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
@@ -24,9 +25,28 @@ fun CornerButton(
             .padding(15.dp)) {
         Box(contentAlignment = Alignment.Center,
                 modifier = Modifier.background(Color.DarkGray, shape = CircleShape)
-                        .padding(15.dp)
-                        .alpha(0.5f)) {
+                        .alpha(0.5f)
+                        .padding(15.dp)) {
             Icon(imageVector = imageVector, contentDescription = "",
+                    modifier = Modifier.background(Color.Transparent),
+                    tint = Color.White)
+        }
+    }
+}
+
+@Composable
+fun CornerButton(
+        painter: Painter,
+        onClick: () -> Unit,
+) {
+    IconButton(onClick = onClick, modifier = Modifier
+            .background(Color.Transparent)
+            .padding(15.dp)) {
+        Box(contentAlignment = Alignment.Center,
+                modifier = Modifier.background(Color.DarkGray, shape = CircleShape)
+                        .alpha(0.5f)
+                        .padding(15.dp)) {
+            Icon(painter = painter, contentDescription = "",
                     modifier = Modifier.background(Color.Transparent),
                     tint = Color.White)
         }

@@ -29,7 +29,6 @@ import com.anjo.GetAllVehiclesQuery
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.presentation.screens.common.choosePainter
 import com.anjo.starwarswikicompose.presentation.screens.common.findImage
-import com.anjo.starwarswikicompose.presentation.screens.common.navigateToProperlyCompose
 import com.anjo.starwarswikicompose.presentation.screens.movie.home.FilmColumnText
 import com.anjo.starwarswikicompose.presentation.screens.person.home.PeopleColumnText
 import com.anjo.starwarswikicompose.presentation.screens.planet.home.PlanetColumnText
@@ -38,6 +37,7 @@ import com.anjo.starwarswikicompose.presentation.screens.starship.home.StarshipC
 import com.anjo.starwarswikicompose.presentation.screens.vehicle.home.VehicleColumnText
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.utils.Category
+import com.anjo.starwarswikicompose.utils.navigateToProperlyCompose
 
 @Composable
 fun <T> CommonButton(navController: NavHostController, item: T, category: Category) {

@@ -35,7 +35,7 @@ class HomeMovieViewModel @Inject constructor(private val useCase: UseCases) : Vi
     fun fetchFilms() =
         viewModelScope.launch(Dispatchers.IO) {
             _fetchedFilms.update { movieState ->
-                val films = useCase.getAllFilmsUseCase()
+                val films = useCase.getAllFilmsUseCase()?.sortedBy { it?.episodeID }
                 if (films != null) {
                     movieState.copy(
                             movies = films,

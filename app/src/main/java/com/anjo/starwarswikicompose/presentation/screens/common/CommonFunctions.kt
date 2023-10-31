@@ -51,6 +51,7 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING_FOR_INFOBOX
 import com.anjo.starwarswikicompose.utils.Category
 import com.anjo.starwarswikicompose.utils.calculatePathToImage
+import com.anjo.starwarswikicompose.utils.navigateToProperlyCompose
 
 @Composable
 fun choosePainter(category: Category): Painter {

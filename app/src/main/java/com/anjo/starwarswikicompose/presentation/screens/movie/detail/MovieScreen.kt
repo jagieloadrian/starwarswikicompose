@@ -1,5 +1,6 @@
 package com.anjo.starwarswikicompose.presentation.screens.movie.detail
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -19,6 +20,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -50,12 +53,12 @@ import coil.compose.AsyncImage
 import com.anjo.GetFilmQuery
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.presentation.common.GallerySlider
-import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFab
-import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
-import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFabWrap
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBoxColumn
 import com.anjo.starwarswikicompose.presentation.screens.common.RelatedBox
+import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.choosePainter
 import com.anjo.starwarswikicompose.presentation.screens.common.clickableArrangementInLazyRow
 import com.anjo.starwarswikicompose.presentation.screens.common.findImage
@@ -71,12 +74,11 @@ import com.anjo.starwarswikicompose.utils.Category.PLANETS
 import com.anjo.starwarswikicompose.utils.Category.SPECIES
 import com.anjo.starwarswikicompose.utils.Category.STARSHIPS
 import com.anjo.starwarswikicompose.utils.Category.VEHICLES
-import com.anjo.starwarswikicompose.utils.addImageFunction
+import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MovieContentScreen(
         navController: NavHostController,
@@ -86,6 +88,7 @@ fun MovieContentScreen(
     selectedMovie?.let { MovieVisualisation(it, navController, movieViewModel) }
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun MovieVisualisation(
@@ -99,16 +102,9 @@ private fun MovieVisualisation(
     val twoThirdsWidth = thirdWidth * 2
     val state = rememberScrollState()
     var fabExtended by remember { mutableStateOf(true) }
-    val imagesState = movieViewModel.images.toMutableList()
+    val imagesState = remember { mutableStateOf(movieViewModel.images.value) }
     val imagesStateRefresh = remember { mutableStateOf(true) }
     val clipManager = LocalClipboardManager.current
-
-    LaunchedEffect(imagesStateRefresh.value) {
-        movieViewModel.refreshImages(selected.id)
-        delay(1000)
-        imagesStateRefresh.value = false
-    }
-
     val refreshScope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
     val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
@@ -119,6 +115,16 @@ private fun MovieVisualisation(
             isRefreshing = false
         }
     })
+
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(imagesStateRefresh.value) {
+        movieViewModel.refreshImages(selected.id)
+        delay(1000)
+        imagesState.value = movieViewModel.images.value
+        imagesStateRefresh.value = false
+    }
+
 
     LaunchedEffect(state) {
         var prev = 0
@@ -132,13 +138,12 @@ private fun MovieVisualisation(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) },
             floatingActionButton = {
-                AddImageFab(extended = fabExtended) {
-                    addImageFunction(clipManager, navController) {
-                        movieViewModel.saveInDatabase(selected, it)
-                        imagesStateRefresh.value = true
-                    }
-                }
-            }) { padding ->
+                AddImageFabWrap(fabExtended, clipManager, navController, selected.title.orEmpty(), {
+                    movieViewModel.saveInDatabase(selected, it)
+                    imagesStateRefresh.value = true
+                }, refreshScope, snackBarHostState)
+            },
+            snackbarHost = { SnackbarHost(snackBarHostState) }) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)
                 .pullRefresh(pullRefreshState)
                 .paint(painter = painterResource(R.drawable.stars_image),
@@ -199,11 +204,19 @@ private fun MovieVisualisation(
                     ShowStarships(selected, halfWidth, navController)
                     ShowVehicles(selected, halfWidth, navController)
                     ShowSpecies(selected, halfWidth, navController)
-                    GallerySlider(images = imagesState,
-                            onCLickLeft = {movieViewModel.deleteFromDatabase(it)
-                                imagesStateRefresh.value = true},
+                    GallerySlider(images = imagesState.value,
+                            onCLickLeft = {
+                                refreshScope.launch {
+                                    snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
+                                }
+                                imagesStateRefresh.value = true
+                            },
                             onCLickRight = {
-                                movieViewModel.refreshImages(selected.id)
+                                refreshScope.launch {
+                                    snackBarHostState.showSnackbar(Constants.DELETE_AND_REFRESH_IMAGES)
+                                }
+                                movieViewModel.deleteFromDatabase(it)
+                                imagesStateRefresh.value = true
                             })
                 }
             }

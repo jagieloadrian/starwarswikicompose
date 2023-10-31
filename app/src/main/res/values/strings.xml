@@ -5,6 +5,9 @@
     <string name="close_text">Close</string>
     <string name="title_text">Title: </string>
     <string name="author_text">Author name: </string>
+    <string name="save_close">Save &amp; Close</string>
+    <string name="label_notes">Your notes</string>
+    <string name="default_value">Default Value</string>
     <string name="movies">MOVIES</string>
     <string name="people">PEOPLE</string>
     <string name="starships">STARSHIPS</string>

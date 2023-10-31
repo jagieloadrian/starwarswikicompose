@@ -45,3 +45,7 @@ val Colors.topAppBarContentColor: Color
 
 val Colors.topAppBarHomeBackgroundColor: Color
     get() = if (isLight) GoldColor else GoldOrangeColor
+
+
+val Colors.reverseTopAppBarHomeBackgroundColor: Color
+    get() = if (isLight) GoldOrangeColor else GoldColor

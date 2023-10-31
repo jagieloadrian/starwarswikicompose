@@ -1,4 +1,4 @@
-package com.anjo.starwarswikicompose.services.data.database
+package com.anjo.starwarswikicompose.services.data.database.image
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

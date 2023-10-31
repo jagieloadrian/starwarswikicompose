@@ -19,6 +19,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -49,12 +51,12 @@ import coil.compose.AsyncImage
 import com.anjo.GetSpecieQuery
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.presentation.common.GallerySlider
-import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFab
-import com.anjo.starwarswikicompose.presentation.screens.common.CustomBottomAppBar
-import com.anjo.starwarswikicompose.presentation.screens.common.CustomTopAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFabWrap
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBoxColumn
 import com.anjo.starwarswikicompose.presentation.screens.common.RelatedBox
+import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.choosePainter
 import com.anjo.starwarswikicompose.presentation.screens.common.clickableArrangementInLazyRow
 import com.anjo.starwarswikicompose.presentation.screens.common.findImage
@@ -66,7 +68,7 @@ import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.utils.Category
 import com.anjo.starwarswikicompose.utils.Category.PEOPLE
 import com.anjo.starwarswikicompose.utils.Category.SPECIES
-import com.anjo.starwarswikicompose.utils.addImageFunction
+import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -93,16 +95,10 @@ private fun SpecieVisualisation(
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
     var fabExtended by remember { mutableStateOf(true) }
-    val imagesState = specieViewModel.images.toMutableList()
+    val imagesState = remember { mutableStateOf(specieViewModel.images.value) }
     val imagesStateRefresh = remember { mutableStateOf(true) }
     val clipManager = LocalClipboardManager.current
-
-    LaunchedEffect(imagesStateRefresh.value) {
-        specieViewModel.refreshImages(selected.id)
-        delay(1000)
-        imagesStateRefresh.value = false
-    }
-
+    val snackBarHostState = remember { SnackbarHostState() }
     val refreshScope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
     val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
@@ -113,6 +109,13 @@ private fun SpecieVisualisation(
             isRefreshing = false
         }
     })
+
+    LaunchedEffect(imagesStateRefresh.value) {
+        specieViewModel.refreshImages(selected.id)
+        delay(1000)
+        imagesState.value = specieViewModel.images.value
+        imagesStateRefresh.value = false
+    }
 
 
     LaunchedEffect(state) {
@@ -127,13 +130,12 @@ private fun SpecieVisualisation(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) },
             floatingActionButton = {
-                AddImageFab(extended = fabExtended) {
-                    addImageFunction(clipManager, navController) {
-                        specieViewModel.saveInDatabase(selected, it)
-                        imagesStateRefresh.value = true
-                    }
-                }
-            }
+                AddImageFabWrap(fabExtended, clipManager, navController, selected.name.orEmpty(), {
+                            specieViewModel.saveInDatabase(selected, it)
+                            imagesStateRefresh.value = true
+                        }, refreshScope, snackBarHostState)
+            },
+            snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)
                 .paint(painter = painterResource(R.drawable.stars_image),
@@ -217,13 +219,19 @@ private fun SpecieVisualisation(
                     }
                     ShowCharacters(selected, halfWidth, navController)
                     ShowMovies(selected, halfWidth, navController)
-                    GallerySlider(images = imagesState,
+                    GallerySlider(images = imagesState.value,
                             onCLickLeft = {
-                                specieViewModel.deleteFromDatabase(it)
+                                refreshScope.launch {
+                                    snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
+                                }
                                 imagesStateRefresh.value = true
                             },
                             onCLickRight = {
-                                specieViewModel.refreshImages(selected.id)
+                                refreshScope.launch {
+                                    snackBarHostState.showSnackbar(Constants.DELETE_AND_REFRESH_IMAGES)
+                                }
+                                specieViewModel.deleteFromDatabase(it)
+                                imagesStateRefresh.value = true
                             })
                 }
             }

@@ -1,7 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.planet.detail
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,15 +27,15 @@ class PlanetViewModel @Inject constructor(
     private val _selectedPlanet: MutableStateFlow<GetPlanetQuery.Planet?> = MutableStateFlow(null)
     val selectedPlanet: StateFlow<GetPlanetQuery.Planet?> = _selectedPlanet
 
-    private var _images = mutableStateListOf<ImageSliderModel>()
-    val images: List<ImageSliderModel> = _images
+    private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
+    val images: StateFlow<List<ImageSliderModel>> = _images
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             val planetId = savedStateHandle.get<String>(DETAILS_PLANET_ARGUMENT_KEY)
             _selectedPlanet.value = planetId?.let { useCase.getPlanetUseCase(id = it) }
             planetId?.let {
-                _images+=imageSliderUseCases.getImagesForObjectUseCase(planetId, Category.FILMS)
+                _images.value = imageSliderUseCases.getImagesForObjectUseCase(planetId, Category.PLANETS)
             }
         }
     }
@@ -51,8 +49,8 @@ class PlanetViewModel @Inject constructor(
 
     fun refreshImages(planetId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val anotherList = imageSliderUseCases.getImagesForObjectUseCase(planetId, Category.FILMS)
-            _images = anotherList.toMutableStateList()
+            val anotherList = imageSliderUseCases.getImagesForObjectUseCase(planetId, Category.PLANETS)
+            _images.value = anotherList
         }
     }
 

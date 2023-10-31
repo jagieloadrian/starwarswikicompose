@@ -54,8 +54,8 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun GallerySlider(
         images: List<ImageSliderModel>,
-        onCLickLeft: (ImageSliderModel) -> Unit,
-        onCLickRight: () -> Unit,
+        onCLickLeft: () -> Unit,
+        onCLickRight: (ImageSliderModel) -> Unit,
 ) {
     val loadingBoxVisible = remember { mutableStateOf(false) }
     var itemHeight by remember {
@@ -69,7 +69,6 @@ fun GallerySlider(
     val onRefresh: () -> Unit = {
         isRefreshing = true
         refreshScope.launch {
-            onCLickRight()
             delay(1500)
             isRefreshing = false
         }
@@ -105,25 +104,32 @@ fun GallerySlider(
                                         .width(maxWidth)
                         )
                         Surface(modifier = Modifier.background(Color.Transparent)
-                                .align(Alignment.TopEnd),
+                                .align(Alignment.TopStart),
                                 color = Color.Transparent) {
-                            CornerButton(imageVector = Icons.Filled.Delete) { onCLickLeft(images[index]) }
+                            CornerButton(imageVector = Icons.Filled.Refresh) {
+                                onRefresh()
+                                onCLickLeft() }
 
                         }
                         Surface(modifier = Modifier.background(Color.Transparent)
-                                .align(Alignment.TopStart),
+                                .align(Alignment.TopEnd),
                                 color = Color.Transparent) {
-                            CornerButton(imageVector = Icons.Filled.Refresh) { onRefresh() }
+                            CornerButton(imageVector = Icons.Filled.Delete) {
+                                onCLickRight(images[index])
+                                onRefresh()
+                            }
                         }
                     }
                 }
             }
-            PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier
-                    .fillMaxWidth()
-                    .height(PICTURE_HEIGHT)
-                    .padding(MEDIUM_PADDING),
-                    backgroundColor = Color.Transparent,
-                    contentColor = MaterialTheme.colors.topAppBarHomeBackgroundColor)
+            Box(modifier = Modifier,
+                    contentAlignment = Alignment.Center) {
+                PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier
+                        .align(Alignment.Center),
+                        scale = true,
+                        backgroundColor = Color.Transparent,
+                        contentColor = MaterialTheme.colors.topAppBarHomeBackgroundColor)
+            }
         }
     } else {
         loadingBoxVisible.value = true

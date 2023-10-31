@@ -1,7 +1,7 @@
 package com.anjo.starwarswikicompose.services.data.repository.image
 
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
-import com.anjo.starwarswikicompose.services.data.database.ImageSliderDao
+import com.anjo.starwarswikicompose.services.data.database.image.ImageSliderDao
 import com.anjo.starwarswikicompose.utils.Category
 
 class ImageSliderService(

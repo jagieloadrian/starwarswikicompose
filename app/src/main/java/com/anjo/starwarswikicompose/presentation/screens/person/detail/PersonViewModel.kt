@@ -1,7 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.person.detail
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,15 +27,15 @@ class PersonViewModel @Inject constructor(
     private val _selectedPerson: MutableStateFlow<GetPersonQuery.Person?> = MutableStateFlow(null)
     val selectedPerson: StateFlow<GetPersonQuery.Person?> = _selectedPerson
 
-    private var _images = mutableStateListOf<ImageSliderModel>()
-    val images: List<ImageSliderModel> = _images
+    private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
+    val images:StateFlow<List<ImageSliderModel>> = _images
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             val personId = savedStateHandle.get<String>(DETAILS_PERSON_ARGUMENT_KEY)
             _selectedPerson.value = personId?.let { useCase.getPersonUseCase(id = it) }
             personId?.let {
-                _images += imageSliderUseCases.getImagesForObjectUseCase(personId, Category.FILMS)
+                _images.value = imageSliderUseCases.getImagesForObjectUseCase(personId, Category.PEOPLE)
             }
         }
     }
@@ -57,8 +55,8 @@ class PersonViewModel @Inject constructor(
 
     fun refreshImages(personId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val anotherList = imageSliderUseCases.getImagesForObjectUseCase(personId, Category.FILMS)
-            _images = anotherList.toMutableStateList()
+            val anotherList = imageSliderUseCases.getImagesForObjectUseCase(personId, Category.PEOPLE)
+            _images.value = anotherList
         }
     }
 }

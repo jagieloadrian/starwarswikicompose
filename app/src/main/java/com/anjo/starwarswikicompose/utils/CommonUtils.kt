@@ -4,6 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavHostController
+import com.anjo.GetAllFilmsQuery
+import com.anjo.GetAllPeoplesQuery
+import com.anjo.GetAllPlanetsQuery
+import com.anjo.GetAllSpeciesQuery
+import com.anjo.GetAllStarshipsQuery
+import com.anjo.GetAllVehiclesQuery
 import com.anjo.GetFilmQuery
 import com.anjo.GetPersonQuery
 import com.anjo.GetPlanetQuery
@@ -53,14 +59,18 @@ fun validateUrl(photoUrl: String?): Boolean {
 fun addImageFunction(
         clipManager: ClipboardManager,
         navController: NavHostController,
-        runSaving:(String)-> Unit
+        runSaving:(String)-> Unit,
+        runSavingSnackBar:()->Unit,
+        navControllerSnackBar:()->Unit
 ) {
     val photoUrl = clipManager.getText()?.text
     photoUrl?.let {
         if (validateUrl(photoUrl)) {
             runSaving(photoUrl)
+            runSavingSnackBar()
         } else {
             navController.navigate(Screen.ImageSearch.route)
+            navControllerSnackBar()
         }
     }
 }
@@ -111,4 +121,78 @@ fun GetVehicleQuery.Vehicle.toImageSliderModel(photoUrl: String):ImageSliderMode
             url = photoUrl,
             objectType = VEHICLES
     )
+}
+
+fun <T> navigateToProperlyCompose(navController: NavHostController, item: T, category: Category) {
+    when (category) {
+        FILMS     -> {
+            val currentItem = item as GetAllFilmsQuery.Film
+            navController.navigate(Screen.MovieDetail.passMovieId(currentItem.id))
+            return
+        }
+
+        PEOPLE    -> {
+            val currentItem = item as GetAllPeoplesQuery.Person
+            navController.navigate(Screen.PersonDetail.passPersonId(currentItem.id))
+            return
+        }
+
+        PLANETS   -> {
+            val currentItem = item as GetAllPlanetsQuery.Planet
+            navController.navigate(Screen.PlanetDetail.passPlanetId(currentItem.id))
+            return
+        }
+
+        SPECIES   -> {
+            val currentItem = item as GetAllSpeciesQuery.Species
+            navController.navigate(Screen.SpecieDetail.passSpecieId(currentItem.id))
+            return
+        }
+
+        STARSHIPS -> {
+            val currentItem = item as GetAllStarshipsQuery.Starship
+            navController.navigate(Screen.StarshipDetail.passStarshipId(currentItem.id))
+            return
+        }
+
+        VEHICLES  -> {
+            val currentItem = item as GetAllVehiclesQuery.Vehicle
+            navController.navigate(Screen.VehicleDetail.passVehicleId(currentItem.id))
+            return
+        }
+    }
+}
+
+fun navigateToProperlyCompose(navController: NavHostController, itemId: String, category: Category) {
+    when (category) {
+        FILMS     -> {
+            navController.navigate(Screen.MovieDetail.passMovieId(itemId))
+            return
+        }
+
+        PEOPLE    -> {
+            navController.navigate(Screen.PersonDetail.passPersonId(itemId))
+            return
+        }
+
+        PLANETS   -> {
+            navController.navigate(Screen.PlanetDetail.passPlanetId(itemId))
+            return
+        }
+
+        SPECIES   -> {
+            navController.navigate(Screen.SpecieDetail.passSpecieId(itemId))
+            return
+        }
+
+        STARSHIPS -> {
+            navController.navigate(Screen.StarshipDetail.passStarshipId(itemId))
+            return
+        }
+
+        VEHICLES  -> {
+            navController.navigate(Screen.VehicleDetail.passVehicleId(itemId))
+            return
+        }
+    }
 }

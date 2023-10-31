@@ -1,7 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.movie.detail
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,15 +27,15 @@ class MovieViewModel @Inject constructor(
     private val _selectedMovie: MutableStateFlow<GetFilmQuery.Film?> = MutableStateFlow(null)
     val selectedMovie: StateFlow<GetFilmQuery.Film?> = _selectedMovie
 
-    private var _images = mutableStateListOf<ImageSliderModel>()
-    val images:List<ImageSliderModel> = _images
+    private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
+    val images: StateFlow<List<ImageSliderModel>> = _images
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             val movieId = savedStateHandle.get<String>(DETAILS_MOVIE_ARGUMENT_KEY)
             _selectedMovie.value = movieId?.let { useCase.getMovieUseCase(id = it) }
             movieId?.let {
-                _images += imageSliderUseCases.getImagesForObjectUseCase(movieId, FILMS).toMutableList()
+                _images.value = imageSliderUseCases.getImagesForObjectUseCase(movieId, FILMS).toMutableList()
             }
         }
     }
@@ -52,7 +50,7 @@ class MovieViewModel @Inject constructor(
     fun refreshImages(movieId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val anotherList = imageSliderUseCases.getImagesForObjectUseCase(movieId, FILMS)
-            _images = anotherList.toMutableStateList()
+            _images.value = anotherList
         }
     }
 
