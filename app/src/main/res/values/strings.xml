@@ -6,7 +6,14 @@
     <string name="title_text">Title: </string>
     <string name="author_text">Author name: </string>
     <string name="save_close">Save &amp; Close</string>
+    <string name="send_close">Send &amp; Close</string>
     <string name="label_notes">Your notes</string>
+    <string name="user_email">User email</string>
+    <string name="user_email_placeholder">[Optional] example@mail.com</string>
+    <string name="subject">Subject</string>
+    <string name="subject_placeholder">Fill the subject of your feedback</string>
+    <string name="description">Description</string>
+    <string name="description_placeholder">Provide your description :)</string>
     <string name="default_value">Default Value</string>
     <string name="movies">MOVIES</string>
     <string name="people">PEOPLE</string>
@@ -18,8 +25,8 @@
     <string name="close_icon">close icon</string>
     <string name="home_icon">home icon</string>
     <string name="options">options</string>
-    <string name="dictionary_icon">dictionary icon</string>
-    <string name="image_icon">image icon</string>
+    <string name="bottom_tab_description">bottom tab description</string>
+    <string name="browser_icon">browser icon</string>
     <string name="network_error_icon">network error icon</string>
     <string name="placeholder_search">Search images…</string>
     <string name="flickr_image">image from flickr</string>
@@ -73,6 +80,7 @@
 
     <string name="wiki_bottom_bar">WIKI</string>
     <string name="images_bottom_bar">IMAGES</string>
+    <string name="more_bottom_bar">MORE</string>
 
 
 </resources>

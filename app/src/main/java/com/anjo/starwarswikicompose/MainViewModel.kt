@@ -3,11 +3,19 @@ package com.anjo.starwarswikicompose
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.anjo.starwarswikicompose.R.raw.cantinaband
+import com.anjo.starwarswikicompose.services.backgroundWorker.NotificationWorker
+import com.anjo.starwarswikicompose.utils.Constants.NOTIFICATION_WORK_TAG
+import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+@HiltViewModel
 class MainViewModel @Inject constructor() : ViewModel() {
 
     private val _musicPlayer = mutableStateOf(MediaPlayer())
@@ -31,5 +39,21 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     fun playMusic() {
         _musicPlayer.value.start()
+    }
+
+    fun addPeriodicWorker(context: Context) {
+        val checkIfExist = WorkManager.getInstance(context).getWorkInfosByTag(NOTIFICATION_WORK_TAG).get()
+                .filterNot { workInfo -> workInfo.state.isFinished }
+                .count()
+        if(checkIfExist == 0) {
+            val workRequest =
+                PeriodicWorkRequestBuilder<NotificationWorker>(7, TimeUnit.DAYS).addTag(NOTIFICATION_WORK_TAG).build()
+            WorkManager.getInstance(context).enqueue(workRequest)
+            Log.e("WORKERS", workRequest.toString())
+        }
+    }
+
+    fun cancelAllWorkers(context: Context) {
+        WorkManager.getInstance(context).cancelAllWorkByTag(NOTIFICATION_WORK_TAG)
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -40,40 +41,41 @@ fun CustomBottomAppBar(navHostController: NavHostController) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(modifier = Modifier
-                    .clickable { navHostController.navigate(Screen.Home.route) },
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                        painter = painterResource(R.drawable.dictionary_icon),
-                        contentDescription = stringResource(R.string.dictionary_icon),
-                        modifier = Modifier.height(HOME_ICON_HEIGHT)
-                                .align(Alignment.CenterVertically),
-                        tint = MaterialTheme.colors.topAppBarContentColor,
-                )
-                Text(text = stringResource(R.string.wiki_bottom_bar),
-                        modifier = Modifier.padding(SMALL_PADDING),
-                        textAlign = TextAlign.Center,
-                        fontFamily = SOLOFontName,
-                        color = White)
-            }
-            Row(
-                    modifier = Modifier.clickable { navHostController.navigate(Screen.ImageSearch.route) },
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(painter = painterResource(R.drawable.image_icon),
-                        contentDescription = stringResource(R.string.image_icon),
-                        modifier = Modifier.height(HOME_ICON_HEIGHT)
-                                .align(Alignment.CenterVertically),
-                        tint = MaterialTheme.colors.topAppBarContentColor)
-                Text(text = stringResource(R.string.images_bottom_bar),
-                        modifier = Modifier.padding(SMALL_PADDING),
-                        textAlign = TextAlign.Center,
-                        fontFamily = SOLOFontName,
-                        color = White)
-            }
+            BottomTab({ navHostController.navigate(Screen.Home.route) },
+                    painterResource(R.drawable.dictionary_icon),
+                    stringResource(R.string.wiki_bottom_bar))
+            BottomTab({ navHostController.navigate(Screen.ImageSearch.route) },
+                    painterResource(R.drawable.image_icon),
+                    stringResource(R.string.images_bottom_bar))
+            BottomTab({ navHostController.navigate(Screen.WookiepediaWebView.route) },
+                    painterResource(R.drawable.baseline_travel_explore_24),
+                    stringResource(R.string.more_bottom_bar))
         }
+    }
+}
+
+@Composable
+private fun BottomTab(
+        function: () -> Unit,
+        painterResource: Painter,
+        stringResource: String,
+) {
+    Row(modifier = Modifier
+            .clickable { function() },
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+                painter = painterResource,
+                contentDescription = stringResource(R.string.bottom_tab_description),
+                modifier = Modifier.height(HOME_ICON_HEIGHT)
+                        .align(Alignment.CenterVertically),
+                tint = MaterialTheme.colors.topAppBarContentColor,
+        )
+        Text(text = stringResource,
+                modifier = Modifier.padding(SMALL_PADDING),
+                textAlign = TextAlign.Center,
+                fontFamily = SOLOFontName,
+                color = White)
     }
 }

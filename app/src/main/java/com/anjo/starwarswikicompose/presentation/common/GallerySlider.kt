@@ -81,7 +81,10 @@ fun GallerySlider(
     }
 
     if (loadingBoxVisible.value) {
-        LoadingBox()
+        Box(modifier = Modifier,
+                contentAlignment = Alignment.Center) {
+            LoadingBox()
+        }
     }
 
     if (images.isNotEmpty()) {

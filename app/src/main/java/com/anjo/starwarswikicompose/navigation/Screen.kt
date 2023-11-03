@@ -34,4 +34,5 @@ sealed class Screen(val route: String) {
         }
     }
     object ImageSearch:Screen("image_search_screen")
+    object WookiepediaWebView:Screen("wookiepedia_webview_screen")
 }

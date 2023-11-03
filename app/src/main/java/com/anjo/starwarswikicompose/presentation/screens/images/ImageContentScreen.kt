@@ -93,6 +93,10 @@ fun ImageScreen(
     LaunchedEffect(key1 = true) {
         startAnimation = true
     }
+    LaunchedEffect(photoResponse) {
+        lazyListState.animateScrollToItem(0)
+    }
+
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) },

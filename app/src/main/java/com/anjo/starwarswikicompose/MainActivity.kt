@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.anjo.starwarswikicompose.navigation.Screen
 import com.anjo.starwarswikicompose.navigation.SetupNavGraph
+import com.anjo.starwarswikicompose.presentation.common.PermissionScreen
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import com.anjo.starwarswikicompose.ui.theme.StarWarsWikiComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,47 +30,46 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var navController: NavHostController
-
     @Inject
     lateinit var useCases: UseCases
-
     private val mainViewModel: MainViewModel by viewModels()
+    private lateinit var navController: NavHostController
+    private var completed = false
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
     }
 
-    private var completed = false
-
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val lifecycleOwner = LocalLifecycleOwner.current
             val current = LocalContext.current
+            val lifecycleOwner = LocalLifecycleOwner.current
+
             mainViewModel.createMusic(current)
             BackgroundMusicLaunching(lifecycleOwner, mainViewModel)
-
-            StarWarsWikiComposeTheme {
-                navController = rememberNavController()
-                SetupNavGraph(navController = navController,
-                        startDestination = if (completed) Screen.Home.route else Screen.Welcome.route,
-                        modifier = Modifier)
-            }
+            PermissionScreen(periodicWorker = { mainViewModel.addPeriodicWorker(current) }, composable =  {
+                StarWarsWikiComposeTheme {
+                    navController = rememberNavController()
+                    SetupNavGraph(navController = navController,
+                            startDestination = if (completed) Screen.Home.route else Screen.Welcome.route,
+                            modifier = Modifier)
+                }
+            })
         }
         lifecycleScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             useCases.readOnboardingUseCase().collect {
                 completed = it
             }
         }
-
     }
 }
 
 @Composable
-private fun BackgroundMusicLaunching(lifecycleOwner: LifecycleOwner,
-                            mainViewModel: MainViewModel) {
+private fun BackgroundMusicLaunching(
+        lifecycleOwner: LifecycleOwner,
+        mainViewModel: MainViewModel,
+) {
     DisposableEffect(key1 = lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME ||

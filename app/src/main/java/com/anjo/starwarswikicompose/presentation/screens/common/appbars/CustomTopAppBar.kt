@@ -3,7 +3,6 @@ package com.anjo.starwarswikicompose.presentation.screens.common.appbars
 import android.content.Context
 import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -18,6 +17,8 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -32,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,39 +42,67 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.anjo.starwarswikicompose.MainViewModel
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.model.MenuItemData
+import com.anjo.starwarswikicompose.domain.model.MenuItemData.Feedback
+import com.anjo.starwarswikicompose.domain.model.MenuItemData.Info
+import com.anjo.starwarswikicompose.domain.model.MenuItemData.Notes
+import com.anjo.starwarswikicompose.domain.model.MenuItemData.Notification
+import com.anjo.starwarswikicompose.domain.model.MenuItemData.Sound
 import com.anjo.starwarswikicompose.navigation.Screen
+import com.anjo.starwarswikicompose.presentation.common.PermissionScreen
+import com.anjo.starwarswikicompose.presentation.common.checkNotificationPolicyAccess
+import com.anjo.starwarswikicompose.presentation.screens.common.FeedbackCard
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoDialog
 import com.anjo.starwarswikicompose.presentation.screens.notes.CardNote
 import com.anjo.starwarswikicompose.ui.theme.HOME_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
+import com.anjo.starwarswikicompose.ui.theme.reverseTopAppBarHomeBackgroundColor
 import com.anjo.starwarswikicompose.ui.theme.topAppBarContentColor
 import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
+import com.anjo.starwarswikicompose.utils.getLocalWidth
+import com.anjo.starwarswikicompose.utils.muteMusic
+import com.anjo.starwarswikicompose.utils.volumeUpMusic
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CustomTopAppBar(navHostController: NavHostController) {
+fun CustomTopAppBar(
+        navHostController: NavHostController,
+        mainViewModel: MainViewModel = hiltViewModel(),
+) {
     val scope = rememberCoroutineScope()
-    val muted = remember { mutableStateOf(false) }
-    val listItems = getMenuItemsList(muted)
+    var soundOn by remember { mutableStateOf(true) }
+    val notification = remember { mutableStateOf(true) }
+    val notificationPermissionRun = remember { mutableStateOf(false) }
+    val listItems = listOf(Notes, Feedback, Info, Notification, Sound)
+    val feedbackDialog = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(false) }
     val openNotes = remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val halfWidth = (getLocalWidth() / 2).dp
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     var expanded by remember {
         mutableStateOf(false)
+    }
+    if (feedbackDialog.value) {
+        FeedbackCard {
+            feedbackDialog.value = false
+        }
     }
     if (openDialog.value) {
         InfoDialog { openDialog.value = false }
     }
     if (openNotes.value) {
         CardNote(onDismissAction = { openNotes.value = false })
+    }
+    if (notificationPermissionRun.value) {
+        PermissionLogic(notification, mainViewModel, context)
+        notificationPermissionRun.value = false
     }
 
     TopAppBar(modifier = Modifier.fillMaxWidth()
@@ -116,37 +146,84 @@ fun CustomTopAppBar(navHostController: NavHostController) {
                             tint = MaterialTheme.colors.topAppBarContentColor)
                 }
                 DropdownMenu(
-                        modifier = Modifier.width(width = 150.dp)
+                        modifier = Modifier.width(halfWidth)
                                 .background(MaterialTheme.colors.topAppBarHomeBackgroundColor),
                         expanded = expanded,
                         onDismissRequest = {
                             expanded = false
                         },
-                        offset = DpOffset(x = (-102).dp, y = (-64).dp),
+                        offset = DpOffset(x = halfWidth, y = (-64).dp),
                         properties = PopupProperties()
                 ) {
                     listItems.forEach { menuItemData ->
                         DropdownMenuItem(
                                 onClick = {
-                                    runProperlyAction(menuItemData, context,
-                                            muted, openNotes, openDialog,
-                                            audioManager, scope)
-                                    expanded = false
+                                    expanded = if (menuItemData == Sound || menuItemData == Notification) {
+                                        false
+                                    } else {
+                                        runProperlyAction(menuItemData,
+                                                soundOn, openNotes, openDialog,
+                                                audioManager, scope, feedbackDialog, notificationPermissionRun)
+                                        false
+                                    }
                                 },
-                                enabled = true
+                                enabled = true,
                         ) {
                             Icon(
                                     painter = menuItemData.icon,
                                     contentDescription = menuItemData.text,
                                     tint = MaterialTheme.colors.topAppBarContentColor,
+                                    modifier = Modifier.weight(2f)
                             )
-                            Spacer(modifier = Modifier.width(width = 8.dp))
+                            Spacer(modifier = Modifier.weight(0.5f))
                             Text(
                                     text = menuItemData.text,
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 16.sp,
-                                    color = MaterialTheme.colors.topAppBarContentColor
+                                    color = MaterialTheme.colors.topAppBarContentColor,
+                                    modifier = Modifier.weight(6f)
                             )
+                            when (menuItemData) {
+                                Sound        -> {
+                                    Spacer(modifier = Modifier.weight(0.5f))
+                                    Switch(checked = soundOn, onCheckedChange = {
+                                        soundOn = it
+                                        runProperlyAction(menuItemData,
+                                                soundOn, openNotes, openDialog,
+                                                audioManager, scope, feedbackDialog, notificationPermissionRun)
+                                    },
+                                            modifier = Modifier.weight(2f),
+                                            colors = SwitchDefaults.colors(
+                                                    checkedThumbColor = Color.White,
+                                                    uncheckedThumbColor = Color.White.copy(alpha = 0.6f),
+                                                    checkedTrackColor = MaterialTheme.colors.reverseTopAppBarHomeBackgroundColor,
+                                                    uncheckedTrackColor = MaterialTheme.colors.reverseTopAppBarHomeBackgroundColor,
+                                                    checkedTrackAlpha = 0.8f
+                                            ))
+                                }
+
+                                Notification -> {
+                                    Spacer(modifier = Modifier.weight(0.5f))
+                                    Switch(checked = notification.value, onCheckedChange = {
+                                        notification.value = it
+                                        runProperlyAction(menuItemData,
+                                                soundOn, openNotes, openDialog,
+                                                audioManager, scope, feedbackDialog, notificationPermissionRun)
+                                    },
+                                            modifier = Modifier.weight(2f),
+                                            colors = SwitchDefaults.colors(
+                                                    checkedThumbColor = Color.White,
+                                                    uncheckedThumbColor = Color.White.copy(alpha = 0.6f),
+                                                    checkedTrackColor = MaterialTheme.colors.reverseTopAppBarHomeBackgroundColor,
+                                                    uncheckedTrackColor = MaterialTheme.colors.reverseTopAppBarHomeBackgroundColor,
+                                                    checkedTrackAlpha = 0.8f
+                                            ))
+                                }
+
+                                else         -> {
+                                    Spacer(modifier = Modifier.weight(2.5f))
+                                }
+                            }
                         }
                     }
                 }
@@ -155,79 +232,59 @@ fun CustomTopAppBar(navHostController: NavHostController) {
     )
 }
 
-
-fun getMenuItemsList(muted: MutableState<Boolean>): ArrayList<MenuItemData> {
-    val listItems = ArrayList<MenuItemData>()
-
-    listItems.add(MenuItemData.Notes)
-    listItems.add(MenuItemData.Mail)
-    listItems.add(MenuItemData.Info)
-    if (muted.value) {
-        listItems.add(MenuItemData.Sound)
+@Composable
+private fun PermissionLogic(
+        notification: MutableState<Boolean>,
+        mainViewModel: MainViewModel,
+        context: Context,
+) {
+    val policy = checkNotificationPolicyAccess()
+    if (policy) {
+        if (notification.value) {
+            mainViewModel.addPeriodicWorker(context)
+        } else {
+            mainViewModel.cancelAllWorkers(context)
+        }
     } else {
-        listItems.add(MenuItemData.Mute)
+        PermissionScreen({ notification.value = true }, {})
     }
-
-    return listItems
 }
 
 fun runProperlyAction(
-        menuItemData: MenuItemData, context: Context, muted: MutableState<Boolean>,
+        menuItemData: MenuItemData, soundOn: Boolean,
         openNotes: MutableState<Boolean>,
         openDialog: MutableState<Boolean>,
         audioManager: AudioManager,
         scope: CoroutineScope,
+        feedbackDialog: MutableState<Boolean>,
+        notificationPermissionRun: MutableState<Boolean>,
 ) {
     val maxVol: Int = audioManager.getStreamMaxVolume((STREAM_MUSIC * 0.8).toInt())
     when (menuItemData) {
-        MenuItemData.Notes -> {
+        Notes        -> {
             openNotes.value = true
         }
 
-        MenuItemData.Mail  -> Toast.makeText(context, "You choose: ${MenuItemData.Mail.text}", Toast.LENGTH_SHORT)
-                .show()
+        Feedback     -> {
+            feedbackDialog.value = true
+        }
 
-        MenuItemData.Info  -> {
+        Info         -> {
             openDialog.value = true
         }
 
-        MenuItemData.Sound -> {
-            volumeUpMusic(scope, audioManager, maxVol)
-            muted.value = false
-        }
-
-        MenuItemData.Mute  -> {
-            muteMusic(scope, audioManager)
-            muted.value = true
-        }
-    }
-
-}
-
-private fun volumeUpMusic(
-        scope: CoroutineScope, audioManager: AudioManager, maxVol: Int,
-) {
-    scope.launch {
-        if (audioManager.getStreamVolume(STREAM_MUSIC) == 0) {
-            var currentVol = 0
-            while (currentVol != (maxVol + 1)) {
-                audioManager.setStreamVolume(STREAM_MUSIC, currentVol, 0)
-                currentVol += 1
-                delay(100)
+        Sound        -> {
+            if (soundOn) {
+                volumeUpMusic(scope, audioManager, maxVol)
+            } else {
+                muteMusic(scope, audioManager)
             }
         }
-    }
-}
 
-private fun muteMusic(scope: CoroutineScope, audioManager: AudioManager) {
-    scope.launch {
-        if (audioManager.getStreamVolume(STREAM_MUSIC) != 0) {
-            var currentVol = audioManager.getStreamVolume(STREAM_MUSIC)
-            while (currentVol != -1) {
-                audioManager.setStreamVolume(STREAM_MUSIC, currentVol, 0)
-                currentVol -= 1
-                delay(100)
-            }
+        Notification -> {
+            notificationPermissionRun.value = true
         }
     }
 }
+
+
