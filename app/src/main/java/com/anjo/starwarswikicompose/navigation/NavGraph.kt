@@ -22,6 +22,7 @@ import com.anjo.starwarswikicompose.presentation.screens.planet.detail.PlanetCon
 import com.anjo.starwarswikicompose.presentation.screens.specie.detail.SpecieContentScreen
 import com.anjo.starwarswikicompose.presentation.screens.starship.detail.StarshipContentScreen
 import com.anjo.starwarswikicompose.presentation.screens.vehicle.detail.VehicleContentScreen
+import com.anjo.starwarswikicompose.presentation.screens.webview.WebViewScreen
 import com.anjo.starwarswikicompose.presentation.screens.welcome.WelcomeScreen
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_MOVIE_ARGUMENT_KEY
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_PERSON_ARGUMENT_KEY
@@ -126,11 +127,19 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String, mo
                 popExitTransition = SlideExitAnimation(Right)) {
             ImageScreen(navController)
         }
+        composable(route = Screen.WookiepediaWebView.route,
+                enterTransition = SlideEnterAnimation(Left),
+                exitTransition = SlideExitAnimation(Left),
+                popEnterTransition = SlideEnterAnimation(Right),
+                popExitTransition = SlideExitAnimation(Right)) {
+            WebViewScreen(navController)
+        }
     }
 }
 
 private fun SlideEnterAnimation(
-        towards: AnimatedContentTransitionScope.SlideDirection): AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? {
+        towards: AnimatedContentTransitionScope.SlideDirection,
+): AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? {
     return {
         slideIntoContainer(
                 towards = towards,
@@ -140,7 +149,8 @@ private fun SlideEnterAnimation(
 }
 
 private fun SlideExitAnimation(
-        towards: AnimatedContentTransitionScope.SlideDirection): AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? {
+        towards: AnimatedContentTransitionScope.SlideDirection,
+): AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? {
     return {
         slideOutOfContainer(
                 towards = towards,
