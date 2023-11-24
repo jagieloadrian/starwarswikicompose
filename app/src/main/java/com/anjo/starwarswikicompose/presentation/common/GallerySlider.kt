@@ -36,6 +36,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
@@ -44,7 +45,7 @@ import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.MEDIUM_PADDING
 import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
-import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
+import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -76,16 +77,14 @@ fun GallerySlider(
     val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = onRefresh)
 
     LaunchedEffect(loadingBoxVisible.value) {
-        delay(1.seconds)
+        delay(2.seconds)
         loadingBoxVisible.value = false
     }
 
     if (loadingBoxVisible.value) {
-        Box(modifier = Modifier,
-                contentAlignment = Alignment.Center) {
-            LoadingBox()
-        }
+        LoadingBox()
     }
+
 
     if (images.isNotEmpty()) {
         Card(modifier = Modifier.padding(SMALL_PADDING)
@@ -95,34 +94,7 @@ fun GallerySlider(
                 shape = RoundedCornerShape(MEDIUM_PADDING)) {
             if (!isRefreshing) {
                 ImageCarousel(images) { index ->
-                    Box(modifier = Modifier
-                            .fillMaxWidth()) {
-                        AsyncImage(
-                                model = images[index].url,
-                                placeholder = painterResource(R.drawable.image_icon),
-                                error = painterResource(R.drawable.ic_network_error),
-                                contentDescription = stringResource(R.string.flickr_image),
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.height(PICTURE_HEIGHT)
-                                        .width(maxWidth)
-                        )
-                        Surface(modifier = Modifier.background(Color.Transparent)
-                                .align(Alignment.TopStart),
-                                color = Color.Transparent) {
-                            CornerButton(imageVector = Icons.Filled.Refresh) {
-                                onRefresh()
-                                onCLickLeft() }
-
-                        }
-                        Surface(modifier = Modifier.background(Color.Transparent)
-                                .align(Alignment.TopEnd),
-                                color = Color.Transparent) {
-                            CornerButton(imageVector = Icons.Filled.Delete) {
-                                onCLickRight(images[index])
-                                onRefresh()
-                            }
-                        }
-                    }
+                    ImageBox(images, index, maxWidth, onRefresh, onCLickLeft, onCLickRight)
                 }
             }
             Box(modifier = Modifier,
@@ -131,11 +103,49 @@ fun GallerySlider(
                         .align(Alignment.Center),
                         scale = true,
                         backgroundColor = Color.Transparent,
-                        contentColor = MaterialTheme.colors.topAppBarHomeBackgroundColor)
+                        contentColor = MaterialTheme.colors.mainBackgroundColors)
             }
         }
     } else {
         loadingBoxVisible.value = true
+    }
+}
+
+@Composable
+fun ImageBox(
+        images: List<ImageSliderModel>,
+        index: Int, maxWidth: Dp, onRefresh: () -> Unit,
+        onCLickLeft: () -> Unit,
+        onCLickRight: (ImageSliderModel) -> Unit,
+) {
+    Box(modifier = Modifier
+            .fillMaxWidth()) {
+        AsyncImage(
+                model = images[index].url,
+                placeholder = painterResource(R.drawable.image_icon),
+                error = painterResource(R.drawable.ic_network_error),
+                contentDescription = stringResource(R.string.flickr_image),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.height(PICTURE_HEIGHT)
+                        .width(maxWidth)
+        )
+        Surface(modifier = Modifier.background(Color.Transparent)
+                .align(Alignment.TopStart),
+                color = Color.Transparent) {
+            CornerButton(imageVector = Icons.Filled.Refresh) {
+                onRefresh()
+                onCLickLeft()
+            }
+
+        }
+        Surface(modifier = Modifier.background(Color.Transparent)
+                .align(Alignment.TopEnd),
+                color = Color.Transparent) {
+            CornerButton(imageVector = Icons.Filled.Delete) {
+                onCLickRight(images[index])
+                onRefresh()
+            }
+        }
     }
 }
 

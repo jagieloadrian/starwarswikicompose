@@ -30,8 +30,7 @@ object ImageSliderRepositoryModule {
     ) = Room.databaseBuilder(
             context,
             ImageSliderDb::class.java,
-            IMAGE_SLIDER_TABLE
-    ).build()
+            IMAGE_SLIDER_TABLE).build()
 
     @Provides
     @Singleton

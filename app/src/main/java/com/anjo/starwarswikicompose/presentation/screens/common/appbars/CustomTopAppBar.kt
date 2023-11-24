@@ -61,9 +61,9 @@ import com.anjo.starwarswikicompose.presentation.screens.notes.CardNote
 import com.anjo.starwarswikicompose.ui.theme.HOME_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
-import com.anjo.starwarswikicompose.ui.theme.reverseTopAppBarHomeBackgroundColor
-import com.anjo.starwarswikicompose.ui.theme.topAppBarContentColor
-import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
+import com.anjo.starwarswikicompose.ui.theme.reverseMainBackgroundColors
+import com.anjo.starwarswikicompose.ui.theme.mainContentColor
+import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import com.anjo.starwarswikicompose.utils.muteMusic
 import com.anjo.starwarswikicompose.utils.volumeUpMusic
@@ -107,7 +107,7 @@ fun CustomTopAppBar(
 
     TopAppBar(modifier = Modifier.fillMaxWidth()
             .height(TOP_BAR_HEIGHT),
-            backgroundColor = MaterialTheme.colors.topAppBarHomeBackgroundColor,
+            backgroundColor = MaterialTheme.colors.mainBackgroundColors,
             title = {
                 Box(modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center) {
@@ -120,7 +120,7 @@ fun CustomTopAppBar(
                                     .basicMarquee(iterations = Int.MAX_VALUE),
                             textAlign = TextAlign.Left,
                             style = MaterialTheme.typography.h4,
-                            color = MaterialTheme.colors.topAppBarContentColor,
+                            color = MaterialTheme.colors.mainContentColor,
                     )
                 }
             },
@@ -133,7 +133,7 @@ fun CustomTopAppBar(
                     Icon(imageVector = Icons.Default.Home,
                             contentDescription = stringResource(R.string.home_icon),
                             modifier = Modifier.height(HOME_ICON_HEIGHT),
-                            tint = MaterialTheme.colors.topAppBarContentColor)
+                            tint = MaterialTheme.colors.mainContentColor)
                 }
             },
             actions = {
@@ -143,11 +143,11 @@ fun CustomTopAppBar(
                     Icon(imageVector = Icons.Default.MoreVert,
                             contentDescription = stringResource(R.string.options),
                             modifier = Modifier.height(HOME_ICON_HEIGHT),
-                            tint = MaterialTheme.colors.topAppBarContentColor)
+                            tint = MaterialTheme.colors.mainContentColor)
                 }
                 DropdownMenu(
                         modifier = Modifier.width(halfWidth)
-                                .background(MaterialTheme.colors.topAppBarHomeBackgroundColor),
+                                .background(MaterialTheme.colors.mainBackgroundColors),
                         expanded = expanded,
                         onDismissRequest = {
                             expanded = false
@@ -172,7 +172,7 @@ fun CustomTopAppBar(
                             Icon(
                                     painter = menuItemData.icon,
                                     contentDescription = menuItemData.text,
-                                    tint = MaterialTheme.colors.topAppBarContentColor,
+                                    tint = MaterialTheme.colors.mainContentColor,
                                     modifier = Modifier.weight(2f)
                             )
                             Spacer(modifier = Modifier.weight(0.5f))
@@ -180,7 +180,7 @@ fun CustomTopAppBar(
                                     text = menuItemData.text,
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 16.sp,
-                                    color = MaterialTheme.colors.topAppBarContentColor,
+                                    color = MaterialTheme.colors.mainContentColor,
                                     modifier = Modifier.weight(6f)
                             )
                             when (menuItemData) {
@@ -196,8 +196,8 @@ fun CustomTopAppBar(
                                             colors = SwitchDefaults.colors(
                                                     checkedThumbColor = Color.White,
                                                     uncheckedThumbColor = Color.White.copy(alpha = 0.6f),
-                                                    checkedTrackColor = MaterialTheme.colors.reverseTopAppBarHomeBackgroundColor,
-                                                    uncheckedTrackColor = MaterialTheme.colors.reverseTopAppBarHomeBackgroundColor,
+                                                    checkedTrackColor = MaterialTheme.colors.reverseMainBackgroundColors,
+                                                    uncheckedTrackColor = MaterialTheme.colors.reverseMainBackgroundColors,
                                                     checkedTrackAlpha = 0.8f
                                             ))
                                 }
@@ -214,8 +214,8 @@ fun CustomTopAppBar(
                                             colors = SwitchDefaults.colors(
                                                     checkedThumbColor = Color.White,
                                                     uncheckedThumbColor = Color.White.copy(alpha = 0.6f),
-                                                    checkedTrackColor = MaterialTheme.colors.reverseTopAppBarHomeBackgroundColor,
-                                                    uncheckedTrackColor = MaterialTheme.colors.reverseTopAppBarHomeBackgroundColor,
+                                                    checkedTrackColor = MaterialTheme.colors.reverseMainBackgroundColors,
+                                                    uncheckedTrackColor = MaterialTheme.colors.reverseMainBackgroundColors,
                                                     checkedTrackAlpha = 0.8f
                                             ))
                                 }
