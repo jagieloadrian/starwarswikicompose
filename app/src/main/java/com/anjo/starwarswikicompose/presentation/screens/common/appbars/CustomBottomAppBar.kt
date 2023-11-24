@@ -26,15 +26,15 @@ import com.anjo.starwarswikicompose.ui.theme.HOME_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
-import com.anjo.starwarswikicompose.ui.theme.topAppBarContentColor
-import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
+import com.anjo.starwarswikicompose.ui.theme.mainContentColor
+import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 
 @Composable
 fun CustomBottomAppBar(navHostController: NavHostController) {
     BottomAppBar(
             modifier = Modifier.fillMaxWidth()
                     .height(TOP_BAR_HEIGHT),
-            backgroundColor = MaterialTheme.colors.topAppBarHomeBackgroundColor,
+            backgroundColor = MaterialTheme.colors.mainBackgroundColors,
     ) {
         Row(
                 modifier = Modifier.fillMaxSize(),
@@ -70,7 +70,7 @@ private fun BottomTab(
                 contentDescription = stringResource(R.string.bottom_tab_description),
                 modifier = Modifier.height(HOME_ICON_HEIGHT)
                         .align(Alignment.CenterVertically),
-                tint = MaterialTheme.colors.topAppBarContentColor,
+                tint = MaterialTheme.colors.mainContentColor,
         )
         Text(text = stringResource,
                 modifier = Modifier.padding(SMALL_PADDING),

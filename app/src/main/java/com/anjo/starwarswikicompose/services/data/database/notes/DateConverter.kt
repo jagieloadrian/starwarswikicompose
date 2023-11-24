@@ -13,11 +13,9 @@ class DateConverter {
         return LocalDateTime.ofEpochSecond(this, 0, offset)
     }
 
-
     @TypeConverter
    fun LocalDateTime.toLong():Long {
        return this.toEpochSecond(offset)
    }
-
 
 }

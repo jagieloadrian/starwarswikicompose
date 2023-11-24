@@ -40,12 +40,12 @@ val Colors.descriptionColor
 val Colors.welcomeImageBackground
     get() = if (isLight) Color.White else Color.Black
 
-val Colors.topAppBarContentColor: Color
+val Colors.mainContentColor: Color
     get() = if (isLight) Color.White else LightGray
 
-val Colors.topAppBarHomeBackgroundColor: Color
+val Colors.mainBackgroundColors: Color
     get() = if (isLight) GoldColor else GoldOrangeColor
 
 
-val Colors.reverseTopAppBarHomeBackgroundColor: Color
+val Colors.reverseMainBackgroundColors: Color
     get() = if (isLight) GoldOrangeColor else GoldColor

@@ -31,7 +31,7 @@ import com.anjo.starwarswikicompose.BuildConfig
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
-import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
+import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.getLocalHeight
 import java.time.LocalDate
@@ -56,7 +56,7 @@ fun InfoDialog(onDismissAction: () -> Unit) {
             Box(modifier = Modifier.fillMaxSize()
                     .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))) {
                 Column(modifier = Modifier.fillMaxSize().align(Alignment.Center)
-                        .background(color = MaterialTheme.colors.topAppBarHomeBackgroundColor)
+                        .background(color = MaterialTheme.colors.mainBackgroundColors)
                         .alpha(0.8f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceBetween) {

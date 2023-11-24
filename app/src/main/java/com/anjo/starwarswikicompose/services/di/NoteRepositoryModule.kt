@@ -30,8 +30,7 @@ object NoteRepositoryModule {
     ) = Room.databaseBuilder(
             context,
             NoteDb::class.java,
-            NOTES_TABLE
-    ).build()
+            NOTES_TABLE).build()
 
     @Provides
     @Singleton
@@ -44,8 +43,7 @@ object NoteRepositoryModule {
     fun provideNotesRepository(
             notesDao: NotesDao,
     ): NotesRepository {
-        return NotesService(notesDao = notesDao)
-    }
+        return NotesService(notesDao = notesDao)}
 
     @Provides
     @Singleton
@@ -53,7 +51,6 @@ object NoteRepositoryModule {
         return NotesUseCases(
                 addNoteUseCase = AddNoteUseCase(notesRepository),
                 deleteNoteUseCase = DeleteNoteUseCase(notesRepository),
-                getNotesUseCase = GetNotesUseCase(notesRepository)
-        )
+                getNotesUseCase = GetNotesUseCase(notesRepository))
     }
 }

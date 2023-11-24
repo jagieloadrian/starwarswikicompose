@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.images
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +18,6 @@ class ImageViewModel @Inject constructor(
     private val _fetchedPhotoInfos = MutableStateFlow(FlickrResponse())
     val fetchedPhotoInfos = _fetchedPhotoInfos
 
-
     private val _searchQuery = mutableStateOf("")
     val searchQuery = _searchQuery
 
@@ -37,7 +35,6 @@ class ImageViewModel @Inject constructor(
                 useCases.getSearchImagesUseCase(searchText = query)
                         .let { flickrResponse -> _fetchedPhotoInfos.value = flickrResponse }
             } catch (exc: Exception) {
-                Log.e("EXCEPTION", exc.toString())
                 _fetchedPhotoInfos.value = FlickrResponse(message = exc.javaClass.simpleName)
             }
         }
@@ -47,9 +44,7 @@ class ImageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 useCases.getRecentImagesUseCase().let { response -> _fetchedPhotoInfos.value = response }
-
             } catch (exc: Exception) {
-                Log.e("EXCEPTION", exc.toString())
                 _fetchedPhotoInfos.value = FlickrResponse(message = exc.javaClass.simpleName)
             }
         }

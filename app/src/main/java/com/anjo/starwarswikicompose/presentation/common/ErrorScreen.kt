@@ -65,7 +65,6 @@ fun ErrorContent(
 ) {
     Column(
             modifier = Modifier.fillMaxSize()
-//                    .background(Color.Transparent)
                     .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center

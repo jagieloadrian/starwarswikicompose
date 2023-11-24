@@ -37,8 +37,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
-import com.anjo.starwarswikicompose.ui.theme.reverseTopAppBarHomeBackgroundColor
-import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
+import com.anjo.starwarswikicompose.ui.theme.reverseMainBackgroundColors
+import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.getLocalHeight
 import kotlinx.coroutines.delay
@@ -70,12 +70,12 @@ fun CardNote(
                 .padding(16.dp),
                 shape = RoundedCornerShape(16.dp)) {
             Box(modifier = Modifier.fillMaxSize()
-                    .background(color = MaterialTheme.colors.topAppBarHomeBackgroundColor)
+                    .background(color = MaterialTheme.colors.mainBackgroundColors)
                     .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))) {
                 Column(modifier = Modifier.fillMaxSize()
                         .padding(10.dp)
                         .align(Alignment.Center)
-                        .background(color = MaterialTheme.colors.topAppBarHomeBackgroundColor,
+                        .background(color = MaterialTheme.colors.mainBackgroundColors,
                                 shape = RoundedCornerShape(16.dp))
                         .alpha(0.8f),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -91,13 +91,13 @@ fun CardNote(
                                 colors = TextFieldDefaults.outlinedTextFieldColors(
                                         textColor = Color.White,
                                         focusedLabelColor = (MaterialTheme.colors
-                                                .reverseTopAppBarHomeBackgroundColor),
+                                                .reverseMainBackgroundColors),
                                         unfocusedLabelColor = (MaterialTheme.colors
-                                                .reverseTopAppBarHomeBackgroundColor),
+                                                .reverseMainBackgroundColors),
                                         focusedBorderColor = (MaterialTheme.colors
-                                                .reverseTopAppBarHomeBackgroundColor),
+                                                .reverseMainBackgroundColors),
                                         unfocusedBorderColor = (MaterialTheme.colors
-                                                .reverseTopAppBarHomeBackgroundColor),
+                                                .reverseMainBackgroundColors),
                                         cursorColor = MaterialTheme.colors.primary
                                 ))
                     }

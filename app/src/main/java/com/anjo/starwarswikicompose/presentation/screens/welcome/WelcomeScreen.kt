@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.welcome
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -40,8 +39,8 @@ import com.anjo.starwarswikicompose.ui.theme.EXTRA_LARGE_PADDING
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.descriptionColor
+import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 import com.anjo.starwarswikicompose.ui.theme.titleColor
-import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
 import com.anjo.starwarswikicompose.ui.theme.welcomeImageBackground
 import com.anjo.starwarswikicompose.ui.theme.welcomeScreenBackgroundColor
 import com.anjo.starwarswikicompose.ui.theme.welcomeScreenImageBackgroundColor
@@ -71,7 +70,7 @@ fun WelcomeScreen(
     }
 
     val systemUiController = rememberSystemUiController()
-    val sytemBarColor = MaterialTheme.colors.topAppBarHomeBackgroundColor
+    val sytemBarColor = MaterialTheme.colors.mainBackgroundColors
 
     SideEffect {
         systemUiController.setStatusBarColor(
@@ -103,7 +102,6 @@ fun WelcomeScreen(
                 modifier = Modifier.weight(1f),
                 pagerState = pagerState
         ) {
-            Log.i(this.javaClass.simpleName, "FinishButton clicked")
             navController.navigate(Screen.Home.route)
             welcomeViewModel.saveOnBoardingState(completed = true)
         }
@@ -175,7 +173,7 @@ fun FinishButton(
             Button(
                     onClick = onClick,
                     colors = ButtonDefaults.buttonColors(
-                            backgroundColor = MaterialTheme.colors.topAppBarHomeBackgroundColor,
+                            backgroundColor = MaterialTheme.colors.mainBackgroundColors,
                             contentColor = Color.White
                     )
             ) {

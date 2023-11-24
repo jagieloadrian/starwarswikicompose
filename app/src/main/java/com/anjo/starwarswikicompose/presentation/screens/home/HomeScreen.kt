@@ -33,7 +33,7 @@ import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
-import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
+import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 import com.anjo.starwarswikicompose.utils.Category
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
@@ -52,7 +52,7 @@ fun HomeScreen(navController: NavHostController) {
     val scope = rememberCoroutineScope()
 
     val systemUiController = rememberSystemUiController()
-    val sytemBarColor = MaterialTheme.colors.topAppBarHomeBackgroundColor
+    val sytemBarColor = MaterialTheme.colors.mainBackgroundColors
 
     SideEffect {
         systemUiController.setStatusBarColor(
@@ -69,7 +69,7 @@ fun HomeScreen(navController: NavHostController) {
                         contentScale = ContentScale.FillBounds)) {
             ScrollableTabRow(
                     selectedTabIndex = pagerState.currentPage,
-                    backgroundColor = MaterialTheme.colors.topAppBarHomeBackgroundColor) {
+                    backgroundColor = MaterialTheme.colors.mainBackgroundColors) {
                 tabs.forEachIndexed { index, category ->
                     val selected = selectedIndex == index
                     CustomTab(selected, category) {
@@ -90,7 +90,7 @@ private fun CustomTab(selected: Boolean,
             selected = selected,
             modifier = Modifier
                     .clip(RoundedCornerShape(25))
-                    .background(MaterialTheme.colors.topAppBarHomeBackgroundColor),
+                    .background(MaterialTheme.colors.mainBackgroundColors),
             onClick = onClick,
             text = {
                 Text(

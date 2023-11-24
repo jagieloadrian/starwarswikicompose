@@ -19,8 +19,8 @@ import androidx.compose.ui.platform.ClipboardManager
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.ui.theme.MEDIUM_PADDING
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_WIDTH
-import com.anjo.starwarswikicompose.ui.theme.topAppBarContentColor
-import com.anjo.starwarswikicompose.ui.theme.topAppBarHomeBackgroundColor
+import com.anjo.starwarswikicompose.ui.theme.mainContentColor
+import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.addImageFunction
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +35,7 @@ fun AddImageFab(
     FloatingActionButton(
             modifier = modifier,
             onClick = onClick,
-            backgroundColor = MaterialTheme.colors.topAppBarHomeBackgroundColor,
+            backgroundColor = MaterialTheme.colors.mainBackgroundColors,
             shape = RoundedCornerShape(MEDIUM_PADDING)
     ) {
         Row(modifier = Modifier.padding(MEDIUM_PADDING),
@@ -43,13 +43,13 @@ fun AddImageFab(
             Icon(
                     imageVector = Icons.Rounded.Add,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.topAppBarContentColor
+                    tint = MaterialTheme.colors.mainContentColor
             )
             AnimatedVisibility(visible = extended) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Spacer(Modifier.padding(PAGING_INDICATOR_WIDTH))
                     Text(text = "Add Image from Clipboard",
-                            color = MaterialTheme.colors.topAppBarContentColor)
+                            color = MaterialTheme.colors.mainContentColor)
                 }
             }
         }
