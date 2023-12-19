@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.anjo.GetFilmQuery
+import com.anjo.starwarswikicompose.GetFilmQuery
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.presentation.common.GallerySlider
 import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFabWrap

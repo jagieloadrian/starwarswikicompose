@@ -1,6 +1,6 @@
 package com.anjo.starwarswikicompose.services.usecases.operationusecase.planet
 
-import com.anjo.GetPlanetQuery
+import com.anjo.starwarswikicompose.GetPlanetQuery
 import com.anjo.starwarswikicompose.services.data.repository.OperationRepository
 import javax.inject.Inject
 

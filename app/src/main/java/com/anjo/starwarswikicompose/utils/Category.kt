@@ -1,7 +1,6 @@
 package com.anjo.starwarswikicompose.utils
 
-enum class Category(
-        val categoryName:String) {
+enum class Category(val categoryName:String) {
     FILMS("Films"),
     PEOPLE("People"),
     PLANETS("Planets"),

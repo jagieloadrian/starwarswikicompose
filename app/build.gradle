@@ -1,21 +1,22 @@
 plugins {
-    id ("com.android.application")
-    id ("org.jetbrains.kotlin.android")
-    id ("com.google.devtools.ksp")
-    id ("dagger.hilt.android.plugin")
-    id ("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
-    id ("com.apollographql.apollo3") version "3.8.2"
+    id("com.android.application")
+    id("kotlin-kapt")
+    id("org.jetbrains.kotlin.android")
+    id("dagger.hilt.android.plugin")
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
+    id("com.apollographql.apollo3") version "3.8.2"
 }
 
 apollo {
     service("service") {
-        packageName.set("com.anjo")
+        packageName.set("com.anjo.starwarswikicompose")
     }
 }
 
 android {
     namespace 'com.anjo.starwarswikicompose'
     compileSdk 34
+    useLibrary 'android.test.mock'
 
     defaultConfig {
         applicationId "com.anjo.starwarswikicompose"
@@ -24,8 +25,7 @@ android {
         versionCode 1
         versionName "1.0"
         setArchivesBaseName("StarWarsWikiCompose")
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -48,18 +48,31 @@ android {
             buildConfigField "String", FEEDBACK_RECEIVER, "\"diether18.apps@gmail.com\""
             buildConfigField "String", FEEDBACK_RECEIVER_PASSWORD, "\"dummy thing\""
         }
-
     }
-    kotlin {
-        jvmToolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
+    testOptions {
+        unitTests {
+            all { useJUnitPlatform() }
+            returnDefaultValues = true
         }
+    }
+
+    kapt {
+        javacOptions {
+            option("-Adagger.hilt.android.internal.disableAndroidSuperclassValidation=true")
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         compose true
     }
+    testOptions {
+        animationsDisabled = true
+    }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.3'
+        kotlinCompilerExtensionVersion '1.5.4'
     }
     packagingOptions {
         resources {
@@ -72,36 +85,49 @@ android {
 dependencies {
 
     //Core and compose
-    implementation ("androidx.core:core-ktx:1.12.0")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation "androidx.compose.runtime:runtime-livedata:$compose_ui_version"
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.compose.runtime:runtime-livedata:$compose_ui_version")
 
-    implementation ("androidx.activity:activity-compose:1.8.1")
-    implementation "androidx.compose.ui:ui:$compose_ui_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation "androidx.compose.material:material:$compose_ui_version"
-    implementation ("androidx.core:core-splashscreen:1.1.0-alpha02")
+    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation("androidx.compose.ui:ui:$compose_ui_version")
+    implementation("androidx.compose.ui:ui-tooling-preview:$compose_ui_version")
+    implementation("androidx.compose.material:material:$compose_ui_version")
+    implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
 
     // System UI Controller - Accompanist
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
-    implementation ("androidx.paging:paging-compose:3.3.0-alpha02")
+    implementation("androidx.paging:paging-compose:3.3.0-alpha02")
 
-    //test
-    testImplementation ("junit:junit:4.13.2")
-    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
+    //junit5
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
+    testImplementation(platform("org.junit:junit-bom:5.10.1"))
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
+
+    //androidTestLibraries
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+
+    //mockk and kotest
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.kotest:kotest-assertions-core:5.5.5")
 
     //apollo implementation
     implementation("com.apollographql.apollo3:apollo-runtime:3.8.2")
     implementation("com.apollographql.apollo3:apollo-api:3.8.2")
     implementation("com.apollographql.apollo3:apollo-normalized-cache:3.8.2")
+    testImplementation("com.apollographql.apollo3:apollo-testing-support:3.8.2")
 
     //Retrofit
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
 
     //kotlinx serialization
@@ -109,12 +135,12 @@ dependencies {
 
     // Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.48.1"
-    ksp ("com.google.dagger:hilt-android-compiler:2.48.1")
-    ksp ("androidx.hilt:hilt-compiler:$hilt_compiler_version")
+    kapt("com.google.dagger:hilt-android-compiler:2.48.1")
+    kapt("androidx.hilt:hilt-compiler:$hilt_compiler_version")
 
     // Compose - navigation
-    implementation ("androidx.navigation:navigation-compose:2.7.5")
-    implementation ("androidx.hilt:hilt-navigation-compose:$hilt_compiler_version")
+    implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation("androidx.hilt:hilt-navigation-compose:$hilt_compiler_version")
 
     //Coil
     implementation("io.coil-kt:coil:2.4.0")
@@ -124,16 +150,17 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     //Room
-    implementation ("androidx.room:room-runtime:$room_version")
-    ksp ("androidx.room:room-compiler:$room_version")
-    implementation ("androidx.room:room-ktx:$room_version")
+    implementation("androidx.room:room-runtime:$room_version")
+    //noinspection KaptUsageInsteadOfKsp google provide shit instead of clean code
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
 
     //Mail
     implementation("com.sun.mail:jakarta.mail:2.0.1")
 
     //WorkManager
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
-    implementation ("androidx.hilt:hilt-work:$hilt_compiler_version")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.hilt:hilt-work:$hilt_compiler_version")
 
     //Permissions
     implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")

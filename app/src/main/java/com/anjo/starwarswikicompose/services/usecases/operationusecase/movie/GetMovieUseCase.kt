@@ -1,6 +1,6 @@
 package com.anjo.starwarswikicompose.services.usecases.operationusecase.movie
 
-import com.anjo.GetFilmQuery
+import com.anjo.starwarswikicompose.GetFilmQuery
 import com.anjo.starwarswikicompose.services.data.repository.OperationRepository
 import javax.inject.Inject
 

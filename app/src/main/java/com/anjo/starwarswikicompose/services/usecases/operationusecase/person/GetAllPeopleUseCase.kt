@@ -1,6 +1,6 @@
 package com.anjo.starwarswikicompose.services.usecases.operationusecase.person
 
-import com.anjo.GetAllPeoplesQuery
+import com.anjo.starwarswikicompose.GetAllPeoplesQuery
 import com.anjo.starwarswikicompose.services.data.repository.OperationRepository
 import javax.inject.Inject
 

@@ -2,7 +2,7 @@ package com.anjo.starwarswikicompose.presentation.screens.person.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.GetAllPeoplesQuery
+import com.anjo.starwarswikicompose.GetAllPeoplesQuery
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

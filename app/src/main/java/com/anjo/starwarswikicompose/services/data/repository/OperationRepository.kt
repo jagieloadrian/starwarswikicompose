@@ -1,17 +1,18 @@
 package com.anjo.starwarswikicompose.services.data.repository
 
-import com.anjo.GetAllFilmsQuery
-import com.anjo.GetAllPeoplesQuery
-import com.anjo.GetAllPlanetsQuery
-import com.anjo.GetAllSpeciesQuery
-import com.anjo.GetAllStarshipsQuery
-import com.anjo.GetAllVehiclesQuery
-import com.anjo.GetFilmQuery
-import com.anjo.GetPersonQuery
-import com.anjo.GetPlanetQuery
-import com.anjo.GetSpecieQuery
-import com.anjo.GetStarshipQuery
-import com.anjo.GetVehicleQuery
+
+import com.anjo.starwarswikicompose.GetAllFilmsQuery
+import com.anjo.starwarswikicompose.GetAllPeoplesQuery
+import com.anjo.starwarswikicompose.GetAllPlanetsQuery
+import com.anjo.starwarswikicompose.GetAllSpeciesQuery
+import com.anjo.starwarswikicompose.GetAllStarshipsQuery
+import com.anjo.starwarswikicompose.GetAllVehiclesQuery
+import com.anjo.starwarswikicompose.GetFilmQuery
+import com.anjo.starwarswikicompose.GetPersonQuery
+import com.anjo.starwarswikicompose.GetPlanetQuery
+import com.anjo.starwarswikicompose.GetSpecieQuery
+import com.anjo.starwarswikicompose.GetStarshipQuery
+import com.anjo.starwarswikicompose.GetVehicleQuery
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrResponse
 import com.anjo.starwarswikicompose.services.apollofetcher.DataFetcher
 import com.anjo.starwarswikicompose.services.imagefetcher.FlickrApi

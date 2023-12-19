@@ -1,8 +1,10 @@
 package com.anjo.starwarswikicompose.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Left
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Right
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -54,10 +56,11 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String, mo
                             type = NavType.StringType
                         }
                 ),
-                enterTransition = SlideEnterAnimation(Left),
-                exitTransition = SlideExitAnimation(Left),
-                popEnterTransition = SlideEnterAnimation(Right),
-                popExitTransition = SlideExitAnimation(Right)) {
+                enterTransition = SlideEnterAnimation(Up),
+                exitTransition = SlideExitAnimation(Down),
+                popEnterTransition = SlideEnterAnimation(Up),
+                popExitTransition = SlideExitAnimation(Down)
+        ) {
             PersonContentScreen(navController)
         }
         composable(route = Screen.MovieDetail.route,
@@ -66,10 +69,11 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String, mo
                             type = NavType.StringType
                         }
                 ),
-                enterTransition = SlideEnterAnimation(Left),
-                exitTransition = SlideExitAnimation(Left),
-                popEnterTransition = SlideEnterAnimation(Right),
-                popExitTransition = SlideExitAnimation(Right)) {
+                enterTransition = SlideEnterAnimation(Up),
+                exitTransition = SlideExitAnimation(Down),
+                popEnterTransition = SlideEnterAnimation(Up),
+                popExitTransition = SlideExitAnimation(Down)
+                ) {
             MovieContentScreen(navController)
         }
         composable(route = Screen.PlanetDetail.route,
@@ -143,7 +147,7 @@ private fun SlideEnterAnimation(
     return {
         slideIntoContainer(
                 towards = towards,
-                animationSpec = tween(1200)
+                animationSpec = tween(2500, delayMillis = 100)
         )
     }
 }
@@ -154,7 +158,7 @@ private fun SlideExitAnimation(
     return {
         slideOutOfContainer(
                 towards = towards,
-                animationSpec = tween(1200)
+                animationSpec = tween(2500, delayMillis = 100)
         )
     }
 }

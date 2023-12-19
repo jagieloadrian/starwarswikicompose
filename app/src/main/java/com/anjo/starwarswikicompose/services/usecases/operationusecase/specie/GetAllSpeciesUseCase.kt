@@ -1,6 +1,6 @@
 package com.anjo.starwarswikicompose.services.usecases.operationusecase.specie
 
-import com.anjo.GetAllSpeciesQuery
+import com.anjo.starwarswikicompose.GetAllSpeciesQuery
 import com.anjo.starwarswikicompose.services.data.repository.OperationRepository
 import javax.inject.Inject
 
