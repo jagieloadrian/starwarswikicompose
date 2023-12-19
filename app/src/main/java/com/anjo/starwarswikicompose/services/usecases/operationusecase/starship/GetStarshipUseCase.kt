@@ -1,6 +1,6 @@
 package com.anjo.starwarswikicompose.services.usecases.operationusecase.starship
 
-import com.anjo.GetStarshipQuery
+import com.anjo.starwarswikicompose.GetStarshipQuery
 import com.anjo.starwarswikicompose.services.data.repository.OperationRepository
 import javax.inject.Inject
 

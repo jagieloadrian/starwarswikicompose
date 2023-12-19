@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.anjo.GetAllStarshipsQuery
+import com.anjo.starwarswikicompose.GetAllStarshipsQuery
 import com.anjo.starwarswikicompose.presentation.common.ShimmerEffect
 import com.anjo.starwarswikicompose.presentation.screens.home.CommonButton
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING

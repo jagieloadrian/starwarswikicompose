@@ -37,6 +37,8 @@ object Constants {
     const val IMAGE_SLIDER_TABLE = "image_slider_table"
     const val NOTES_TABLE = "notes_table"
 
+    const val DEFAULT_VALUE = "Default Value"
+
     const val SAVE_IN_PREFIX = "Save in "
     const val IMAGE_NOT_FOUND = "Image not found, go to searcher!"
     const val REFRESH_IMAGES = "Refresh images"

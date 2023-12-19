@@ -22,7 +22,7 @@ before_script:
   - export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/cmdline-tools/tools/bin
   - sdkmanager --version
 
-  # use yes to accept all licenses
+#  # use yes to accept all licenses
   - yes | sdkmanager --licenses > /dev/null || true
   - sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}"
   - sdkmanager "platform-tools"
@@ -33,7 +33,14 @@ before_script:
 
 
 stages:
+  - test
   - build
+
+test:
+  stage: test
+  script:
+    - echo "Run Unit tests"
+    - ./gradlew testDebugUnitTest
 
 build:
   stage: build

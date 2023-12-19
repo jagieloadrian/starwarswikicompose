@@ -1,6 +1,6 @@
 package com.anjo.starwarswikicompose.services.usecases.operationusecase.vehicle
 
-import com.anjo.GetVehicleQuery
+import com.anjo.starwarswikicompose.GetVehicleQuery
 import com.anjo.starwarswikicompose.services.data.repository.OperationRepository
 import javax.inject.Inject
 

@@ -5,18 +5,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavHostController
-import com.anjo.GetAllFilmsQuery
-import com.anjo.GetAllPeoplesQuery
-import com.anjo.GetAllPlanetsQuery
-import com.anjo.GetAllSpeciesQuery
-import com.anjo.GetAllStarshipsQuery
-import com.anjo.GetAllVehiclesQuery
-import com.anjo.GetFilmQuery
-import com.anjo.GetPersonQuery
-import com.anjo.GetPlanetQuery
-import com.anjo.GetSpecieQuery
-import com.anjo.GetStarshipQuery
-import com.anjo.GetVehicleQuery
+import com.anjo.starwarswikicompose.GetAllFilmsQuery
+import com.anjo.starwarswikicompose.GetAllPeoplesQuery
+import com.anjo.starwarswikicompose.GetAllPlanetsQuery
+import com.anjo.starwarswikicompose.GetAllSpeciesQuery
+import com.anjo.starwarswikicompose.GetAllStarshipsQuery
+import com.anjo.starwarswikicompose.GetAllVehiclesQuery
+import com.anjo.starwarswikicompose.GetFilmQuery
+import com.anjo.starwarswikicompose.GetPersonQuery
+import com.anjo.starwarswikicompose.GetPlanetQuery
+import com.anjo.starwarswikicompose.GetSpecieQuery
+import com.anjo.starwarswikicompose.GetStarshipQuery
+import com.anjo.starwarswikicompose.GetVehicleQuery
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhoto
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.navigation.Screen
@@ -201,9 +201,7 @@ fun navigateToProperlyCompose(navController: NavHostController, itemId: String, 
     }
 }
 
-fun volumeUpMusic(
-        scope: CoroutineScope, audioManager: AudioManager, maxVol: Int,
-) {
+fun volumeUpMusic( scope: CoroutineScope, audioManager: AudioManager, maxVol: Int ) {
     scope.launch {
         if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
             var currentVol = 0

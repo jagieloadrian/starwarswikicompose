@@ -3,7 +3,7 @@ package com.anjo.starwarswikicompose.presentation.screens.specie.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.GetSpecieQuery
+import com.anjo.starwarswikicompose.GetSpecieQuery
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.services.usecases.imagesliderusecase.ImageSliderUseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases

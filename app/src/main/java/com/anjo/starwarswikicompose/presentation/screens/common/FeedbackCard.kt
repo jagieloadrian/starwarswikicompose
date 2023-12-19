@@ -33,18 +33,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.anjo.starwarswikicompose.BuildConfig
+import com.anjo.starwarswikicompose.BuildConfig.FEEDBACK_RECEIVER_PASSWORD
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
-import com.anjo.starwarswikicompose.ui.theme.reverseMainBackgroundColors
 import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
+import com.anjo.starwarswikicompose.ui.theme.reverseMainBackgroundColors
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.Constants.FEEDBACK_RECEIVER
 import com.anjo.starwarswikicompose.utils.getLocalHeight
 import jakarta.mail.Authenticator
-import jakarta.mail.MessagingException
 import jakarta.mail.Message
+import jakarta.mail.MessagingException
 import jakarta.mail.PasswordAuthentication
 import jakarta.mail.Session
 import jakarta.mail.Transport
@@ -200,7 +200,7 @@ fun sendFeedback(
         val host = "smtp.gmail.com"
         val port = 587
         val userName = FEEDBACK_RECEIVER
-        val password = BuildConfig.FEEDBACK_RECEIVER_PASSWORD
+        val password = FEEDBACK_RECEIVER_PASSWORD
 
         val to = FEEDBACK_RECEIVER
 
