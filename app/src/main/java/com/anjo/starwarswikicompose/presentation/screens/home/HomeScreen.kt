@@ -30,11 +30,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
-import com.anjo.starwarswikicompose.utils.Category
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
@@ -84,8 +84,10 @@ fun HomeScreen(navController: NavHostController) {
 }
 
 @Composable
-private fun CustomTab(selected: Boolean,
-                      enum: Category, onClick: () -> Unit) {
+private fun CustomTab(
+        selected: Boolean,
+        enum: Category, onClick: () -> Unit,
+) {
     Tab(
             selected = selected,
             modifier = Modifier

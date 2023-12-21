@@ -19,8 +19,8 @@ import androidx.compose.ui.platform.ClipboardManager
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.ui.theme.MEDIUM_PADDING
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_WIDTH
-import com.anjo.starwarswikicompose.ui.theme.mainContentColor
 import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
+import com.anjo.starwarswikicompose.ui.theme.mainContentColor
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.addImageFunction
 import kotlinx.coroutines.CoroutineScope

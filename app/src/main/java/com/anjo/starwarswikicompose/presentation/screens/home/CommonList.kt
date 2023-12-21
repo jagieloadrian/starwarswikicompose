@@ -15,22 +15,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.presentation.screens.movie.home.Movies
 import com.anjo.starwarswikicompose.presentation.screens.person.home.People
 import com.anjo.starwarswikicompose.presentation.screens.planet.home.Planets
 import com.anjo.starwarswikicompose.presentation.screens.specie.home.Species
 import com.anjo.starwarswikicompose.presentation.screens.starship.home.Starships
 import com.anjo.starwarswikicompose.presentation.screens.vehicle.home.Vehicles
-import com.anjo.starwarswikicompose.utils.Category
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CommonList(
-        navController: NavHostController,
-        enum: Category
-) {
+fun CommonList(navController: NavHostController,
+        enum: Category) {
     val refreshScope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
 
@@ -55,7 +53,7 @@ fun CommonList(
 @Composable
 fun GenerateComposableContent(navController: NavHostController, enum: Category, refresh: Boolean) {
     when (enum) {
-        Category.FILMS     -> {
+        Category.FILMS -> {
             Movies(navController, refresh = refresh)
         }
 

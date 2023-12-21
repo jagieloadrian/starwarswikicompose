@@ -18,24 +18,31 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class NotificationWorkerTest{
+class NotificationWorkerTest {
 
     @RelaxedMockK
     lateinit var context: Context
+
     @RelaxedMockK
     lateinit var notification: Notification
+
     @RelaxedMockK
     lateinit var data: Data
+
     @RelaxedMockK
     lateinit var executor: TaskExecutor
+
     @RelaxedMockK
     lateinit var workerParameters: WorkerParameters
+
     @RelaxedMockK
     lateinit var notifyBuilder: NotificationCompat.Builder
+
     @RelaxedMockK
     lateinit var notifyManager: NotificationManagerCompat
+
     @InjectMockKs
-    lateinit var notificationWorker:NotificationWorker
+    lateinit var notificationWorker: NotificationWorker
 
     @Test
     fun `given mocks when call doWork then return response`() = runBlocking {

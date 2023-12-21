@@ -47,9 +47,11 @@ import com.anjo.starwarswikicompose.utils.Constants.MAX_LINES_NUMBER
 import com.anjo.starwarswikicompose.utils.getLocalHeight
 
 @Composable
-fun InfoBoxDialog(cornerName: String,
-                  description: String?,
-                  width: Dp) {
+fun InfoBoxDialog(
+        cornerName: String,
+        description: String?,
+        width: Dp,
+) {
     val openDialog = remember { mutableStateOf(false) }
     val descriptionNotNull = description ?: "\uD83D\uDE4A"
 
@@ -97,7 +99,7 @@ fun InfoBoxDialog(cornerName: String,
 fun DialogWithOpeningCrawl(
         description: String,
         cornerName: String,
-        onDismissAction: () -> Unit
+        onDismissAction: () -> Unit,
 ) {
     val scroll = rememberScrollState(0)
     val height = ((getLocalHeight() / 3) * 2).dp

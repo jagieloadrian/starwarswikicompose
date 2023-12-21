@@ -1,30 +1,25 @@
 package com.anjo.starwarswikicompose.services.apollofetcher
 
-import com.anjo.starwarswikicompose.GetAllFilmsQuery
-import com.anjo.starwarswikicompose.GetAllPeoplesQuery
-import com.anjo.starwarswikicompose.GetAllPlanetsQuery
-import com.anjo.starwarswikicompose.GetAllSpeciesQuery
-import com.anjo.starwarswikicompose.GetAllStarshipsQuery
-import com.anjo.starwarswikicompose.GetAllVehiclesQuery
-import com.anjo.starwarswikicompose.GetFilmQuery
-import com.anjo.starwarswikicompose.GetPersonQuery
-import com.anjo.starwarswikicompose.GetPlanetQuery
-import com.anjo.starwarswikicompose.GetSpecieQuery
-import com.anjo.starwarswikicompose.GetStarshipQuery
-import com.anjo.starwarswikicompose.GetVehicleQuery
+import com.anjo.starwarswikicompose.domain.model.sw.Movie
+import com.anjo.starwarswikicompose.domain.model.sw.Person
+import com.anjo.starwarswikicompose.domain.model.sw.Planet
+import com.anjo.starwarswikicompose.domain.model.sw.Specie
+import com.anjo.starwarswikicompose.domain.model.sw.Starship
+import com.anjo.starwarswikicompose.domain.model.sw.Vehicle
+import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 
 
 interface DataFetcher {
-    suspend fun fetchFilms(): List<GetAllFilmsQuery.Film?>?
-    suspend fun fetchOneFilm(id: String): GetFilmQuery.Film?
-    suspend fun fetchPeoples(): List<GetAllPeoplesQuery.Person?>?
-    suspend fun fetchOnePerson(id: String): GetPersonQuery.Person?
-    suspend fun fetchPlanets(): List<GetAllPlanetsQuery.Planet?>?
-    suspend fun fetchOnePlanet(id: String): GetPlanetQuery.Planet?
-    suspend fun fetchSpecies(): List<GetAllSpeciesQuery.Species?>?
-    suspend fun fetchOneSpecie(id: String): GetSpecieQuery.Species?
-    suspend fun fetchStarships(): List<GetAllStarshipsQuery.Starship?>?
-    suspend fun fetchOneStarship(id: String): GetStarshipQuery.Starship?
-    suspend fun fetchVehicles(): List<GetAllVehiclesQuery.Vehicle?>?
-    suspend fun fetchOneVehicle(id: String): GetVehicleQuery.Vehicle?
+    suspend fun fetchFilms(): List<UniversalChunk>
+    suspend fun fetchOneFilm(id: String): Movie
+    suspend fun fetchPeoples(): List<UniversalChunk>
+    suspend fun fetchOnePerson(id: String): Person
+    suspend fun fetchPlanets(): List<UniversalChunk>
+    suspend fun fetchOnePlanet(id: String): Planet
+    suspend fun fetchSpecies(): List<UniversalChunk>
+    suspend fun fetchOneSpecie(id: String): Specie
+    suspend fun fetchStarships(): List<UniversalChunk>
+    suspend fun fetchOneStarship(id: String): Starship
+    suspend fun fetchVehicles(): List<UniversalChunk>
+    suspend fun fetchOneVehicle(id: String): Vehicle
 }

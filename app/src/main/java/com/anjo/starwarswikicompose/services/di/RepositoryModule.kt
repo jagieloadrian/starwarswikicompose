@@ -1,9 +1,9 @@
 package com.anjo.starwarswikicompose.services.di
 
 import android.content.Context
-import com.anjo.starwarswikicompose.services.data.DataStoreOperationImpl
+import com.anjo.starwarswikicompose.services.data.repository.datastore.DataStoreOperationImpl
 import com.anjo.starwarswikicompose.services.data.repository.OperationRepository
-import com.anjo.starwarswikicompose.services.repository.DataStoreOperations
+import com.anjo.starwarswikicompose.services.data.repository.datastore.DataStoreOperations
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.images.GetRecentImagesUseCase
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.images.GetSearchImagesUseCase
@@ -35,10 +35,11 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideDataStoreOperations(
-            @ApplicationContext context: Context
+            @ApplicationContext context: Context,
     ): DataStoreOperations {
         return DataStoreOperationImpl(context = context)
     }
+
     @Provides
     @Singleton
     fun provideUseCases(operationRepository: OperationRepository): UseCases {

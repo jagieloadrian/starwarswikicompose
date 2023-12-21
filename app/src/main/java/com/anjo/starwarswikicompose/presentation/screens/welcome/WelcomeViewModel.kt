@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
-        private val useCases: UseCases
+        private val useCases: UseCases,
 ) : ViewModel() {
 
     fun saveOnBoardingState(completed: Boolean) {

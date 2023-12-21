@@ -7,7 +7,7 @@ sealed class OnboardingPage(
         @DrawableRes
         val image: Int,
         val title: String,
-        val description: String
+        val description: String,
 ) {
     object First : OnboardingPage(
             image = R.drawable.hellothere,

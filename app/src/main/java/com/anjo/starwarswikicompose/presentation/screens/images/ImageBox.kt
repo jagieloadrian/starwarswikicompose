@@ -53,7 +53,7 @@ import com.anjo.starwarswikicompose.utils.buildImageUrl
 @Composable
 fun ImageBox(
         photo: FlickrPhoto,
-        addCopyAction:() -> Unit
+        addCopyAction: () -> Unit,
 ) {
     val title = photo.title.ifEmpty { "\uD83D\uDE4A" }
     val authorName = photo.ownername.ifEmpty { "\uD83D\uDE4A" }

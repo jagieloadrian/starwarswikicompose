@@ -12,5 +12,5 @@ import com.anjo.starwarswikicompose.domain.model.NoteModel
 )
 @TypeConverters(DateConverter::class)
 abstract class NoteDb : RoomDatabase() {
-    abstract val notesDao:NotesDao
+    abstract val notesDao: NotesDao
 }

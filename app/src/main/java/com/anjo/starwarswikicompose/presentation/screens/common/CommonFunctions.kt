@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,20 +39,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.anjo.starwarswikicompose.GetAllFilmsQuery
-import com.anjo.starwarswikicompose.GetAllPeoplesQuery
-import com.anjo.starwarswikicompose.GetAllPlanetsQuery
-import com.anjo.starwarswikicompose.GetAllSpeciesQuery
-import com.anjo.starwarswikicompose.GetAllStarshipsQuery
-import com.anjo.starwarswikicompose.GetAllVehiclesQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.sw.Category
+import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
 import com.anjo.starwarswikicompose.ui.theme.BOXES_COLORS
 import com.anjo.starwarswikicompose.ui.theme.CLICKABLE_BOXES_COLORS
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
+import com.anjo.starwarswikicompose.ui.theme.INFO_BOX_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.RELATED_BOXES_COLORS
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING_FOR_INFOBOX
-import com.anjo.starwarswikicompose.utils.Category
 import com.anjo.starwarswikicompose.utils.calculatePathToImage
 import com.anjo.starwarswikicompose.utils.navigateToProperlyCompose
 
@@ -66,13 +65,15 @@ fun choosePainter(category: Category): Painter {
 }
 
 @Composable
-fun RelatedBox(id: String,
-               name: String?,
-               category: Category,
-               modifier: Modifier = Modifier,
-               width: Dp,
-               navController: NavHostController) {
-    val descriptionName = name ?: "\uD83D\uDE4A"
+fun RelatedBox(
+        id: String,
+        name: String?,
+        category: Category,
+        modifier: Modifier = Modifier,
+        width: Dp,
+        navController: NavHostController,
+) {
+    val descriptionName = if (name.isNullOrEmpty()) "\uD83D\uDE4A" else name
     Box(modifier = Modifier
             .padding(EXTRA_SMALL_PADDING)
             .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))) {
@@ -115,7 +116,7 @@ fun InfoBox(
         id: String? = null,
         category: Category? = null,
         width: Dp,
-        navController: NavHostController? = null
+        navController: NavHostController? = null,
 ) {
     val descriptionName = name ?: "\uD83D\uDE4A"
     val shouldBeClickable = id != null && category != null && navController != null
@@ -160,10 +161,12 @@ fun InfoBox(
 
 
 @Composable
-fun InfoBoxColumn(cornerName: String,
-                  name: String?,
-                  strings: List<String?>?,
-                  width: Dp) {
+fun InfoBoxColumn(
+        cornerName: String,
+        name: String?,
+        strings: List<String?>?,
+        width: Dp,
+) {
 
     var descriptionName = name ?: strings ?: "U+1FAE2"
     if (descriptionName is List<*>) {
@@ -201,27 +204,30 @@ fun InfoBoxColumn(cornerName: String,
     }
 }
 
-fun shouldInstanceLazyRow(firstObject: Any?,
-                          secondObject: Any?,
-                          thirdObject: Any?): Boolean {
-    return (firstObject != null) && (secondObject != null) && secondObject != 0 && thirdObject != null
+fun shouldInstanceLazyRow(count: Int): Boolean {
+    return count > 0
 }
 
 fun findImage(id: String, category: Category): String {
     return calculatePathToImage(category, id)
 }
 
-fun <T> findImage(item: T, category: Category): String {
-    return when (category) {
-        Category.FILMS     -> calculatePathToImage(category, (item as GetAllFilmsQuery.Film).id)
-        Category.PEOPLE    -> calculatePathToImage(category, (item as GetAllPeoplesQuery.Person).id)
-        Category.PLANETS   -> calculatePathToImage(category, (item as GetAllPlanetsQuery.Planet).id)
-        Category.SPECIES   -> calculatePathToImage(category, (item as GetAllSpeciesQuery.Species).id)
-        Category.STARSHIPS -> calculatePathToImage(category, (item as GetAllStarshipsQuery.Starship).id)
-        Category.VEHICLES  -> calculatePathToImage(category, (item as GetAllVehiclesQuery.Vehicle).id)
-    }
-}
+@Composable
+fun clickableArrangementInLazyRow(count: Int) = if (count != 1) Arrangement.SpaceBetween else Arrangement.Center
 
 @Composable
-fun clickableArrangementInLazyRow(
-        count: Int?) = if (count != 1) Arrangement.SpaceBetween else Arrangement.Center
+fun ShowHorizontalBoxes(
+        connection: Connection, category: Category, halfWidth: Dp,
+        navController: NavHostController,
+) {
+    val count = connection.totalCount
+    if (shouldInstanceLazyRow(count)) {
+        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                .fillMaxWidth(),
+                horizontalArrangement = clickableArrangementInLazyRow(count)) {
+            items(items = connection.objects) { item ->
+                RelatedBox(item.id, item.name, category, width = halfWidth, navController = navController)
+            }
+        }
+    }
+}

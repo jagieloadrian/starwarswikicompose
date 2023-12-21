@@ -5,7 +5,7 @@ import com.anjo.starwarswikicompose.services.data.repository.notes.NotesReposito
 import javax.inject.Inject
 
 class AddNoteUseCase @Inject constructor(
-        private val notesRepository: NotesRepository
+        private val notesRepository: NotesRepository,
 ) {
     suspend operator fun invoke(noteModel: NoteModel) {
         notesRepository.addNote(noteModel)

@@ -43,7 +43,8 @@ object NoteRepositoryModule {
     fun provideNotesRepository(
             notesDao: NotesDao,
     ): NotesRepository {
-        return NotesService(notesDao = notesDao)}
+        return NotesService(notesDao = notesDao)
+    }
 
     @Provides
     @Singleton

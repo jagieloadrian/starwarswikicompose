@@ -3,8 +3,8 @@
     <string name="app_name_top_bar">StarWarsWiki</string>
     <string name="on_boarding_image">On boarding Image</string>
     <string name="close_text">Close</string>
-    <string name="title_text">Title: </string>
-    <string name="author_text">Author name: </string>
+    <string name="title_text">Title:</string>
+    <string name="author_text">Author name:</string>
     <string name="save_close">Save &amp; Close</string>
     <string name="send_close">Send &amp; Close</string>
     <string name="label_notes">Your notes</string>

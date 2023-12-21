@@ -2,7 +2,7 @@ package com.anjo.starwarswikicompose.presentation.screens.planet.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.GetAllPlanetsQuery
+import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ class HomePlanetViewModel @Inject constructor(private val useCase: UseCases) : V
     private val _fetchedPlanets = MutableStateFlow(PlanetState())
     val fetchedPlanets = _fetchedPlanets.asStateFlow()
 
-    init {
+    fun getPlanets() {
         viewModelScope.launch {
             _fetchedPlanets.update {
                 it.copy(
@@ -33,21 +33,15 @@ class HomePlanetViewModel @Inject constructor(private val useCase: UseCases) : V
         viewModelScope.launch(Dispatchers.IO) {
             _fetchedPlanets.update { state ->
                 val planets = useCase.getAllPlanetsUseCase()
-                if (planets != null) {
-                    state.copy(
-                            planets = planets,
-                            isLoading = false
-                    )
-                } else {
-                    state.copy(
-                            isLoading = true
-                    )
-                }
+                state.copy(
+                        planets = planets,
+                        isLoading = false
+                )
             }
         }
 
     data class PlanetState(
-            val planets: List<GetAllPlanetsQuery.Planet?>? = emptyList(),
-            val isLoading: Boolean = false
+            val planets: List<UniversalChunk> = emptyList(),
+            val isLoading: Boolean = false,
     )
 }

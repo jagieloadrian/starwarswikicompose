@@ -5,27 +5,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavHostController
-import com.anjo.starwarswikicompose.GetAllFilmsQuery
-import com.anjo.starwarswikicompose.GetAllPeoplesQuery
-import com.anjo.starwarswikicompose.GetAllPlanetsQuery
-import com.anjo.starwarswikicompose.GetAllSpeciesQuery
-import com.anjo.starwarswikicompose.GetAllStarshipsQuery
-import com.anjo.starwarswikicompose.GetAllVehiclesQuery
-import com.anjo.starwarswikicompose.GetFilmQuery
-import com.anjo.starwarswikicompose.GetPersonQuery
-import com.anjo.starwarswikicompose.GetPlanetQuery
-import com.anjo.starwarswikicompose.GetSpecieQuery
-import com.anjo.starwarswikicompose.GetStarshipQuery
-import com.anjo.starwarswikicompose.GetVehicleQuery
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhoto
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
+import com.anjo.starwarswikicompose.domain.model.sw.Category
+import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PEOPLE
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.SPECIES
+import com.anjo.starwarswikicompose.domain.model.sw.Category.STARSHIPS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.VEHICLES
+import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
+import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.navigation.Screen
-import com.anjo.starwarswikicompose.utils.Category.FILMS
-import com.anjo.starwarswikicompose.utils.Category.PEOPLE
-import com.anjo.starwarswikicompose.utils.Category.PLANETS
-import com.anjo.starwarswikicompose.utils.Category.SPECIES
-import com.anjo.starwarswikicompose.utils.Category.STARSHIPS
-import com.anjo.starwarswikicompose.utils.Category.VEHICLES
 import com.anjo.starwarswikicompose.utils.Constants.ASSETS_PATH
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_BASE_URL_IMAGE
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_EXT
@@ -33,18 +24,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-fun calculatePathToImage(category: Category, id:String):String {
+fun calculatePathToImage(category: Category, id: String): String {
     return "$ASSETS_PATH/${category.categoryName.lowercase()}/$id.jpg"
 }
 
 @Composable
-fun getLocalWidth():Int {
+fun getLocalWidth(): Int {
     val configuration = LocalConfiguration.current
     return configuration.screenWidthDp
 }
 
 @Composable
-fun getLocalHeight():Int {
+fun getLocalHeight(): Int {
     val configuration = LocalConfiguration.current
     return configuration.screenHeightDp
 }
@@ -63,9 +54,9 @@ fun validateUrl(photoUrl: String?): Boolean {
 fun addImageFunction(
         clipManager: ClipboardManager,
         navController: NavHostController,
-        runSaving:(String)-> Unit,
-        runSavingSnackBar:()->Unit,
-        navControllerSnackBar:()->Unit
+        runSaving: (String) -> Unit,
+        runSavingSnackBar: () -> Unit,
+        navControllerSnackBar: () -> Unit,
 ) {
     val photoUrl = clipManager.getText()?.text
     photoUrl?.let {
@@ -79,112 +70,32 @@ fun addImageFunction(
     }
 }
 
-fun GetFilmQuery.Film.toImageSliderModel(photoUrl:String): ImageSliderModel {
+fun UniversalChunk.toImageSliderModel(photoUrl: String, category: Category): ImageSliderModel {
     return ImageSliderModel(
             objectId = id,
             url = photoUrl,
-            objectType = FILMS
+            objectType = category
     )
-}
-
-fun GetPersonQuery.Person.toImageSliderModel(photoUrl: String):ImageSliderModel {
-    return ImageSliderModel(
-            objectId = id,
-            url = photoUrl,
-            objectType = PEOPLE
-    )
-}
-
-fun GetPlanetQuery.Planet.toImageSliderModel(photoUrl: String):ImageSliderModel {
-    return ImageSliderModel(
-            objectId = id,
-            url = photoUrl,
-            objectType = PLANETS
-    )
-}
-
-fun GetSpecieQuery.Species.toImageSliderModel(photoUrl: String):ImageSliderModel {
-    return ImageSliderModel(
-            objectId = id,
-            url = photoUrl,
-            objectType = SPECIES
-    )
-}
-
-fun GetStarshipQuery.Starship.toImageSliderModel(photoUrl: String):ImageSliderModel {
-    return ImageSliderModel(
-            objectId = id,
-            url = photoUrl,
-            objectType = STARSHIPS
-    )
-}
-
-fun GetVehicleQuery.Vehicle.toImageSliderModel(photoUrl: String):ImageSliderModel {
-    return ImageSliderModel(
-            objectId = id,
-            url = photoUrl,
-            objectType = VEHICLES
-    )
-}
-
-fun <T> navigateToProperlyCompose(navController: NavHostController, item: T, category: Category) {
-    when (category) {
-        FILMS     -> {
-            val currentItem = item as GetAllFilmsQuery.Film
-            navController.navigate(Screen.MovieDetail.passMovieId(currentItem.id))
-            return
-        }
-
-        PEOPLE    -> {
-            val currentItem = item as GetAllPeoplesQuery.Person
-            navController.navigate(Screen.PersonDetail.passPersonId(currentItem.id))
-            return
-        }
-
-        PLANETS   -> {
-            val currentItem = item as GetAllPlanetsQuery.Planet
-            navController.navigate(Screen.PlanetDetail.passPlanetId(currentItem.id))
-            return
-        }
-
-        SPECIES   -> {
-            val currentItem = item as GetAllSpeciesQuery.Species
-            navController.navigate(Screen.SpecieDetail.passSpecieId(currentItem.id))
-            return
-        }
-
-        STARSHIPS -> {
-            val currentItem = item as GetAllStarshipsQuery.Starship
-            navController.navigate(Screen.StarshipDetail.passStarshipId(currentItem.id))
-            return
-        }
-
-        VEHICLES  -> {
-            val currentItem = item as GetAllVehiclesQuery.Vehicle
-            navController.navigate(Screen.VehicleDetail.passVehicleId(currentItem.id))
-            return
-        }
-    }
 }
 
 fun navigateToProperlyCompose(navController: NavHostController, itemId: String, category: Category) {
     when (category) {
-        FILMS     -> {
+        FILMS -> {
             navController.navigate(Screen.MovieDetail.passMovieId(itemId))
             return
         }
 
-        PEOPLE    -> {
+        PEOPLE -> {
             navController.navigate(Screen.PersonDetail.passPersonId(itemId))
             return
         }
 
-        PLANETS   -> {
+        PLANETS -> {
             navController.navigate(Screen.PlanetDetail.passPlanetId(itemId))
             return
         }
 
-        SPECIES   -> {
+        SPECIES -> {
             navController.navigate(Screen.SpecieDetail.passSpecieId(itemId))
             return
         }
@@ -194,14 +105,14 @@ fun navigateToProperlyCompose(navController: NavHostController, itemId: String, 
             return
         }
 
-        VEHICLES  -> {
+        VEHICLES -> {
             navController.navigate(Screen.VehicleDetail.passVehicleId(itemId))
             return
         }
     }
 }
 
-fun volumeUpMusic( scope: CoroutineScope, audioManager: AudioManager, maxVol: Int ) {
+fun volumeUpMusic(scope: CoroutineScope, audioManager: AudioManager, maxVol: Int) {
     scope.launch {
         if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
             var currentVol = 0
@@ -226,3 +137,5 @@ fun muteMusic(scope: CoroutineScope, audioManager: AudioManager) {
         }
     }
 }
+
+fun emptyConnection() : Connection = Connection(0, listOf())

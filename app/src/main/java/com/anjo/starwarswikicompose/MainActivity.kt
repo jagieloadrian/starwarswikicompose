@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
             mainViewModel.createMusic(current)
             BackgroundMusicLaunching(lifecycleOwner, mainViewModel)
-            PermissionScreen(periodicWorker = { mainViewModel.addPeriodicWorker(current) }, composable =  {
+            PermissionScreen(periodicWorker = { mainViewModel.addPeriodicWorker(current) }, composable = {
                 StarWarsWikiComposeTheme {
                     navController = rememberNavController()
                     SetupNavGraph(navController = navController,

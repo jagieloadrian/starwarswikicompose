@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
-import com.anjo.starwarswikicompose.utils.Category
+import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.utils.Constants.IMAGE_SLIDER_TABLE
 
 @Dao

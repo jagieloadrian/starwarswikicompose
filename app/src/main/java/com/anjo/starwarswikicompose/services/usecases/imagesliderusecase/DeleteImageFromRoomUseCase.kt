@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class DeleteImageFromRoomUseCase
 @Inject constructor(
-        private val imageSliderRepository: ImageSliderRepository
+        private val imageSliderRepository: ImageSliderRepository,
 ) {
     suspend operator fun invoke(imageSliderModel: ImageSliderModel) {
         imageSliderRepository.deleteImageFromRoom(imageSliderModel)

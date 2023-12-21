@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -45,54 +43,56 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.anjo.starwarswikicompose.GetFilmQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PEOPLE
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.SPECIES
+import com.anjo.starwarswikicompose.domain.model.sw.Category.STARSHIPS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.VEHICLES
+import com.anjo.starwarswikicompose.domain.model.sw.Movie
 import com.anjo.starwarswikicompose.presentation.common.GallerySlider
 import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFabWrap
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBoxColumn
-import com.anjo.starwarswikicompose.presentation.screens.common.RelatedBox
+import com.anjo.starwarswikicompose.presentation.screens.common.ShowHorizontalBoxes
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.choosePainter
-import com.anjo.starwarswikicompose.presentation.screens.common.clickableArrangementInLazyRow
 import com.anjo.starwarswikicompose.presentation.screens.common.findImage
-import com.anjo.starwarswikicompose.presentation.screens.common.shouldInstanceLazyRow
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.INFO_BOX_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.NAME_PLACEHOLDER_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
-import com.anjo.starwarswikicompose.utils.Category.FILMS
-import com.anjo.starwarswikicompose.utils.Category.PEOPLE
-import com.anjo.starwarswikicompose.utils.Category.PLANETS
-import com.anjo.starwarswikicompose.utils.Category.SPECIES
-import com.anjo.starwarswikicompose.utils.Category.STARSHIPS
-import com.anjo.starwarswikicompose.utils.Category.VEHICLES
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MovieContentScreen(
         navController: NavHostController,
-        movieViewModel: MovieViewModel = hiltViewModel(),
-) {
+        movieViewModel: MovieViewModel = hiltViewModel()) {
     val selectedMovie by movieViewModel.selectedMovie.collectAsState()
-    selectedMovie?.let { MovieVisualisation(it, navController, movieViewModel) }
+    val init = remember { mutableStateOf(true) }
+
+    if (init.value) {
+        movieViewModel.getMovie()
+        init.value = false
+    }
+    MovieVisualisation(selectedMovie, navController, movieViewModel)
 }
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun MovieVisualisation(
-        selected: GetFilmQuery.Film,
+        selected: Movie,
         navController: NavHostController,
         movieViewModel: MovieViewModel,
 ) {
@@ -102,7 +102,7 @@ private fun MovieVisualisation(
     val twoThirdsWidth = thirdWidth * 2
     val state = rememberScrollState()
     var fabExtended by remember { mutableStateOf(true) }
-    val imagesState = remember { mutableStateOf(movieViewModel.images.value) }
+    val imagesState by movieViewModel.images.collectAsState()
     val imagesStateRefresh = remember { mutableStateOf(true) }
     val clipManager = LocalClipboardManager.current
     val refreshScope = rememberCoroutineScope()
@@ -115,16 +115,13 @@ private fun MovieVisualisation(
             isRefreshing = false
         }
     })
-
     val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(imagesStateRefresh.value) {
         movieViewModel.refreshImages(selected.id)
         delay(1000)
-        imagesState.value = movieViewModel.images.value
         imagesStateRefresh.value = false
     }
-
 
     LaunchedEffect(state) {
         var prev = 0
@@ -138,8 +135,8 @@ private fun MovieVisualisation(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) },
             floatingActionButton = {
-                AddImageFabWrap(fabExtended, clipManager, navController, selected.title.orEmpty(), {
-                    movieViewModel.saveInDatabase(selected, it)
+                AddImageFabWrap(fabExtended, clipManager, navController, selected.title, {
+                    movieViewModel.saveInDatabase(selected.id, it)
                     imagesStateRefresh.value = true
                 }, refreshScope, snackBarHostState)
             },
@@ -161,7 +158,7 @@ private fun MovieVisualisation(
                                     .align(alignment = Alignment.CenterHorizontally)
                                     .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
                                     .background(Color.Magenta))
-                    Text(text = selected.title.orEmpty(),
+                    Text(text = selected.title,
                             fontFamily = SOLOFontName,
                             modifier = Modifier.fillMaxWidth()
                                     .height(NAME_PLACEHOLDER_HEIGHT)
@@ -175,7 +172,7 @@ private fun MovieVisualisation(
                             horizontalArrangement = Arrangement.SpaceAround) {
                         InfoBox(
                                 stringResource(R.string.episode_id_box_name),
-                                selected.episodeID,
+                                selected.episodeId,
                                 width = thirdWidth)
                         InfoBoxDialog(
                                 stringResource(R.string.opening_crawl_box_name),
@@ -199,12 +196,12 @@ private fun MovieVisualisation(
                                 selected.releaseDate,
                                 width = thirdWidth)
                     }
-                    ShowCharacters(selected, halfWidth, navController)
-                    ShowPlanets(selected, halfWidth, navController)
-                    ShowStarships(selected, halfWidth, navController)
-                    ShowVehicles(selected, halfWidth, navController)
-                    ShowSpecies(selected, halfWidth, navController)
-                    GallerySlider(images = imagesState.value,
+                    ShowHorizontalBoxes(selected.characterConnection, PEOPLE, halfWidth, navController)
+                    ShowHorizontalBoxes(selected.planetConnection, PLANETS, halfWidth, navController)
+                    ShowHorizontalBoxes(selected.starshipConnection, STARSHIPS, halfWidth, navController)
+                    ShowHorizontalBoxes(selected.vehicleConnection, VEHICLES, halfWidth, navController)
+                    ShowHorizontalBoxes(selected.specieConnection, SPECIES, halfWidth, navController)
+                    GallerySlider(images = imagesState,
                             onCLickLeft = {
                                 refreshScope.launch {
                                     snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
@@ -221,87 +218,6 @@ private fun MovieVisualisation(
                 }
             }
             PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
-        }
-    }
-}
-
-
-@Composable
-private fun ShowCharacters(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedMovie.characterConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedMovie.characterConnection,
-                    count,
-                    selectedMovie.characterConnection?.characters)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedMovie.characterConnection!!.characters!!) { item ->
-                RelatedBox(item!!.id, item.name, PEOPLE, width = halfWidth, navController = navController)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShowPlanets(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedMovie.planetConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedMovie.planetConnection,
-                    selectedMovie.planetConnection?.totalCount,
-                    selectedMovie.planetConnection?.planets)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedMovie.planetConnection!!.planets!!) { item ->
-                RelatedBox(item!!.id, item.name, PLANETS, width = halfWidth, navController = navController)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShowVehicles(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedMovie.vehicleConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedMovie.vehicleConnection,
-                    count,
-                    selectedMovie.vehicleConnection?.vehicles)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedMovie.vehicleConnection!!.vehicles!!) { item ->
-                RelatedBox(item!!.id, item.name, VEHICLES, width = halfWidth, navController = navController)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShowStarships(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedMovie.starshipConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedMovie.starshipConnection,
-                    count,
-                    selectedMovie.starshipConnection?.starships)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedMovie.starshipConnection!!.starships!!) { item ->
-                RelatedBox(item!!.id, item.name, STARSHIPS, width = halfWidth, navController = navController)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShowSpecies(selectedMovie: GetFilmQuery.Film, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedMovie.speciesConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedMovie.speciesConnection,
-                    count,
-                    selectedMovie.speciesConnection?.species)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedMovie.speciesConnection!!.species!!) { item ->
-                RelatedBox(item!!.id, item.name, SPECIES, width = halfWidth, navController = navController)
-            }
         }
     }
 }

@@ -1,13 +1,13 @@
 package com.anjo.starwarswikicompose.services.usecases.operationusecase.specie
 
-import com.anjo.starwarswikicompose.GetAllSpeciesQuery
+import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.services.data.repository.OperationRepository
 import javax.inject.Inject
 
 class GetAllSpeciesUseCase @Inject constructor(
-        private val dataFetcher: OperationRepository
+        private val dataFetcher: OperationRepository,
 ) {
-    suspend operator fun invoke(): List<GetAllSpeciesQuery.Species?>? {
+    suspend operator fun invoke(): List<UniversalChunk> {
         return dataFetcher.fetchSpecies()
     }
 }

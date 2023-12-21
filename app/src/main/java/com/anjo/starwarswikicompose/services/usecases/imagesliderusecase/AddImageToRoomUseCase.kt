@@ -5,7 +5,7 @@ import com.anjo.starwarswikicompose.services.data.repository.image.ImageSliderRe
 import javax.inject.Inject
 
 class AddImageToRoomUseCase @Inject constructor(
-        private val imageSliderRepository: ImageSliderRepository
+        private val imageSliderRepository: ImageSliderRepository,
 ) {
 
     suspend operator fun invoke(imageSliderModel: ImageSliderModel) {

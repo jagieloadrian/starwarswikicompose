@@ -37,8 +37,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
-import com.anjo.starwarswikicompose.ui.theme.reverseMainBackgroundColors
 import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
+import com.anjo.starwarswikicompose.ui.theme.reverseMainBackgroundColors
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.getLocalHeight
 import kotlinx.coroutines.delay
@@ -57,7 +57,8 @@ fun CardNote(
 
     if (init.value) {
         cardNoteViewModel.getNotes()
-        scope.launch { delay(1000)
+        scope.launch {
+            delay(1000)
             userText.value = cardNoteViewModel.note.value.text
             init.value = false
         }
@@ -80,7 +81,7 @@ fun CardNote(
                         .alpha(0.8f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceBetween) {
-                    if(init.value){
+                    if (init.value) {
                         CircularProgressIndicator()
                     } else {
                         OutlinedTextField(value = userText.value,

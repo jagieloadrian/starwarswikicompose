@@ -1,29 +1,24 @@
 package com.anjo.starwarswikicompose.services.data.repository
 
 
-import com.anjo.starwarswikicompose.GetAllFilmsQuery
-import com.anjo.starwarswikicompose.GetAllPeoplesQuery
-import com.anjo.starwarswikicompose.GetAllPlanetsQuery
-import com.anjo.starwarswikicompose.GetAllSpeciesQuery
-import com.anjo.starwarswikicompose.GetAllStarshipsQuery
-import com.anjo.starwarswikicompose.GetAllVehiclesQuery
-import com.anjo.starwarswikicompose.GetFilmQuery
-import com.anjo.starwarswikicompose.GetPersonQuery
-import com.anjo.starwarswikicompose.GetPlanetQuery
-import com.anjo.starwarswikicompose.GetSpecieQuery
-import com.anjo.starwarswikicompose.GetStarshipQuery
-import com.anjo.starwarswikicompose.GetVehicleQuery
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrResponse
+import com.anjo.starwarswikicompose.domain.model.sw.Movie
+import com.anjo.starwarswikicompose.domain.model.sw.Person
+import com.anjo.starwarswikicompose.domain.model.sw.Planet
+import com.anjo.starwarswikicompose.domain.model.sw.Specie
+import com.anjo.starwarswikicompose.domain.model.sw.Starship
+import com.anjo.starwarswikicompose.domain.model.sw.Vehicle
+import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.services.apollofetcher.DataFetcher
 import com.anjo.starwarswikicompose.services.imagefetcher.FlickrApi
-import com.anjo.starwarswikicompose.services.repository.DataStoreOperations
+import com.anjo.starwarswikicompose.services.data.repository.datastore.DataStoreOperations
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class OperationRepository @Inject constructor(
         private val dataStore: DataStoreOperations,
         private val dataFetcher: DataFetcher,
-        private val flickrApi:FlickrApi
+        private val flickrApi: FlickrApi,
 ) {
     suspend fun saveOnboardingState(completed: Boolean) {
         dataStore.saveOnBoardingState(completed)
@@ -33,59 +28,59 @@ class OperationRepository @Inject constructor(
         return dataStore.readingBoardingState()
     }
 
-     suspend fun fetchFilms(): List<GetAllFilmsQuery.Film?>? {
-       return dataFetcher.fetchFilms()
+    suspend fun fetchFilms(): List<UniversalChunk> {
+        return dataFetcher.fetchFilms()
     }
 
-     suspend fun fetchOneFilm(id: String): GetFilmQuery.Film? {
+    suspend fun fetchOneFilm(id: String): Movie {
         return dataFetcher.fetchOneFilm(id)
     }
 
-     suspend fun fetchPeoples(): List<GetAllPeoplesQuery.Person?>? {
-       return dataFetcher.fetchPeoples()
+    suspend fun fetchPeoples(): List<UniversalChunk> {
+        return dataFetcher.fetchPeoples()
     }
 
-     suspend fun fetchOnePerson(id: String): GetPersonQuery.Person? {
-       return dataFetcher.fetchOnePerson(id)
+    suspend fun fetchOnePerson(id: String): Person  {
+        return dataFetcher.fetchOnePerson(id)
     }
 
-     suspend fun fetchPlanets(): List<GetAllPlanetsQuery.Planet?>? {
+    suspend fun fetchPlanets(): List<UniversalChunk> {
         return dataFetcher.fetchPlanets()
     }
 
-     suspend fun fetchOnePlanet(id: String): GetPlanetQuery.Planet? {
+    suspend fun fetchOnePlanet(id: String):Planet {
         return dataFetcher.fetchOnePlanet(id)
     }
 
-     suspend fun fetchSpecies(): List<GetAllSpeciesQuery.Species?>? {
+    suspend fun fetchSpecies(): List<UniversalChunk> {
         return dataFetcher.fetchSpecies()
     }
 
-     suspend fun fetchOneSpecie(id: String): GetSpecieQuery.Species? {
+    suspend fun fetchOneSpecie(id: String): Specie {
         return dataFetcher.fetchOneSpecie(id)
     }
 
-     suspend fun fetchStarships(): List<GetAllStarshipsQuery.Starship?>? {
+    suspend fun fetchStarships(): List<UniversalChunk> {
         return dataFetcher.fetchStarships()
     }
 
-     suspend fun fetchOneStarship(id: String): GetStarshipQuery.Starship? {
+    suspend fun fetchOneStarship(id: String): Starship {
         return dataFetcher.fetchOneStarship(id)
     }
 
-     suspend fun fetchVehicles(): List<GetAllVehiclesQuery.Vehicle?>? {
+    suspend fun fetchVehicles(): List<UniversalChunk> {
         return dataFetcher.fetchVehicles()
     }
 
-     suspend fun fetchOneVehicle(id: String): GetVehicleQuery.Vehicle? {
+    suspend fun fetchOneVehicle(id: String): Vehicle {
         return dataFetcher.fetchOneVehicle(id)
     }
 
-     suspend fun getSearchPhotosInfo(searchText: String): FlickrResponse {
-         return flickrApi.getSearchPhotosInfo(searchText = searchText)
+    suspend fun getSearchPhotosInfo(searchText: String): FlickrResponse {
+        return flickrApi.getSearchPhotosInfo(searchText = searchText)
     }
 
-     suspend fun getRecentPhotos(): FlickrResponse {
+    suspend fun getRecentPhotos(): FlickrResponse {
         return flickrApi.getRecentPhotos()
     }
 }

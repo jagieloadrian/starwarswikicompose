@@ -3,13 +3,12 @@ package com.anjo.starwarswikicompose.presentation.screens.person.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.GetPersonQuery
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
+import com.anjo.starwarswikicompose.domain.model.sw.Category
+import com.anjo.starwarswikicompose.domain.model.sw.Person
 import com.anjo.starwarswikicompose.services.usecases.imagesliderusecase.ImageSliderUseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
-import com.anjo.starwarswikicompose.utils.Category
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_PERSON_ARGUMENT_KEY
-import com.anjo.starwarswikicompose.utils.toImageSliderModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,27 +20,28 @@ import javax.inject.Inject
 class PersonViewModel @Inject constructor(
         private val useCase: UseCases,
         private val imageSliderUseCases: ImageSliderUseCases,
-        savedStateHandle: SavedStateHandle,
+        private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _selectedPerson: MutableStateFlow<GetPersonQuery.Person?> = MutableStateFlow(null)
-    val selectedPerson: StateFlow<GetPersonQuery.Person?> = _selectedPerson
+    private val _selectedPerson: MutableStateFlow<Person> = MutableStateFlow(Person())
+    val selectedPerson: StateFlow<Person> = _selectedPerson
 
     private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
-    val images:StateFlow<List<ImageSliderModel>> = _images
+    val images: StateFlow<List<ImageSliderModel>> = _images
 
-    init {
+    fun getPerson() {
         viewModelScope.launch(Dispatchers.IO) {
             val personId = savedStateHandle.get<String>(DETAILS_PERSON_ARGUMENT_KEY)
-            _selectedPerson.value = personId?.let { useCase.getPersonUseCase(id = it) }
+            _selectedPerson.value = personId?.let { useCase.getPersonUseCase(id = it) } ?: Person()
             personId?.let {
                 _images.value = imageSliderUseCases.getImagesForObjectUseCase(personId, Category.PEOPLE)
             }
         }
     }
 
-    fun saveInDatabase(selected: GetPersonQuery.Person, photoUrl: String) {
-        val modelObject = selected.toImageSliderModel(photoUrl)
+    fun saveInDatabase(objectId: String, photoUrl: String) {
+        val modelObject = ImageSliderModel(objectId = objectId, url = photoUrl, objectType = Category.FILMS)
+
         viewModelScope.launch(Dispatchers.IO) {
             imageSliderUseCases.addImageToRoomUseCase(modelObject)
         }

@@ -1,4 +1,4 @@
-package com.anjo.starwarswikicompose.services.data
+package com.anjo.starwarswikicompose.services.data.repository.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.anjo.starwarswikicompose.services.repository.DataStoreOperations
 import com.anjo.starwarswikicompose.utils.Constants.PREFERENCES_KEY
 import com.anjo.starwarswikicompose.utils.Constants.PREFERENCES_NAME
 import kotlinx.coroutines.flow.Flow
