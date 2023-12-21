@@ -31,13 +31,14 @@ import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.ui.theme.TOP_APP_BAR_HEIGHT
 
 @Composable
-fun SearchBar(modifier: Modifier = Modifier,
-              text: String,
-              onTextChange: (String) -> Unit,
-              onSearchClicked: (String) -> Unit,
-              onClosedClicked: () -> Unit,
-              enabled: Boolean,
-              lazyListState: LazyListState
+fun SearchBar(
+        modifier: Modifier = Modifier,
+        text: String,
+        onTextChange: (String) -> Unit,
+        onSearchClicked: (String) -> Unit,
+        onClosedClicked: () -> Unit,
+        enabled: Boolean,
+        lazyListState: LazyListState,
 ) {
     val focusManager = LocalFocusManager.current
     Surface(modifier = modifier) {
@@ -52,8 +53,9 @@ fun SearchBar(modifier: Modifier = Modifier,
                 leadingIcon = {
                     IconButton(
                             modifier = Modifier.alpha(alpha = ContentAlpha.medium),
-                            onClick = { onSearchClicked(text)
-                            focusManager.clearFocus()
+                            onClick = {
+                                onSearchClicked(text)
+                                focusManager.clearFocus()
                             }
                     ) {
                         Icon(
@@ -89,8 +91,9 @@ fun SearchBar(modifier: Modifier = Modifier,
                     Text(stringResource(R.string.placeholder_search))
                 },
                 keyboardActions = KeyboardActions(
-                        onSearch = { onSearchClicked(text)
-                        focusManager.clearFocus()
+                        onSearch = {
+                            onSearchClicked(text)
+                            focusManager.clearFocus()
                         }
                 ),
                 keyboardOptions = KeyboardOptions(

@@ -48,7 +48,8 @@ object NotificationModule {
                 .setOnlyAlertOnce(true)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
-                .addAction(0, GO_TO_APP, pendingIntent)}
+                .addAction(0, GO_TO_APP, pendingIntent)
+    }
 
     @Singleton
     @Provides

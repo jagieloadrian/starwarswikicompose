@@ -21,7 +21,7 @@ class DeleteNoteUseCaseTest {
     lateinit var deleteNoteUseCase: DeleteNoteUseCase
 
     @Test
-    fun `given note model when invoke deleteNoteUseCase then verify call`() =  runBlocking {
+    fun `given note model when invoke deleteNoteUseCase then verify call`() = runBlocking {
         //given
         val noteModel = NoteModel(id = 1, "someText")
 

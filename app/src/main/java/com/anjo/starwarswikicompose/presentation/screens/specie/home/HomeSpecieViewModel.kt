@@ -2,7 +2,7 @@ package com.anjo.starwarswikicompose.presentation.screens.specie.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.GetAllSpeciesQuery
+import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ class HomeSpecieViewModel @Inject constructor(private val useCase: UseCases) : V
     private val _fetchedSpecies = MutableStateFlow(SpecieState())
     val fetchedSpecies = _fetchedSpecies.asStateFlow()
 
-    init {
+    fun getSpecies() {
         viewModelScope.launch {
             _fetchedSpecies.update {
                 it.copy(
@@ -33,21 +33,15 @@ class HomeSpecieViewModel @Inject constructor(private val useCase: UseCases) : V
         viewModelScope.launch(Dispatchers.IO) {
             _fetchedSpecies.update { state ->
                 val species = useCase.getAllSpeciesUseCase()
-                if (species != null) {
-                    state.copy(
-                            species = species,
-                            isLoading = false
-                    )
-                } else {
-                    state.copy(
-                            isLoading = true
-                    )
-                }
+                state.copy(
+                        species = species,
+                        isLoading = false
+                )
             }
         }
 
     data class SpecieState(
-            val species: List<GetAllSpeciesQuery.Species?>? = emptyList(),
-            val isLoading: Boolean = false
+            val species: List<UniversalChunk> = emptyList(),
+            val isLoading: Boolean = false,
     )
 }

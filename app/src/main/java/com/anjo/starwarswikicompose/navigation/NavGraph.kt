@@ -73,7 +73,7 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String, mo
                 exitTransition = SlideExitAnimation(Down),
                 popEnterTransition = SlideEnterAnimation(Up),
                 popExitTransition = SlideExitAnimation(Down)
-                ) {
+        ) {
             MovieContentScreen(navController)
         }
         composable(route = Screen.PlanetDetail.route,

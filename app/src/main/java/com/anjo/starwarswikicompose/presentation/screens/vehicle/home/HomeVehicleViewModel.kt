@@ -2,7 +2,7 @@ package com.anjo.starwarswikicompose.presentation.screens.vehicle.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.GetAllVehiclesQuery
+import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +17,7 @@ class HomeVehicleViewModel @Inject constructor(private val useCase: UseCases) : 
     private val _fetchedVehicles = MutableStateFlow(VehicleState())
     val fetchedVehicles = _fetchedVehicles
 
-    init {
+    fun getVehicles() {
         viewModelScope.launch {
             _fetchedVehicles.update {
                 it.copy(
@@ -32,21 +32,15 @@ class HomeVehicleViewModel @Inject constructor(private val useCase: UseCases) : 
         viewModelScope.launch(Dispatchers.IO) {
             _fetchedVehicles.update { state ->
                 val vehicles = useCase.getAllVehicleUseCase()
-                if (vehicles != null) {
-                    state.copy(
-                            vehicles = vehicles,
-                            isLoading = false
-                    )
-                } else {
-                    state.copy(
-                            isLoading = true
-                    )
-                }
+                state.copy(
+                        vehicles = vehicles,
+                        isLoading = false
+                )
             }
         }
 
     data class VehicleState(
-            val vehicles: List<GetAllVehiclesQuery.Vehicle?>? = emptyList(),
-            val isLoading: Boolean = false
+            val vehicles: List<UniversalChunk> = emptyList(),
+            val isLoading: Boolean = false,
     )
 }

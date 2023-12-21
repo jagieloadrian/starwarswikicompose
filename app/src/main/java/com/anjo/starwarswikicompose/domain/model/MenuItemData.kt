@@ -15,10 +15,10 @@ enum class MenuItemData(val text: String) {
     val icon: Painter
         @Composable
         get() = when (this) {
-            Notes -> painterResource(R.drawable.baseline_notes_24)
-            Feedback  -> painterResource(R.drawable.outline_mail_24)
-            Info  -> painterResource(R.drawable.outline_info_24)
-            Sound -> painterResource(R.drawable.outline_volume_up_24)
+            Notes        -> painterResource(R.drawable.baseline_notes_24)
+            Feedback     -> painterResource(R.drawable.outline_mail_24)
+            Info         -> painterResource(R.drawable.outline_info_24)
+            Sound        -> painterResource(R.drawable.outline_volume_up_24)
             Notification -> painterResource(R.drawable.baseline_notifications_none_24)
         }
 }

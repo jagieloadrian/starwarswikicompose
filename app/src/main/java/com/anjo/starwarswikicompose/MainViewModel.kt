@@ -45,7 +45,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
         val checkIfExist = WorkManager.getInstance(context).getWorkInfosByTag(NOTIFICATION_WORK_TAG).get()
                 .filterNot { workInfo -> workInfo.state.isFinished }
                 .count()
-        if(checkIfExist == 0) {
+        if (checkIfExist == 0) {
             val workRequest =
                 PeriodicWorkRequestBuilder<NotificationWorker>(7, TimeUnit.DAYS).addTag(NOTIFICATION_WORK_TAG).build()
             WorkManager.getInstance(context).enqueue(workRequest)

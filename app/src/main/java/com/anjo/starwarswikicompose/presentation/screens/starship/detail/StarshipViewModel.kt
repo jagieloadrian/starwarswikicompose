@@ -3,13 +3,12 @@ package com.anjo.starwarswikicompose.presentation.screens.starship.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.GetStarshipQuery
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
+import com.anjo.starwarswikicompose.domain.model.sw.Category.STARSHIPS
+import com.anjo.starwarswikicompose.domain.model.sw.Starship
 import com.anjo.starwarswikicompose.services.usecases.imagesliderusecase.ImageSliderUseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
-import com.anjo.starwarswikicompose.utils.Category.STARSHIPS
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_STARSHIP_ARGUMENT_KEY
-import com.anjo.starwarswikicompose.utils.toImageSliderModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,27 +20,28 @@ import javax.inject.Inject
 class StarshipViewModel @Inject constructor(
         private val useCase: UseCases,
         private val imageSliderUseCases: ImageSliderUseCases,
-        savedStateHandle: SavedStateHandle) : ViewModel() {
+       private val savedStateHandle: SavedStateHandle,
+) : ViewModel() {
 
-    private val _selectedStarship: MutableStateFlow<GetStarshipQuery.Starship?> = MutableStateFlow(null)
-    val selectedStarship: StateFlow<GetStarshipQuery.Starship?> = _selectedStarship
+    private val _selectedStarship: MutableStateFlow<Starship> = MutableStateFlow(Starship())
+    val selectedStarship: StateFlow<Starship> = _selectedStarship
 
     private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
     val images: StateFlow<List<ImageSliderModel>> = _images
 
 
-    init {
+    fun getStarship() {
         viewModelScope.launch(Dispatchers.IO) {
             val starshipId = savedStateHandle.get<String>(DETAILS_STARSHIP_ARGUMENT_KEY)
-            _selectedStarship.value = starshipId?.let { useCase.getStarshipUseCase(id = it) }
+            _selectedStarship.value = starshipId?.let { useCase.getStarshipUseCase(id = it) } ?: Starship()
             starshipId?.let {
                 _images.value = imageSliderUseCases.getImagesForObjectUseCase(starshipId, STARSHIPS)
             }
         }
     }
 
-    fun saveInDatabase(selected: GetStarshipQuery.Starship, photoUrl:String) {
-        val modelObject = selected.toImageSliderModel(photoUrl)
+    fun saveInDatabase(objectId: String, photoUrl: String) {
+        val modelObject = ImageSliderModel(objectId = objectId, url = photoUrl, objectType = STARSHIPS)
         viewModelScope.launch(Dispatchers.IO) {
             imageSliderUseCases.addImageToRoomUseCase(modelObject)
         }

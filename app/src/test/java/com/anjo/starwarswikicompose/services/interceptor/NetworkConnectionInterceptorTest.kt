@@ -48,7 +48,7 @@ class NetworkConnectionInterceptorTest {
     fun `mock is internet available when intercept then return response`(int: Int) {
         //given
         val mockContext = mockk<Context>() {
-           every { getSystemService(CONNECTIVITY_SERVICE) } returns connectivityManager
+            every { getSystemService(CONNECTIVITY_SERVICE) } returns connectivityManager
         }
         val networkConnectionInterceptor = NetworkConnectionInterceptor(mockContext)
 
@@ -66,7 +66,7 @@ class NetworkConnectionInterceptorTest {
     }
 
     @Test
-    fun `mock is internet not available when intercept then return response`(){
+    fun `mock is internet not available when intercept then return response`() {
         //given
         val mockContext = mockk<Context> {
             every { getSystemService(CONNECTIVITY_SERVICE) } returns connectivityManager

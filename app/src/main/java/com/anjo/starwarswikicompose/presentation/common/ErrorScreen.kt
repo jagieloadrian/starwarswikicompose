@@ -37,7 +37,8 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 
 @Composable
 fun ErrorScreen(
-        text: String) {
+        text: String,
+) {
     var startAnimation by remember { mutableStateOf(false) }
     val transition = rememberInfiniteTransition(label = "")
     val alphaAnim by transition.animateFloat(

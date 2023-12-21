@@ -13,7 +13,7 @@ class MyApplication : Application(), Configuration.Provider {
     lateinit var workerFactory: HiltWorkerFactory
 
     override val workManagerConfiguration: Configuration
-        get() =   Configuration.Builder()
+        get() = Configuration.Builder()
                 .setMinimumLoggingLevel(android.util.Log.INFO)
                 .setWorkerFactory(workerFactory)
                 .build()

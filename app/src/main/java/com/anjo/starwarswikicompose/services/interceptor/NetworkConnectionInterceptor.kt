@@ -9,13 +9,13 @@ import okhttp3.Request
 import okhttp3.Response
 
 class NetworkConnectionInterceptor(
-        private val context:Context
-) : Interceptor{
+        private val context: Context,
+) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        if(!isInternetAvailable()){
-           Log.e("NETWORK_SW_WIKI", "Network is not available")
+        if (!isInternetAvailable()) {
+            Log.e("NETWORK_SW_WIKI", "Network is not available")
         }
-        val builder:Request.Builder = chain.request().newBuilder()
+        val builder: Request.Builder = chain.request().newBuilder()
         return chain.proceed(builder.build())
     }
 
@@ -30,7 +30,7 @@ class NetworkConnectionInterceptor(
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)     -> true
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-            else -> false
+            else                                                       -> false
         }
         return result
     }

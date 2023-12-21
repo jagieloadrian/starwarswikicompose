@@ -5,7 +5,7 @@ import com.anjo.starwarswikicompose.services.data.repository.OperationRepository
 import javax.inject.Inject
 
 class GetSearchImagesUseCase @Inject constructor(
-        private val operationRepository: OperationRepository
+        private val operationRepository: OperationRepository,
 ) {
     suspend operator fun invoke(searchText: String): FlickrResponse {
         return operationRepository.getSearchPhotosInfo(searchText)

@@ -21,7 +21,7 @@ class AddNoteUseCaseTest {
     lateinit var addNoteUseCase: AddNoteUseCase
 
     @Test
-    fun `given note model when invoke addNoteUseCase then verify call`() =  runBlocking {
+    fun `given note model when invoke addNoteUseCase then verify call`() = runBlocking {
         //given
         val noteModel = NoteModel(id = 1, "someText")
 

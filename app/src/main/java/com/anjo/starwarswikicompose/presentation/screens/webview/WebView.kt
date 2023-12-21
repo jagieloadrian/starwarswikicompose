@@ -22,7 +22,7 @@ import com.anjo.starwarswikicompose.utils.Constants.WOOKIEPEDIA_URL
 
 
 @Composable
-fun WebViewScreen(navController:NavHostController) {
+fun WebViewScreen(navController: NavHostController) {
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) }
@@ -34,7 +34,8 @@ fun WebViewScreen(navController:NavHostController) {
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun WebView(
-        modifier: Modifier = Modifier) {
+        modifier: Modifier = Modifier,
+) {
     val url = WOOKIEPEDIA_URL
     var backEnabled by remember { mutableStateOf(false) }
     var webView: WebView? = null

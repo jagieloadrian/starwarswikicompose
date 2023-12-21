@@ -7,17 +7,17 @@ import kotlinx.serialization.json.JsonNames
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class FlickrPhoto(
-        val id:String,
-        val owner:String,
-        val secret:String,
-        val server:String,
-        val farm:Int,
-        val title:String,
+        val id: String,
+        val owner: String,
+        val secret: String,
+        val server: String,
+        val farm: Int,
+        val title: String,
         @JsonNames("ispublic")
-        val isPublic:Int,
+        val isPublic: Int,
         @JsonNames("isfriend")
-        val isFriend:Int,
+        val isFriend: Int,
         @JsonNames("isfamily")
-        val isFamily:Int,
-        val ownername:String
+        val isFamily: Int,
+        val ownername: String,
 )

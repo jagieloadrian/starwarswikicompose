@@ -26,7 +26,7 @@ object ApolloClientBuilder {
     @Singleton
     @Provides
     fun apolloClient(okHttpClient: OkHttpClient): ApolloClient {
-        val cacheFactory = MemoryCacheFactory(maxSizeBytes = 10*10*1024)
+        val cacheFactory = MemoryCacheFactory(maxSizeBytes = 10 * 10 * 1024)
         check(Looper.myLooper() == Looper.getMainLooper()) {
             "Only the main thread can get the apolloClient instance"
         }
@@ -50,7 +50,7 @@ object ApolloClientBuilder {
     @Singleton
     @Provides
     fun provideDataFetcher(
-            apolloClient: ApolloClient
+            apolloClient: ApolloClient,
     ): DataFetcher {
         return DataFetcherImpl(
                 apolloClient = apolloClient

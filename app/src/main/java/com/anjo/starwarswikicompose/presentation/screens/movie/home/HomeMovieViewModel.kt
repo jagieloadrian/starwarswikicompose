@@ -2,7 +2,7 @@ package com.anjo.starwarswikicompose.presentation.screens.movie.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.GetAllFilmsQuery
+import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ class HomeMovieViewModel @Inject constructor(private val useCase: UseCases) : Vi
     private val _fetchedFilms = MutableStateFlow(MovieState())
     val fetchedFilms = _fetchedFilms.asStateFlow()
 
-    init {
+    fun getMovies() {
         viewModelScope.launch {
             _fetchedFilms.update {
                 it.copy(
@@ -35,22 +35,16 @@ class HomeMovieViewModel @Inject constructor(private val useCase: UseCases) : Vi
     fun fetchFilms() =
         viewModelScope.launch(Dispatchers.IO) {
             _fetchedFilms.update { movieState ->
-                val films = useCase.getAllFilmsUseCase()?.sortedBy { it?.episodeID }
-                if (films != null) {
-                    movieState.copy(
-                            movies = films,
-                            isLoading = false
-                    )
-                } else {
-                    movieState.copy(
-                            isLoading = true
-                    )
-                }
+                val films = useCase.getAllFilmsUseCase().sortedBy { it.desc }
+                movieState.copy(
+                        movies = films,
+                        isLoading = false
+                )
             }
         }
 
     data class MovieState(
-            val movies: List<GetAllFilmsQuery.Film?>? = emptyList(),
-            val isLoading: Boolean = false
+            val movies: List<UniversalChunk> = emptyList(),
+            val isLoading: Boolean = false,
     )
 }

@@ -12,5 +12,5 @@ data class FlickrPhotos(
         @JsonNames("perpage")
         val perPage: Int,
         val total: Int,
-        val photo: List<FlickrPhoto>
+        val photo: List<FlickrPhoto>,
 )

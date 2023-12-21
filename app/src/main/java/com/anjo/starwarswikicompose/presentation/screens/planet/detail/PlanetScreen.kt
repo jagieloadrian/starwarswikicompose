@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -43,32 +41,29 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.anjo.starwarswikicompose.GetPlanetQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PEOPLE
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
+import com.anjo.starwarswikicompose.domain.model.sw.Planet
 import com.anjo.starwarswikicompose.presentation.common.GallerySlider
 import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFabWrap
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBoxColumn
-import com.anjo.starwarswikicompose.presentation.screens.common.RelatedBox
+import com.anjo.starwarswikicompose.presentation.screens.common.ShowHorizontalBoxes
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.choosePainter
-import com.anjo.starwarswikicompose.presentation.screens.common.clickableArrangementInLazyRow
 import com.anjo.starwarswikicompose.presentation.screens.common.findImage
-import com.anjo.starwarswikicompose.presentation.screens.common.shouldInstanceLazyRow
-import com.anjo.starwarswikicompose.presentation.screens.home.formatPopulation
+import com.anjo.starwarswikicompose.services.mapper.formatPopulation
 import com.anjo.starwarswikicompose.ui.theme.INFO_BOX_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.NAME_PLACEHOLDER_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
-import com.anjo.starwarswikicompose.utils.Category
-import com.anjo.starwarswikicompose.utils.Category.PEOPLE
-import com.anjo.starwarswikicompose.utils.Category.PLANETS
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.delay
@@ -81,14 +76,20 @@ fun PlanetContentScreen(
         planetViewModel: PlanetViewModel = hiltViewModel(),
 ) {
     val selectedPlanet by planetViewModel.selectedPlanet.collectAsState()
-    selectedPlanet?.let { PlanetVisualisation(it, navController, planetViewModel) }
+    val init = remember { mutableStateOf(true) }
+
+    if (init.value) {
+        planetViewModel.getPlanet()
+        init.value = false
+    }
+    PlanetVisualisation(selectedPlanet, navController, planetViewModel)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalFoundationApi
 @Composable
 private fun PlanetVisualisation(
-        selected: GetPlanetQuery.Planet, navController: NavHostController,
+        selected: Planet, navController: NavHostController,
         planetViewModel: PlanetViewModel,
 ) {
     val width = getLocalWidth()
@@ -96,7 +97,7 @@ private fun PlanetVisualisation(
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
     var fabExtended by remember { mutableStateOf(true) }
-    val imagesState = remember { mutableStateOf(planetViewModel.images.value) }
+    val imagesState by planetViewModel.images.collectAsState()
     val imagesStateRefresh = remember { mutableStateOf(true) }
     val clipManager = LocalClipboardManager.current
     val snackBarHostState = remember { SnackbarHostState() }
@@ -114,7 +115,6 @@ private fun PlanetVisualisation(
     LaunchedEffect(imagesStateRefresh.value) {
         planetViewModel.refreshImages(selected.id)
         delay(1000)
-        imagesState.value = planetViewModel.images.value
         imagesStateRefresh.value = false
     }
 
@@ -130,8 +130,8 @@ private fun PlanetVisualisation(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) },
             floatingActionButton = {
-                AddImageFabWrap(fabExtended, clipManager, navController, selected.name.orEmpty(), {
-                    planetViewModel.saveInDatabase(selected, it)
+                AddImageFabWrap(fabExtended, clipManager, navController, selected.name, {
+                    planetViewModel.saveInDatabase(selected.id, it)
                     imagesStateRefresh.value = true
                 }, refreshScope, snackBarHostState)
             },
@@ -153,7 +153,7 @@ private fun PlanetVisualisation(
                                     .align(alignment = Alignment.CenterHorizontally)
                                     .clip(CircleShape)
                                     .background(Color.Magenta))
-                    Text(text = selected.name.orEmpty(),
+                    Text(text = selected.name,
                             fontFamily = SOLOFontName,
                             modifier = Modifier.fillMaxWidth()
                                     .height(NAME_PLACEHOLDER_HEIGHT)
@@ -206,9 +206,9 @@ private fun PlanetVisualisation(
                                 null, selected.terrains,
                                 width = thirdWidth)
                     }
-                    ShowCharacters(selected, halfWidth, navController)
-                    ShowMovies(selected, halfWidth, navController)
-                    GallerySlider(images = imagesState.value,
+                    ShowHorizontalBoxes(selected.characterConnection, PEOPLE, halfWidth, navController)
+                    ShowHorizontalBoxes(selected.movieConnection, FILMS, halfWidth, navController)
+                    GallerySlider(images = imagesState,
                             onCLickLeft = {
                                 refreshScope.launch {
                                     snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
@@ -225,38 +225,6 @@ private fun PlanetVisualisation(
                 }
             }
             PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
-        }
-    }
-}
-
-@Composable
-private fun ShowCharacters(selectedPlanet: GetPlanetQuery.Planet, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedPlanet.residentConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedPlanet.residentConnection,
-                    count,
-                    selectedPlanet.residentConnection?.residents)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedPlanet.residentConnection!!.residents!!) { item ->
-                RelatedBox(item!!.id, item.name, PEOPLE, width = halfWidth, navController = navController)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShowMovies(selectedPlanet: GetPlanetQuery.Planet, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedPlanet.filmConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedPlanet.filmConnection,
-                    count,
-                    selectedPlanet.filmConnection?.films)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedPlanet.filmConnection!!.films!!) { item ->
-                RelatedBox(item!!.id, item.title, Category.FILMS, width = halfWidth, navController = navController)
-            }
         }
     }
 }

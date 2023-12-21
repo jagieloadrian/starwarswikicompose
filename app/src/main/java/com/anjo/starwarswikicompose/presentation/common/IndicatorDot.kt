@@ -21,7 +21,8 @@ import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
 fun IndicatorDot(
         isSelected: Boolean,
         selectedColor: Color = Color.Yellow,
-        unSelectedColor: Color = Color.LightGray) {
+        unSelectedColor: Color = Color.LightGray,
+) {
     val color = if (isSelected) selectedColor else unSelectedColor
     Box(
             modifier = Modifier
@@ -38,7 +39,8 @@ fun DotsIndicator(
         totalDots: Int,
         selectedIndex: Int,
         selectedColor: Color = Color.Yellow,
-        unSelectedColor: Color = Color.LightGray) {
+        unSelectedColor: Color = Color.LightGray,
+) {
     LazyRow(
             modifier = modifier.height(TOP_BAR_HEIGHT),
             horizontalArrangement = Arrangement.Center,

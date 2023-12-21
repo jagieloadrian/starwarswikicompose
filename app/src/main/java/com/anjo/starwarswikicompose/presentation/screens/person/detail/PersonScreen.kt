@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -43,33 +41,30 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.anjo.starwarswikicompose.GetPersonQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PEOPLE
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.SPECIES
+import com.anjo.starwarswikicompose.domain.model.sw.Category.STARSHIPS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.VEHICLES
+import com.anjo.starwarswikicompose.domain.model.sw.Person
 import com.anjo.starwarswikicompose.presentation.common.GallerySlider
 import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFabWrap
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
-import com.anjo.starwarswikicompose.presentation.screens.common.RelatedBox
+import com.anjo.starwarswikicompose.presentation.screens.common.ShowHorizontalBoxes
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.choosePainter
-import com.anjo.starwarswikicompose.presentation.screens.common.clickableArrangementInLazyRow
 import com.anjo.starwarswikicompose.presentation.screens.common.findImage
-import com.anjo.starwarswikicompose.presentation.screens.common.shouldInstanceLazyRow
 import com.anjo.starwarswikicompose.ui.theme.INFO_BOX_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.NAME_PLACEHOLDER_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
-import com.anjo.starwarswikicompose.utils.Category.FILMS
-import com.anjo.starwarswikicompose.utils.Category.PEOPLE
-import com.anjo.starwarswikicompose.utils.Category.PLANETS
-import com.anjo.starwarswikicompose.utils.Category.SPECIES
-import com.anjo.starwarswikicompose.utils.Category.STARSHIPS
-import com.anjo.starwarswikicompose.utils.Category.VEHICLES
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.delay
@@ -81,13 +76,19 @@ fun PersonContentScreen(
         personViewModel: PersonViewModel = hiltViewModel(),
 ) {
     val selectedPerson by personViewModel.selectedPerson.collectAsState()
-    selectedPerson?.let { PersonVisualisation(it, navController, personViewModel) }
+    val init = remember { mutableStateOf(true) }
+
+    if (init.value) {
+        personViewModel.getPerson()
+        init.value = false
+    }
+    PersonVisualisation(selectedPerson, navController, personViewModel)
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun PersonVisualisation(
-        selected: GetPersonQuery.Person,
+        selected: Person,
         navController: NavHostController,
         personViewModel: PersonViewModel,
 ) {
@@ -96,7 +97,7 @@ private fun PersonVisualisation(
     val thirdWidth = (width / 3).dp
     val state = rememberScrollState()
     var fabExtended by remember { mutableStateOf(true) }
-    val imagesState = remember { mutableStateOf(personViewModel.images.value) }
+    val imagesState by personViewModel.images.collectAsState()
     val imagesStateRefresh = remember { mutableStateOf(true) }
     val clipManager = LocalClipboardManager.current
     val snackBarHostState = remember { SnackbarHostState() }
@@ -114,7 +115,6 @@ private fun PersonVisualisation(
     LaunchedEffect(imagesStateRefresh.value) {
         personViewModel.refreshImages(selected.id)
         delay(1000)
-        imagesState.value = personViewModel.images.value
         imagesStateRefresh.value = false
     }
 
@@ -130,13 +130,13 @@ private fun PersonVisualisation(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) },
             floatingActionButton = {
-                AddImageFabWrap(fabExtended, clipManager, navController, selected.name.orEmpty(), {
-                    personViewModel.saveInDatabase(selected, it)
+                AddImageFabWrap(fabExtended, clipManager, navController, selected.name, {
+                    personViewModel.saveInDatabase(selected.id, it)
                     imagesStateRefresh.value = true
                 }, refreshScope, snackBarHostState)
             },
             snackbarHost = { SnackbarHost(snackBarHostState) }
-            ) { padding ->
+    ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)
                 .paint(painter = painterResource(R.drawable.stars_image),
                         contentScale = ContentScale.FillBounds)) {
@@ -152,7 +152,7 @@ private fun PersonVisualisation(
                                     .align(alignment = Alignment.CenterHorizontally)
                                     .clip(CircleShape)
                                     .background(Color.Magenta))
-                    Text(text = selected.name.orEmpty(),
+                    Text(text = selected.name,
                             fontFamily = SOLOFontName,
                             modifier = Modifier.fillMaxWidth()
                                     .height(NAME_PLACEHOLDER_HEIGHT)
@@ -166,15 +166,15 @@ private fun PersonVisualisation(
                             horizontalArrangement = Arrangement.SpaceAround) {
                         InfoBox(
                                 stringResource(R.string.homeworld_box_name),
-                                selected.homeworld?.name,
-                                id = selected.homeworld?.id,
+                                selected.homeworld.name,
+                                id = selected.homeworld.id,
                                 category = PLANETS,
                                 width = halfWidth,
                                 navController)
                         InfoBox(
                                 stringResource(R.string.species_box_name),
-                                selected.species?.name,
-                                id = selected.species?.id,
+                                selected.specie.name,
+                                id = selected.specie.id,
                                 category = SPECIES,
                                 width = halfWidth,
                                 navController)
@@ -204,18 +204,18 @@ private fun PersonVisualisation(
                                 width = thirdWidth)
                         InfoBox(
                                 stringResource(R.string.hair_box_name),
-                                selected.hairColor,
+                                selected.hair,
                                 width = thirdWidth)
                         InfoBox(
                                 stringResource(R.string.skin_box_name),
-                                selected.skinColor,
+                                selected.skin,
                                 width = thirdWidth)
                     }
                 }
-                ShowMovies(selected, halfWidth, navController)
-                ShowStarships(selected, halfWidth, navController)
-                ShowVehicles(selected, halfWidth, navController)
-                GallerySlider(images = imagesState.value,
+                ShowHorizontalBoxes(selected.movieConnection, FILMS, halfWidth, navController)
+                ShowHorizontalBoxes(selected.starshipConnection, STARSHIPS, halfWidth, navController)
+                ShowHorizontalBoxes(selected.vehicleConnection, VEHICLES, halfWidth, navController)
+                GallerySlider(images = imagesState,
                         onCLickLeft = {
                             refreshScope.launch {
                                 snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
@@ -232,54 +232,6 @@ private fun PersonVisualisation(
                         })
             }
             PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
-        }
-    }
-}
-
-@Composable
-private fun ShowMovies(selectedPerson: GetPersonQuery.Person, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedPerson.filmConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedPerson.filmConnection,
-                    count,
-                    selectedPerson.filmConnection?.films)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedPerson.filmConnection!!.films!!) { item ->
-                RelatedBox(item!!.id, item.title, FILMS, width = halfWidth, navController = navController)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShowStarships(selectedPerson: GetPersonQuery.Person, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedPerson.starshipConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedPerson.starshipConnection,
-                    count,
-                    selectedPerson.starshipConnection?.starships)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedPerson.starshipConnection!!.starships!!) { item ->
-                RelatedBox(item!!.id, item.name, STARSHIPS, width = halfWidth, navController = navController)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShowVehicles(selectedPerson: GetPersonQuery.Person, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedPerson.vehicleConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedPerson.vehicleConnection,
-                    count,
-                    selectedPerson.vehicleConnection?.vehicles)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedPerson.vehicleConnection!!.vehicles!!) { item ->
-                RelatedBox(item!!.id, item.name, VEHICLES, width = halfWidth, navController = navController)
-            }
         }
     }
 }

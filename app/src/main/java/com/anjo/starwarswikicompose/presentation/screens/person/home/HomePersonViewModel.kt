@@ -2,7 +2,7 @@ package com.anjo.starwarswikicompose.presentation.screens.person.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.GetAllPeoplesQuery
+import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ class HomePersonViewModel @Inject constructor(private val useCase: UseCases) : V
     private val _fetchedPeople = MutableStateFlow(PeopleState())
     val fetchedPeople = _fetchedPeople.asStateFlow()
 
-    init {
+    fun getPeople() {
         viewModelScope.launch {
             _fetchedPeople.update {
                 it.copy(
@@ -33,21 +33,15 @@ class HomePersonViewModel @Inject constructor(private val useCase: UseCases) : V
         viewModelScope.launch(Dispatchers.IO) {
             _fetchedPeople.update { peopleState ->
                 val people = useCase.getAllPeopleUseCase()
-                if (people != null) {
-                    peopleState.copy(
-                            people = people,
-                            isLoading = false
-                    )
-                } else {
-                    peopleState.copy(
-                            isLoading = true
-                    )
-                }
+                peopleState.copy(
+                        people = people,
+                        isLoading = false
+                )
             }
         }
-}
 
-data class PeopleState(
-        val people: List<GetAllPeoplesQuery.Person?>? = emptyList(),
-        val isLoading: Boolean = false
-)
+    data class PeopleState(
+            val people: List<UniversalChunk> = emptyList(),
+            val isLoading: Boolean = false,
+    )
+}

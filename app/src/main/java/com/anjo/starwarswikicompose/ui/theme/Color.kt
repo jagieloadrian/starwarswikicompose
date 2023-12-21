@@ -23,12 +23,12 @@ val RELATED_BOXES_COLORS = listOf(Color.Yellow, Color.Red, Color.Blue)
 val SHIMMER_COLORS = RELATED_BOXES_COLORS
 
 
-
 val Colors.welcomeScreenBackgroundColor
     get() = if (isLight) Color.White else Color.Black
 
 val Colors.welcomeScreenImageBackgroundColor
-    get() = if (isLight) listOf( Color.Black, ShimmerMediumGray, Color.White) else listOf( Color.White, ShimmerMediumGray, Color.Black)
+    get() = if (isLight) listOf(Color.Black, ShimmerMediumGray, Color.White) else listOf(Color.White, ShimmerMediumGray,
+            Color.Black)
 
 
 val Colors.titleColor

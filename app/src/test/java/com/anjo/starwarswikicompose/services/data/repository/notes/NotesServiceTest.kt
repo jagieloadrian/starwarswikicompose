@@ -37,7 +37,7 @@ class NotesServiceTest {
     }
 
     @Test
-    fun `given note model when  deleteNote then verify call`() =  runBlocking {
+    fun `given note model when  deleteNote then verify call`() = runBlocking {
         //given
         val noteModel = NoteModel(id = 1, "someText")
 
@@ -51,7 +51,7 @@ class NotesServiceTest {
     }
 
     @Test
-    fun `given note model when addNote then verify call`() =  runBlocking {
+    fun `given note model when addNote then verify call`() = runBlocking {
         //given
         val noteModel = NoteModel(id = 1, "someText")
 

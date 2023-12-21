@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -43,36 +41,32 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.anjo.starwarswikicompose.GetVehicleQuery
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.sw.Category
+import com.anjo.starwarswikicompose.domain.model.sw.Category.VEHICLES
+import com.anjo.starwarswikicompose.domain.model.sw.Vehicle
 import com.anjo.starwarswikicompose.presentation.common.GallerySlider
 import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFabWrap
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBox
 import com.anjo.starwarswikicompose.presentation.screens.common.InfoBoxColumn
-import com.anjo.starwarswikicompose.presentation.screens.common.RelatedBox
+import com.anjo.starwarswikicompose.presentation.screens.common.ShowHorizontalBoxes
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.screens.common.choosePainter
-import com.anjo.starwarswikicompose.presentation.screens.common.clickableArrangementInLazyRow
 import com.anjo.starwarswikicompose.presentation.screens.common.findImage
-import com.anjo.starwarswikicompose.presentation.screens.common.shouldInstanceLazyRow
 import com.anjo.starwarswikicompose.ui.theme.INFO_BOX_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.NAME_PLACEHOLDER_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.VEHICLE_PICTURE_HEIGHT
-import com.anjo.starwarswikicompose.utils.Category
-import com.anjo.starwarswikicompose.utils.Category.VEHICLES
 import com.anjo.starwarswikicompose.utils.Constants.DELETE_AND_REFRESH_IMAGES
 import com.anjo.starwarswikicompose.utils.Constants.REFRESH_IMAGES
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -81,14 +75,20 @@ fun VehicleContentScreen(
         vehicleViewModel: VehicleViewModel = hiltViewModel(),
 ) {
     val selectedVehicle by vehicleViewModel.selectedVehicle.collectAsState()
-    selectedVehicle?.let { VehicleVisualisation(it, navController, vehicleViewModel) }
+    val init = remember { mutableStateOf(true) }
+
+    if (init.value) {
+        vehicleViewModel.getVehicle()
+        init.value = false
+    }
+    VehicleVisualisation(selectedVehicle, navController, vehicleViewModel)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalFoundationApi
 @Composable
 fun VehicleVisualisation(
-        selected: GetVehicleQuery.Vehicle, navController: NavHostController,
+        selected: Vehicle, navController: NavHostController,
         vehicleViewModel: VehicleViewModel,
 ) {
     val width = getLocalWidth()
@@ -130,8 +130,8 @@ fun VehicleVisualisation(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) },
             floatingActionButton = {
-                AddImageFabWrap(fabExtended, clipManager, navController, selected.name.orEmpty(), {
-                    vehicleViewModel.saveInDatabase(selected, it)
+                AddImageFabWrap(fabExtended, clipManager, navController, selected.name, {
+                    vehicleViewModel.saveInDatabase(selected.id, it)
                     imagesStateRefresh.value = true
                 }, refreshScope, snackBarHostState)
             },
@@ -154,7 +154,7 @@ fun VehicleVisualisation(
                                     .align(alignment = Alignment.CenterHorizontally)
                                     .clip(CircleShape)
                                     .background(Color.Magenta))
-                    Text(text = selected.name.orEmpty(),
+                    Text(text = selected.name,
                             fontFamily = SOLOFontName,
                             modifier = Modifier.fillMaxWidth()
                                     .height(NAME_PLACEHOLDER_HEIGHT)
@@ -184,7 +184,7 @@ fun VehicleVisualisation(
                                 width = halfWidth)
                         InfoBox(
                                 stringResource(R.string.cost_box_name),
-                                selected.costInCredits,
+                                selected.cost,
                                 width = halfWidth)
                     }
                     Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -208,7 +208,7 @@ fun VehicleVisualisation(
                             horizontalArrangement = Arrangement.SpaceEvenly) {
                         InfoBox(
                                 stringResource(R.string.v_max_box_name),
-                                selected.maxAtmospheringSpeed,
+                                selected.vMax,
                                 width = thirdWidth)
                         InfoBox(
                                 stringResource(R.string.cargo_box_name),
@@ -219,8 +219,8 @@ fun VehicleVisualisation(
                                 selected.consumables,
                                 width = thirdWidth)
                     }
-                    ShowPilots(selected, halfWidth, navController)
-                    ShowMovies(selected, halfWidth, navController)
+                    ShowHorizontalBoxes(selected.characterConnection, Category.PEOPLE, halfWidth, navController)
+                    ShowHorizontalBoxes(selected.movieConnection, Category.FILMS, halfWidth, navController)
                     GallerySlider(images = imagesState.value,
                             onCLickLeft = {
                                 refreshScope.launch {
@@ -238,38 +238,6 @@ fun VehicleVisualisation(
                 }
             }
             PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
-        }
-    }
-}
-
-@Composable
-private fun ShowPilots(selectedVehicle: GetVehicleQuery.Vehicle, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedVehicle.pilotConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedVehicle.pilotConnection,
-                    count,
-                    selectedVehicle.pilotConnection?.pilots)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedVehicle.pilotConnection!!.pilots!!) { item ->
-                RelatedBox(item!!.id, item.name, Category.PEOPLE, width = halfWidth, navController = navController)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShowMovies(selectedVehicle: GetVehicleQuery.Vehicle, halfWidth: Dp, navController: NavHostController) {
-    val count = selectedVehicle.filmConnection?.totalCount
-    if (shouldInstanceLazyRow(selectedVehicle.filmConnection,
-                    selectedVehicle.filmConnection?.totalCount,
-                    selectedVehicle.filmConnection?.films)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = selectedVehicle.filmConnection!!.films!!) { item ->
-                RelatedBox(item!!.id, item.title, Category.FILMS, width = halfWidth, navController = navController)
-            }
         }
     }
 }

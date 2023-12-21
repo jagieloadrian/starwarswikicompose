@@ -2,7 +2,7 @@ package com.anjo.starwarswikicompose.presentation.screens.starship.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.GetAllStarshipsQuery
+import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +17,7 @@ class HomeStarshipViewModel @Inject constructor(private val useCase: UseCases) :
     private val _fetchedStarship = MutableStateFlow(StarshipState())
     val fetchedStarships = _fetchedStarship
 
-    init {
+   fun getStarships() {
         viewModelScope.launch {
             _fetchedStarship.update {
                 it.copy(
@@ -32,21 +32,15 @@ class HomeStarshipViewModel @Inject constructor(private val useCase: UseCases) :
         viewModelScope.launch(Dispatchers.IO) {
             _fetchedStarship.update { state ->
                 val starships = useCase.getAllStarshipsUseCase()
-                if (starships != null) {
-                    state.copy(
-                            starships = starships,
-                            isLoading = false
-                    )
-                } else {
-                    state.copy(
-                            isLoading = true
-                    )
-                }
+                state.copy(
+                        starships = starships,
+                        isLoading = false
+                )
             }
         }
 
     data class StarshipState(
-            val starships: List<GetAllStarshipsQuery.Starship?>? = emptyList(),
-            val isLoading: Boolean = false
+            val starships: List<UniversalChunk> = emptyList(),
+            val isLoading: Boolean = false,
     )
 }

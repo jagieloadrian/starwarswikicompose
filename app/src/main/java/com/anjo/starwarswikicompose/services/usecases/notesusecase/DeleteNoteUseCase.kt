@@ -9,6 +9,6 @@ class DeleteNoteUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(noteModel: NoteModel) {
-    notesRepository.deleteNote(noteModel)
+        notesRepository.deleteNote(noteModel)
     }
 }

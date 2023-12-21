@@ -30,14 +30,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.ui.theme.NETWORK_ERROR_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
-import com.anjo.starwarswikicompose.utils.Category
 
 @Composable
 fun EmptyScreen(
         category: Category?,
-        text : String = ""
+        text: String = "",
 ) {
     val textFiller = category?.categoryName ?: text
 
@@ -58,7 +58,6 @@ fun EmptyScreen(
     LaunchedEffect(key1 = true) {
         startAnimation = true
     }
-
     EmptyContent(
             alphaAnim = alphaAnim,
             icon = icon,

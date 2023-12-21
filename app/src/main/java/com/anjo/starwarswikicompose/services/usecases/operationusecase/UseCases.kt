@@ -33,5 +33,5 @@ data class UseCases(
         val getAllVehicleUseCase: GetAllVehicleUseCase,
         val getVehicleUseCase: GetVehicleUseCase,
         val getRecentImagesUseCase: GetRecentImagesUseCase,
-        val getSearchImagesUseCase: GetSearchImagesUseCase
+        val getSearchImagesUseCase: GetSearchImagesUseCase,
 )

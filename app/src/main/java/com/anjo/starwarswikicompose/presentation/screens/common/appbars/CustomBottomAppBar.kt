@@ -26,8 +26,8 @@ import com.anjo.starwarswikicompose.ui.theme.HOME_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
-import com.anjo.starwarswikicompose.ui.theme.mainContentColor
 import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
+import com.anjo.starwarswikicompose.ui.theme.mainContentColor
 
 @Composable
 fun CustomBottomAppBar(navHostController: NavHostController) {

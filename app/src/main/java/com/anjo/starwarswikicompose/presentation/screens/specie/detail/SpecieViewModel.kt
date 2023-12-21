@@ -3,13 +3,12 @@ package com.anjo.starwarswikicompose.presentation.screens.specie.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anjo.starwarswikicompose.GetSpecieQuery
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
+import com.anjo.starwarswikicompose.domain.model.sw.Category
+import com.anjo.starwarswikicompose.domain.model.sw.Specie
 import com.anjo.starwarswikicompose.services.usecases.imagesliderusecase.ImageSliderUseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
-import com.anjo.starwarswikicompose.utils.Category.SPECIES
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_SPECIE_ARGUMENT_KEY
-import com.anjo.starwarswikicompose.utils.toImageSliderModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,27 +20,27 @@ import javax.inject.Inject
 class SpecieViewModel @Inject constructor(
         private val useCase: UseCases,
         private val imageSliderUseCases: ImageSliderUseCases,
-        savedStateHandle: SavedStateHandle,
+        private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _selectedSpecie: MutableStateFlow<GetSpecieQuery.Species?> = MutableStateFlow(null)
-    val selectedSpecie: StateFlow<GetSpecieQuery.Species?> = _selectedSpecie
+    private val _selectedSpecie: MutableStateFlow<Specie> = MutableStateFlow(Specie())
+    val selectedSpecie: StateFlow<Specie> = _selectedSpecie
 
     private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
     val images: StateFlow<List<ImageSliderModel>> = _images
 
-    init {
+    fun getSpecie() {
         viewModelScope.launch(Dispatchers.IO) {
             val specieId = savedStateHandle.get<String>(DETAILS_SPECIE_ARGUMENT_KEY)
-            _selectedSpecie.value = specieId?.let { useCase.getSpecieUseCase(id = it) }
+            _selectedSpecie.value = specieId?.let { useCase.getSpecieUseCase(id = it) } ?: Specie()
             specieId?.let {
-                _images.value = imageSliderUseCases.getImagesForObjectUseCase(specieId, SPECIES)
+                _images.value = imageSliderUseCases.getImagesForObjectUseCase(specieId, Category.SPECIES)
             }
         }
     }
 
-    fun saveInDatabase(selected: GetSpecieQuery.Species, photoUrl: String) {
-        val modelObject = selected.toImageSliderModel(photoUrl)
+    fun saveInDatabase(objectId: String, photoUrl: String) {
+        val modelObject = ImageSliderModel(objectId = objectId, url = photoUrl, objectType = Category.SPECIES)
         viewModelScope.launch(Dispatchers.IO) {
             imageSliderUseCases.addImageToRoomUseCase(modelObject)
         }
@@ -49,7 +48,7 @@ class SpecieViewModel @Inject constructor(
 
     fun refreshImages(specieId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val anotherList = imageSliderUseCases.getImagesForObjectUseCase(specieId, SPECIES)
+            val anotherList = imageSliderUseCases.getImagesForObjectUseCase(specieId, Category.SPECIES)
             _images.value = anotherList
         }
     }

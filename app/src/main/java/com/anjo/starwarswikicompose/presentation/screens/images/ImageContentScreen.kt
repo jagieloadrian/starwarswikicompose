@@ -80,6 +80,7 @@ fun ImageScreen(
             refreshing = false
         }
     }
+
     val snackBarHostState = remember { SnackbarHostState() }
     val state = rememberPullRefreshState(refreshing, ::refresh)
     var startAnimation by remember { mutableStateOf(false) }
@@ -162,7 +163,7 @@ fun LazyColumnPhotos(
             verticalArrangement = Arrangement.spacedBy(LARGE_PADDING),
             contentPadding = PaddingValues(all = SMALL_PADDING)) {
         items(photos) { photo ->
-            ImageBox(photo = photo) {addCopyAction()}
+            ImageBox(photo = photo) { addCopyAction() }
         }
     }
 }

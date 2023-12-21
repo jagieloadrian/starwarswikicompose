@@ -61,9 +61,9 @@ import com.anjo.starwarswikicompose.presentation.screens.notes.CardNote
 import com.anjo.starwarswikicompose.ui.theme.HOME_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
-import com.anjo.starwarswikicompose.ui.theme.reverseMainBackgroundColors
-import com.anjo.starwarswikicompose.ui.theme.mainContentColor
 import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
+import com.anjo.starwarswikicompose.ui.theme.mainContentColor
+import com.anjo.starwarswikicompose.ui.theme.reverseMainBackgroundColors
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import com.anjo.starwarswikicompose.utils.muteMusic
 import com.anjo.starwarswikicompose.utils.volumeUpMusic
