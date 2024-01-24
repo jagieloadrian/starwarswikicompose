@@ -77,12 +77,13 @@ fun CustomTopAppBar(
 ) {
     val scope = rememberCoroutineScope()
     var soundOn by remember { mutableStateOf(true) }
-    val notification = remember { mutableStateOf(true) }
+    val notification = remember { mutableStateOf(false) }
     val notificationPermissionRun = remember { mutableStateOf(false) }
     val listItems = listOf(Notes, Feedback, Info, Notification, Sound)
     val feedbackDialog = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(false) }
     val openNotes = remember { mutableStateOf(false) }
+    val policy = checkNotificationPolicyAccess()
     val context = LocalContext.current
     val halfWidth = (getLocalWidth() / 2).dp
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -101,8 +102,8 @@ fun CustomTopAppBar(
         CardNote(onDismissAction = { openNotes.value = false })
     }
     if (notificationPermissionRun.value) {
-        PermissionLogic(notification, mainViewModel, context)
-        notificationPermissionRun.value = false
+        PermissionLogic(notification, mainViewModel, context, policy) { notificationPermissionRun.value = false }
+        notification.value = (policy && notification.value)
     }
 
     TopAppBar(modifier = Modifier.fillMaxWidth()
@@ -237,8 +238,9 @@ private fun PermissionLogic(
         notification: MutableState<Boolean>,
         mainViewModel: MainViewModel,
         context: Context,
+        policy: Boolean,
+        onDismissDialog: () -> Unit,
 ) {
-    val policy = checkNotificationPolicyAccess()
     if (policy) {
         if (notification.value) {
             mainViewModel.addPeriodicWorker(context)
@@ -246,7 +248,7 @@ private fun PermissionLogic(
             mainViewModel.cancelAllWorkers(context)
         }
     } else {
-        PermissionScreen({ notification.value = true }, {})
+        PermissionScreen(periodicWorker = { notification.value = true }, { onDismissDialog() })
     }
 }
 

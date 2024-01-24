@@ -57,7 +57,7 @@ class OperationRepositoryTest {
 
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
-    fun `given boolean when readOnboardingState then verify call`(boolean: Boolean) = runBlocking {
+    fun `given boolean when readOnboardingState then return expected response`(boolean: Boolean) = runBlocking {
         //given
         val expected = flow { emit(boolean) }
 
@@ -246,7 +246,8 @@ class OperationRepositoryTest {
     @Test
     fun `given searchText when getSearchPhotosInfo then return flickrResponse`() = runBlocking {
         //given
-        val expected = FlickrResponse(stat = FlickrStatus.ok, code = 200, photos = FlickrPhotos(0,0,0,0, emptyList()))
+        val expected =
+            FlickrResponse(stat = FlickrStatus.ok, code = 200, photos = FlickrPhotos(0, 0, 0, 0, emptyList()))
         val searchText = "searchText"
 
         coEvery { flickrApi.getSearchPhotosInfo(searchText = searchText) } returns expected
@@ -261,7 +262,8 @@ class OperationRepositoryTest {
     @Test
     fun `given mock  when getRecentPhotos then return flickrResponse`() = runBlocking {
         //given
-        val expected = FlickrResponse(stat = FlickrStatus.ok, code = 200, photos = FlickrPhotos(0,0,0,0, emptyList()))
+        val expected =
+            FlickrResponse(stat = FlickrStatus.ok, code = 200, photos = FlickrPhotos(0, 0, 0, 0, emptyList()))
 
         coEvery { flickrApi.getRecentPhotos() } returns expected
 

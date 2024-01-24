@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +48,7 @@ import com.anjo.starwarswikicompose.ui.theme.welcomeScreenImageBackgroundColor
 import com.anjo.starwarswikicompose.utils.Constants.GO_TO_APP
 import com.anjo.starwarswikicompose.utils.Constants.LAST_ON_BOARDING_PAGE
 import com.anjo.starwarswikicompose.utils.Constants.ON_BOARDING_PAGE_COUNT
+import com.anjo.starwarswikicompose.utils.Constants.WELCOME_BUTTON_TAG
 import com.anjo.starwarswikicompose.utils.OnboardingPage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -88,7 +90,7 @@ fun WelcomeScreen(
                 state = pagerState,
                 verticalAlignment = Alignment.Top
         ) { page ->
-            PagerScreen(onboardingPage = pages[page])
+            PagerScreen(onboardingPage = pages[page], index = page)
 
         }
         DotsIndicator(
@@ -102,14 +104,14 @@ fun WelcomeScreen(
                 modifier = Modifier.weight(1f),
                 pagerState = pagerState
         ) {
-            navController.navigate(Screen.Home.route)
             welcomeViewModel.saveOnBoardingState(completed = true)
+            navController.navigate(Screen.Home.route)
         }
     }
 }
 
 @Composable
-fun PagerScreen(onboardingPage: OnboardingPage) {
+fun PagerScreen(onboardingPage: OnboardingPage, index: Int) {
     Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -125,7 +127,7 @@ fun PagerScreen(onboardingPage: OnboardingPage) {
                                 shape = RoundedCornerShape(EXTRA_SMALL_PADDING),
                                 alpha = 0.8f),
                 painter = painterResource(onboardingPage.image),
-                contentDescription = stringResource(R.string.on_boarding_image),
+                contentDescription = stringResource(R.string.on_boarding_image) + index,
                 contentScale = ContentScale.Fit
 
         )
@@ -170,7 +172,7 @@ fun FinishButton(
                 visible = pagerState.currentPage == LAST_ON_BOARDING_PAGE
 
         ) {
-            Button(
+            Button(modifier = Modifier.testTag(WELCOME_BUTTON_TAG),
                     onClick = onClick,
                     colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.mainBackgroundColors,

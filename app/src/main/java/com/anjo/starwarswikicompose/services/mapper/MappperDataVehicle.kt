@@ -19,6 +19,7 @@ fun GetVehicleQuery.Vehicle.mapToVehicle(): Vehicle {
             passengers = passengers ?: "",
             vMax = maxAtmospheringSpeed?.toString() ?: "",
             consumables = consumables ?: "",
+            cargoCapacity = cargoCapacity?.toString() ?: "",
             characterConnection = pilotConnection?.mapToConnection() ?: emptyConnection(),
             movieConnection = filmConnection?.mapToConnection() ?: emptyConnection()
     )

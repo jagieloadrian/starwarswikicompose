@@ -7,7 +7,7 @@ image: eclipse-temurin:17-jdk-jammy
 variables:
   ANDROID_COMPILE_SDK: "33"
   ANDROID_BUILD_TOOLS: "33.0.2"
-  ANDROID_SDK_TOOLS:   "9477386"
+  ANDROID_SDK_TOOLS: "9477386"
 
 before_script:
   - apt-get --quiet update --yes
@@ -15,40 +15,73 @@ before_script:
   - export ANDROID_HOME="${PWD}/android-sdk-root"
   - install -d $ANDROID_HOME
 
-
   - wget --no-verbose --output-document=$ANDROID_HOME/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip
   - unzip -q -d "$ANDROID_HOME/cmdline-tools" "$ANDROID_HOME/cmdline-tools.zip"
   - mv -T "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/tools"
   - export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/cmdline-tools/tools/bin
   - sdkmanager --version
 
-#  # use yes to accept all licenses
+  #  use yes to accept all licenses
   - yes | sdkmanager --licenses > /dev/null || true
   - sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}"
   - sdkmanager "platform-tools"
   - sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}"
 
   # Not necessary, but just for surity
-  - chmod +x ./gradlew
-
+  - chmod +x ./gradlew 
 
 stages:
   - test
   - build
 
-test:
+unitTest:
   stage: test
+  timeout: 20 minutes
   script:
     - echo "Run Unit tests"
     - ./gradlew testDebugUnitTest
-
+  artifacts:
+    name: 'SW_COMPOSE_UNIT_TEST_REPORT-$CI_PIPELINE_IID'
+    expire_in: 30 days
+    when: always
+    reports:
+      junit: [
+        ./**/build/test-results/testDebugUnitTest/TEST-*.xml,
+      ]
 build:
   stage: build
+  timeout: 20 minutes
   script:
-    - ./gradlew build
+    - ./gradlew assemble
     - echo "Publish artifact!"
   artifacts:
     name: 'SW_COMPOSE-$CI_PIPELINE_IID'
     paths:
-    - /builds/jagieloadrian/starwarswikicompose/app/build/outputs/apk/debug/*.apk
+      - /builds/jagieloadrian/starwarswikicompose/app/build/outputs/apk/debug/*.apk
     expire_in: 30 days
+
+
+#instrumentedTest:
+#  stage: test
+#  script:
+#    - echo "install lib11"
+#    - apt-get --quiet install libx11-dev libpulse0 libgl1 libnss3 libxcomposite-dev libxcursor1 libasound2 --yes
+#    - echo "build android emulator for instrumented test"
+#    - SDK="${ANDROID_HOME}/cmdline-tools/tools/bin/sdkmanager"
+#    - IMG_EMU="system-images;android-26;google_apis;x86"
+#    - echo "$IMG_EMU"
+#    - echo "y" | $SDK --install "${IMG_EMU}"
+#    - AVD="${ANDROID_HOME}/cmdline-tools/tools/bin/avdmanager"
+#    - EMU="${ANDROID_HOME}/emulator/emulator"
+#    - ADB="${ANDROID_HOME}/platform-tools/adb"
+#    - NAME_EMU="sw_wiki_emulator"
+#    - echo "no" | $AVD create avd -n ${NAME_EMU} -k "${IMG_EMU}" --force
+#    - echo "List avds"
+#    - $EMU -list-avds
+#    - echo "Starting emulator"
+#    - nohup $EMU -avd ${NAME_EMU} -skin 1080x2400 -memory 2048 -no-snapshot -no-audio -no-boot-anim -accel auto -gpu auto -qemu -lcd-density 420 > /dev/null 2>&1 &
+#    - $ADB wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done; input keyevent 82'
+#    - $ADB devices
+#    - echo "Emulator started"
+#    - echo "Run instrumented test"
+#    - ./gradlew connectedCheck

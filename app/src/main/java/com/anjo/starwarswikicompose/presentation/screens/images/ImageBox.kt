@@ -1,9 +1,6 @@
 package com.anjo.starwarswikicompose.presentation.screens.images
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,11 +32,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhoto
 import com.anjo.starwarswikicompose.presentation.common.CornerButton
+import com.anjo.starwarswikicompose.services.intent.sendIntent
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.MEDIUM_PADDING
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_SPACING
@@ -48,6 +46,9 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.utils.Constants.MAX_LINES_NUMBER
 import com.anjo.starwarswikicompose.utils.Constants.MEDIUM_WHITE_BACKGROUND_COPY
 import com.anjo.starwarswikicompose.utils.buildImageUrl
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -58,6 +59,7 @@ fun ImageBox(
     val title = photo.title.ifEmpty { "\uD83D\uDE4A" }
     val authorName = photo.ownername.ifEmpty { "\uD83D\uDE4A" }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val clipboardManager = LocalClipboardManager.current
     val photoUrl = buildImageUrl(photo)
 
@@ -79,7 +81,7 @@ fun ImageBox(
                     .align(Alignment.TopEnd),
                     color = Color.Transparent) {
                 CornerButton(imageVector = Icons.Filled.Share) {
-                    sendIntent(photoUrl = photoUrl, context = context)
+                    scope.launch(Dispatchers.IO) { sendIntent(photoUrl = photoUrl, context = context) }
                 }
 
             }
@@ -143,19 +145,4 @@ private fun InfoRow(fieldName: String, description: String) {
 fun copyToClipBoard(clipboardManager: ClipboardManager, text: String) {
     val annotatedString = AnnotatedString(text)
     clipboardManager.setText(annotatedString)
-}
-
-
-fun sendIntent(photoUrl: String, context: Context) {
-    val uri = Uri.parse(photoUrl)
-    val sendIntent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, "Wow, look at this awesome image from Star Wars Wiki!")
-        putExtra(Intent.EXTRA_STREAM, uri)
-        type = "image/*"
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
-
-    val shareIntent = Intent.createChooser(sendIntent, "share image")
-    startActivity(context, shareIntent, null)
 }

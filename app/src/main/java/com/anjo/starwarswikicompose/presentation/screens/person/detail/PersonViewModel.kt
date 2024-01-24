@@ -40,7 +40,7 @@ class PersonViewModel @Inject constructor(
     }
 
     fun saveInDatabase(objectId: String, photoUrl: String) {
-        val modelObject = ImageSliderModel(objectId = objectId, url = photoUrl, objectType = Category.FILMS)
+        val modelObject = ImageSliderModel(objectId = objectId, url = photoUrl, objectType = Category.PEOPLE)
 
         viewModelScope.launch(Dispatchers.IO) {
             imageSliderUseCases.addImageToRoomUseCase(modelObject)
@@ -48,7 +48,7 @@ class PersonViewModel @Inject constructor(
     }
 
     fun deleteFromDatabase(image: ImageSliderModel) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             imageSliderUseCases.deleteImageFromRoomUseCase(image)
         }
     }

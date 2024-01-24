@@ -17,7 +17,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.anjo.starwarswikicompose.navigation.Screen
 import com.anjo.starwarswikicompose.navigation.SetupNavGraph
-import com.anjo.starwarswikicompose.presentation.common.PermissionScreen
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import com.anjo.starwarswikicompose.ui.theme.StarWarsWikiComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,14 +47,12 @@ class MainActivity : ComponentActivity() {
 
             mainViewModel.createMusic(current)
             BackgroundMusicLaunching(lifecycleOwner, mainViewModel)
-            PermissionScreen(periodicWorker = { mainViewModel.addPeriodicWorker(current) }, composable = {
-                StarWarsWikiComposeTheme {
-                    navController = rememberNavController()
-                    SetupNavGraph(navController = navController,
-                            startDestination = if (completed) Screen.Home.route else Screen.Welcome.route,
-                            modifier = Modifier)
-                }
-            })
+            StarWarsWikiComposeTheme {
+                navController = rememberNavController()
+                SetupNavGraph(navController = navController,
+                        startDestination = if (completed) Screen.Home.route else Screen.Welcome.route,
+                        modifier = Modifier)
+            }
         }
         lifecycleScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             useCases.readOnboardingUseCase().collect {
