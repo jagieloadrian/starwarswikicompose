@@ -147,7 +147,7 @@ private fun SlideEnterAnimation(
     return {
         slideIntoContainer(
                 towards = towards,
-                animationSpec = tween(2500, delayMillis = 100)
+                animationSpec = tween(1500, delayMillis = 100)
         )
     }
 }
@@ -158,7 +158,7 @@ private fun SlideExitAnimation(
     return {
         slideOutOfContainer(
                 towards = towards,
-                animationSpec = tween(2500, delayMillis = 100)
+                animationSpec = tween(1500, delayMillis = 100)
         )
     }
 }

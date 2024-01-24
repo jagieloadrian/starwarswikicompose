@@ -21,13 +21,13 @@ class HomeMovieViewModel @Inject constructor(private val useCase: UseCases) : Vi
     val fetchedFilms = _fetchedFilms.asStateFlow()
 
     fun getMovies() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _fetchedFilms.update {
                 it.copy(
                         isLoading = true
                 )
             }
-            delay(5.seconds)
+            delay(3.seconds)
             fetchFilms()
         }
     }

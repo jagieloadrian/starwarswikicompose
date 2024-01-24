@@ -6,10 +6,12 @@ import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class HomeStarshipViewModel @Inject constructor(private val useCase: UseCases) : ViewModel() {
@@ -18,12 +20,13 @@ class HomeStarshipViewModel @Inject constructor(private val useCase: UseCases) :
     val fetchedStarships = _fetchedStarship
 
    fun getStarships() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _fetchedStarship.update {
                 it.copy(
                         isLoading = true
                 )
             }
+            delay(3.seconds)
             fetchStarships()
         }
     }

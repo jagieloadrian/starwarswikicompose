@@ -19,6 +19,9 @@ fun GetStarshipQuery.Starship.mapToStarship(): Starship {
             passengers = passengers ?: "",
             vMax = maxAtmospheringSpeed?.toString() ?: "",
             consumables = consumables ?: "",
+            hyperdriveRating = hyperdriveRating?.toString() ?: "",
+            megalight = MGLT?.toString() ?: "",
+            cargoCapacity = cargoCapacity?.toString() ?: "",
             characterConnection = pilotConnection?.mapToConnection() ?: emptyConnection(),
             movieConnection = filmConnection?.mapToConnection() ?: emptyConnection()
     )

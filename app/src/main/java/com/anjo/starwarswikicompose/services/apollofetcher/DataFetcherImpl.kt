@@ -81,8 +81,7 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
     }
 
     override suspend fun fetchStarships(): List<UniversalChunk> {
-        val response =
-            getResponse(GetAllStarshipsQuery(), Category.STARSHIPS)?.data?.allStarships?.starships ?: listOf()
+        val response = getResponse(GetAllStarshipsQuery(), Category.STARSHIPS)?.data?.allStarships?.starships ?: listOf()
         return response.mapFromStarships()
     }
 

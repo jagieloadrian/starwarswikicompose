@@ -3,12 +3,11 @@ package com.anjo.starwarswikicompose.utils
 import com.anjo.starwarswikicompose.BuildConfig
 
 object Constants {
-
+    const val WELCOME_BUTTON_TAG = "welcome_button_tag"
     const val ON_BOARDING_PAGE_COUNT = 3
     const val LAST_ON_BOARDING_PAGE = 2
     const val MAX_LINES_NUMBER = 2
     const val GO_TO_APP = "Ok, I'm going to app!"
-    const val LIMIT_TEXT_IN_LINE = 20
     const val DETAILS_PERSON_ARGUMENT_KEY = "personId"
     const val DETAILS_MOVIE_ARGUMENT_KEY = "movieId"
     const val DETAILS_PLANET_ARGUMENT_KEY = "planetId"
@@ -21,22 +20,17 @@ object Constants {
     const val FLICKR_BASE_URL = "https://www.flickr.com/"
     const val FLICKR_METHOD_SEARCH_PHOTOS = "flickr.photos.search"
     const val FLICKR_METHOD_RECENT_PHOTOS = "flickr.photos.getRecent"
-
     const val FLICKR_BASE_URL_IMAGE = "https://live.staticflickr.com"
     const val FLICKR_EXT = ".jpg"
 
     const val FLICKR_KEY = BuildConfig.FLICKR_API
     const val FEEDBACK_RECEIVER = BuildConfig.FEEDBACK_RECEIVER
-
     const val LESS_WHITE_BACKGROUND_COPY = 0.2f
     const val MEDIUM_WHITE_BACKGROUND_COPY = 0.8f
-
     const val PREFERENCES_NAME = "sw_wiki_preferences"
     const val PREFERENCES_KEY = "on_boarding-completed"
-
     const val IMAGE_SLIDER_TABLE = "image_slider_table"
     const val NOTES_TABLE = "notes_table"
-
     const val DEFAULT_VALUE = "Default Value"
 
     const val SAVE_IN_PREFIX = "Save in "
@@ -47,6 +41,11 @@ object Constants {
     const val ASKING_FOR_USER = "Where are you?"
     const val DESCRIPTION_ASKING_FOR_USER = "We missed you... Come look for new things \uD83D\uDE80"
 
+    const val SHARE_ADDITIONAL_MESSAGE = "Wow, look at this awesome image from Star Wars Wiki!"
+    const val AUTHORITY_INTENT = "com.anjo.starwarswikicompose.fileprovider"
+    const val INTENT_SHARE_TITLE = "Choose an app"
+    const val CACHE_NAME = "images"
+    const val TEMP_FILE_NAME = "image.jpg"
 
     const val NOTIFICATION_NAME = "Main Channel"
     const val NOTIFICATION_CHANNEL = "main_channel_Id"

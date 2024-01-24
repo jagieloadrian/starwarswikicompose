@@ -31,7 +31,7 @@ fun List<GetAllPlanetsQuery.Planet?>.mapFromPlanets(): List<UniversalChunk> {
             .map {
                 UniversalChunk(id = it.id,
                         name = it.name ?: "",
-                        desc = (it.population ?: "").toString())
+                        desc = formatPopulation((it.population?.toInt() ?: "").toString()))
             }
 }
 

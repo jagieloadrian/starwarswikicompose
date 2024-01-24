@@ -6,6 +6,7 @@ import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.anjo.starwarswikicompose.R.raw.cantinaband
@@ -46,9 +47,12 @@ class MainViewModel @Inject constructor() : ViewModel() {
                 .filterNot { workInfo -> workInfo.state.isFinished }
                 .count()
         if (checkIfExist == 0) {
+            val existingWorkPolicy = ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE
             val workRequest =
-                PeriodicWorkRequestBuilder<NotificationWorker>(7, TimeUnit.DAYS).addTag(NOTIFICATION_WORK_TAG).build()
-            WorkManager.getInstance(context).enqueue(workRequest)
+                PeriodicWorkRequestBuilder<NotificationWorker>(7, TimeUnit.DAYS)
+                        .addTag(NOTIFICATION_WORK_TAG)
+                        .build()
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(NOTIFICATION_WORK_TAG, existingWorkPolicy ,workRequest)
             Log.e("WORKERS", workRequest.toString())
         }
     }
