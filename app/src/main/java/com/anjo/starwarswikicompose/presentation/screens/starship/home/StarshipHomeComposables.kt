@@ -33,6 +33,17 @@ fun Starships(
         init.value = false
     }
 
+    HomeStarshipsContent(item, navController)
+    if (!refresh) {
+        homeStarshipViewModel.fetchStarships()
+    }
+}
+
+@Composable
+fun HomeStarshipsContent(
+        item: HomeStarshipViewModel.StarshipState,
+        navController: NavHostController,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (item.isLoading) {
             ShimmerEffect()
@@ -44,8 +55,5 @@ fun Starships(
                 }
             }
         }
-    }
-    if (!refresh) {
-        homeStarshipViewModel.fetchStarships()
     }
 }

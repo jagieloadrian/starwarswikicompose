@@ -61,7 +61,6 @@ Project is: _in progress_
 Room for improvement:
 - Optimize application
 - Sign and release first version
-- Add profile and personal content for user
 
 To do:
 - Tests

@@ -17,17 +17,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PersonViewModel @Inject constructor(
+open class PersonViewModel @Inject constructor(
         private val useCase: UseCases,
         private val imageSliderUseCases: ImageSliderUseCases,
         private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _selectedPerson: MutableStateFlow<Person> = MutableStateFlow(Person())
-    val selectedPerson: StateFlow<Person> = _selectedPerson
+    open val selectedPerson: StateFlow<Person> = _selectedPerson
 
     private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
-    val images: StateFlow<List<ImageSliderModel>> = _images
+    open val images: StateFlow<List<ImageSliderModel>> = _images
 
     fun getPerson() {
         viewModelScope.launch(Dispatchers.IO) {

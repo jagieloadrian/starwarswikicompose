@@ -18,22 +18,6 @@ import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_WIDTH
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
 
 @Composable
-fun IndicatorDot(
-        isSelected: Boolean,
-        selectedColor: Color = Color.Yellow,
-        unSelectedColor: Color = Color.LightGray,
-) {
-    val color = if (isSelected) selectedColor else unSelectedColor
-    Box(
-            modifier = Modifier
-                    .padding(PAGING_INDICATOR_SPACING)
-                    .size(PAGING_INDICATOR_WIDTH)
-                    .clip(CircleShape)
-                    .background(color)
-    )
-}
-
-@Composable
 fun DotsIndicator(
         modifier: Modifier = Modifier,
         totalDots: Int,
@@ -53,4 +37,20 @@ fun DotsIndicator(
                     unSelectedColor)
         }
     }
+}
+
+@Composable
+private fun IndicatorDot(
+        isSelected: Boolean,
+        selectedColor: Color = Color.Yellow,
+        unSelectedColor: Color = Color.LightGray,
+) {
+    val color = if (isSelected) selectedColor else unSelectedColor
+    Box(
+            modifier = Modifier
+                    .padding(PAGING_INDICATOR_SPACING)
+                    .size(PAGING_INDICATOR_WIDTH)
+                    .clip(CircleShape)
+                    .background(color)
+    )
 }

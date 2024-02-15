@@ -32,6 +32,17 @@ fun Planets(
         init.value = false
     }
 
+    HomePlanetContent(item, navController)
+    if (!refresh) {
+        homePlanetViewModel.fetchPlanets()
+    }
+}
+
+@Composable
+fun HomePlanetContent(
+        item: HomePlanetViewModel.PlanetState,
+        navController: NavHostController,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (item.isLoading) {
             ShimmerEffect()
@@ -41,9 +52,6 @@ fun Planets(
             items(items = item.planets) { item ->
                 CommonButton(navController, item, Category.PLANETS)
             }
-        }
-        if (!refresh) {
-            homePlanetViewModel.fetchPlanets()
         }
     }
 }

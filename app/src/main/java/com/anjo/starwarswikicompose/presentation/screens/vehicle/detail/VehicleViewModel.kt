@@ -17,17 +17,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class VehicleViewModel @Inject constructor(
+open class VehicleViewModel @Inject constructor(
         private val useCase: UseCases,
         private val imageSliderUseCases: ImageSliderUseCases,
         private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _selectedVehicle: MutableStateFlow<Vehicle> = MutableStateFlow(Vehicle())
-    val selectedVehicle: StateFlow<Vehicle> = _selectedVehicle
+    open val selectedVehicle: StateFlow<Vehicle> = _selectedVehicle
 
     private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
-    val images: StateFlow<List<ImageSliderModel>> = _images
+    open val images: StateFlow<List<ImageSliderModel>> = _images
 
     fun getVehicle() {
         viewModelScope.launch(Dispatchers.IO) {

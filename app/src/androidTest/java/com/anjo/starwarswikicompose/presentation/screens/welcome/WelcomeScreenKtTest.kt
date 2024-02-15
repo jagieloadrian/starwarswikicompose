@@ -7,9 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.test.swipeLeft
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -88,8 +86,6 @@ class WelcomeScreenKtTest {
         val thirdDesc = composeTestRule.onNodeWithText(OnboardingPage.Third.description)
         thirdDesc.assertIsDisplayed()
         thirdDesc.assertTextEquals(OnboardingPage.Third.description)
-
-        composeTestRule.onRoot(true).printToLog("Test_tag")
 
         val button = composeTestRule.onNodeWithTag(WELCOME_BUTTON_TAG)
         button.assertIsDisplayed()

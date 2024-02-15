@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel() {
+open class MainViewModel @Inject constructor() : ViewModel() {
 
     private val _musicPlayer = mutableStateOf(MediaPlayer())
 

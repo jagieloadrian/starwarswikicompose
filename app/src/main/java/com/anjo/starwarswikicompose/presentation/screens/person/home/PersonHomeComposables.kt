@@ -22,9 +22,9 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 
 @Composable
 fun People(
-        navController: NavHostController, homePersonViewModel: HomePersonViewModel = hiltViewModel(),
-        refresh: Boolean,
-) {
+        navController: NavHostController,
+        homePersonViewModel: HomePersonViewModel = hiltViewModel(),
+        refresh: Boolean) {
     val item by homePersonViewModel.fetchedPeople.collectAsState()
     val init = remember { mutableStateOf(true) }
 
@@ -33,6 +33,16 @@ fun People(
         init.value = false
     }
 
+    HomePeopleContent(item, navController)
+    if (!refresh) {
+        homePersonViewModel.fetchPeople()
+    }
+}
+
+@Composable
+fun HomePeopleContent(
+        item: HomePersonViewModel.PeopleState,
+        navController: NavHostController) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (item.isLoading) {
             ShimmerEffect()
@@ -43,9 +53,6 @@ fun People(
                     CommonButton(navController, item, Category.PEOPLE)
                 }
             }
-        }
-        if (!refresh) {
-            homePersonViewModel.fetchPeople()
         }
     }
 }

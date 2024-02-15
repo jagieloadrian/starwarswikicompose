@@ -25,16 +25,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.testTag
 import com.anjo.starwarswikicompose.ui.theme.MEDIUM_PADDING
 import com.anjo.starwarswikicompose.ui.theme.NAME_PLACEHOLDER_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SHIMMER_COLORS
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.ShimmerDarkGray
 import com.anjo.starwarswikicompose.ui.theme.ShimmerMediumGray
+import com.anjo.starwarswikicompose.utils.Constants.SHIMMER_EFFECT_TAG
 
 @Composable
 fun ShimmerEffect() {
     LazyColumn(
+            modifier = Modifier.testTag(SHIMMER_EFFECT_TAG),
             contentPadding = PaddingValues(all = SMALL_PADDING),
             verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
     ) {
@@ -45,7 +48,7 @@ fun ShimmerEffect() {
 }
 
 @Composable
-fun AnimatedShimmerItem() {
+private fun AnimatedShimmerItem() {
     val transition = rememberInfiniteTransition(label = "")
     val alphaAnim by transition.animateFloat(
             initialValue = 1f,
@@ -62,7 +65,7 @@ fun AnimatedShimmerItem() {
 }
 
 @Composable
-fun ShimmerItem(alpha: Float) {
+private fun ShimmerItem(alpha: Float) {
     Box(
             modifier = Modifier
                     .fillMaxWidth()

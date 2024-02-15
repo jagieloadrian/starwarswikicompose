@@ -17,17 +17,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StarshipViewModel @Inject constructor(
+open class StarshipViewModel @Inject constructor(
         private val useCase: UseCases,
         private val imageSliderUseCases: ImageSliderUseCases,
        private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _selectedStarship: MutableStateFlow<Starship> = MutableStateFlow(Starship())
-    val selectedStarship: StateFlow<Starship> = _selectedStarship
+    open val selectedStarship: StateFlow<Starship> = _selectedStarship
 
     private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
-    val images: StateFlow<List<ImageSliderModel>> = _images
+    open val images: StateFlow<List<ImageSliderModel>> = _images
 
 
     fun getStarship() {

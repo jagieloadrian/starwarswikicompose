@@ -21,6 +21,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -29,8 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -64,11 +67,26 @@ fun CardNote(
         }
     }
 
+
+    CardNoteDialog(height, init, userText ) {
+        cardNoteViewModel.updateNote(userText.value)
+        onDismissAction()
+    }
+}
+
+@Composable
+fun CardNoteDialog(
+        height: Dp,
+        init: MutableState<Boolean>,
+        userText: MutableState<String>,
+        onDismissAction: () -> Unit,
+) {
     Dialog(onDismissRequest = onDismissAction) {
         Card(modifier = Modifier
                 .fillMaxWidth()
                 .height(height)
-                .padding(16.dp),
+                .padding(16.dp)
+                .testTag("NOTE_DIALOG"),
                 shape = RoundedCornerShape(16.dp)) {
             Box(modifier = Modifier.fillMaxSize()
                     .background(color = MaterialTheme.colors.mainBackgroundColors)
@@ -108,7 +126,6 @@ fun CardNote(
                             horizontalArrangement = Arrangement.Center) {
                         TextButton(
                                 onClick = {
-                                    cardNoteViewModel.updateNote(userText.value)
                                     onDismissAction()
                                 },
                                 modifier = Modifier

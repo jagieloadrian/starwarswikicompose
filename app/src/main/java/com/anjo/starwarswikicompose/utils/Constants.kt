@@ -41,6 +41,11 @@ object Constants {
     const val ASKING_FOR_USER = "Where are you?"
     const val DESCRIPTION_ASKING_FOR_USER = "We missed you... Come look for new things \uD83D\uDE80"
 
+    const val FIRST_RATIONALE = "The notification reminds you about the news in Star Wars world.\nPlease grant the permission."
+    const val SECOND_RATIONALE = "Notification are not available.\\nDo you want turn on notification?"
+    const val REQUEST_PERM = "Request permission"
+    const val CANCEL = "Cancel"
+
     const val SHARE_ADDITIONAL_MESSAGE = "Wow, look at this awesome image from Star Wars Wiki!"
     const val AUTHORITY_INTENT = "com.anjo.starwarswikicompose.fileprovider"
     const val INTENT_SHARE_TITLE = "Choose an app"
@@ -50,4 +55,9 @@ object Constants {
     const val NOTIFICATION_NAME = "Main Channel"
     const val NOTIFICATION_CHANNEL = "main_channel_Id"
     const val NOTIFICATION_WORK_TAG = "main_notification_work"
+
+    const val PROGRESS_INDICATOR_TAG = "ProgressIndicator"
+    const val SHIMMER_EFFECT_TAG = "shimmer_effect_tag"
+    const val FAB_BUTTON_TAG = "fab_button_tag"
+    const val RELATED_BUTTON_TAG = "related_button_tag"
 }

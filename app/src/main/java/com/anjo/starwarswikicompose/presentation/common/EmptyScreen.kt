@@ -66,7 +66,7 @@ fun EmptyScreen(
 }
 
 @Composable
-fun EmptyContent(
+private fun EmptyContent(
         alphaAnim: Float,
         icon: Int,
         message: String,
