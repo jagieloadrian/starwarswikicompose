@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MovieViewModel @Inject constructor(
+open class MovieViewModel @Inject constructor(
         private val useCase: UseCases,
         private val imageSliderUseCases: ImageSliderUseCases,
         private val savedStateHandle: SavedStateHandle,
@@ -27,7 +27,7 @@ class MovieViewModel @Inject constructor(
     val selectedMovie: StateFlow<Movie> = _selectedMovie
 
     private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
-    val images: StateFlow<List<ImageSliderModel>> = _images
+    open val images: StateFlow<List<ImageSliderModel>> = _images
 
     fun getMovie() {
         viewModelScope.launch(Dispatchers.IO) {

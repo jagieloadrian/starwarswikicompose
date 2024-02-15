@@ -15,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.testTag
 import com.anjo.starwarswikicompose.ui.theme.LARGE_PADDING
 import com.anjo.starwarswikicompose.ui.theme.MEDIUM_PADDING
 import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
+import com.anjo.starwarswikicompose.utils.Constants.PROGRESS_INDICATOR_TAG
 
 @Composable
 fun LoadingBox() {
@@ -37,7 +39,8 @@ fun LoadingBox() {
         ) {
             CircularProgressIndicator(modifier = Modifier
                     .fillMaxSize(fraction = 0.5f)
-                    .padding(LARGE_PADDING),
+                    .padding(LARGE_PADDING)
+                    .testTag(PROGRESS_INDICATOR_TAG),
                     color = MaterialTheme.colors.mainBackgroundColors,
                     backgroundColor = Color.Transparent,
                     strokeCap = StrokeCap.Round)

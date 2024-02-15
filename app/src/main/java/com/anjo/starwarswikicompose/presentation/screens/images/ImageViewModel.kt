@@ -12,14 +12,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ImageViewModel @Inject constructor(
+open class ImageViewModel @Inject constructor(
         private val useCases: UseCases,
 ) : ViewModel() {
     private val _fetchedPhotoInfos = MutableStateFlow(FlickrResponse())
-    val fetchedPhotoInfos = _fetchedPhotoInfos
+    open val fetchedPhotoInfos = _fetchedPhotoInfos
 
     private val _searchQuery = mutableStateOf("")
-    val searchQuery = _searchQuery
+    open val searchQuery = _searchQuery
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query

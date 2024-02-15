@@ -10,8 +10,8 @@ import com.anjo.starwarswikicompose.domain.model.sw.Starship
 import com.anjo.starwarswikicompose.domain.model.sw.Vehicle
 import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.services.apollofetcher.DataFetcher
-import com.anjo.starwarswikicompose.services.imagefetcher.FlickrApi
 import com.anjo.starwarswikicompose.services.data.repository.datastore.DataStoreOperations
+import com.anjo.starwarswikicompose.services.imagefetcher.FlickrApi
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

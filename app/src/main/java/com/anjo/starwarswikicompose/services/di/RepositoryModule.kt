@@ -1,8 +1,8 @@
 package com.anjo.starwarswikicompose.services.di
 
 import android.content.Context
-import com.anjo.starwarswikicompose.services.data.repository.datastore.DataStoreOperationImpl
 import com.anjo.starwarswikicompose.services.data.repository.OperationRepository
+import com.anjo.starwarswikicompose.services.data.repository.datastore.DataStoreOperationImpl
 import com.anjo.starwarswikicompose.services.data.repository.datastore.DataStoreOperations
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.images.GetRecentImagesUseCase

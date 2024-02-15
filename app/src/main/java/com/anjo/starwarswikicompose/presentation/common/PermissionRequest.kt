@@ -38,6 +38,10 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 import com.anjo.starwarswikicompose.ui.theme.reverseMainBackgroundColors
+import com.anjo.starwarswikicompose.utils.Constants.CANCEL
+import com.anjo.starwarswikicompose.utils.Constants.FIRST_RATIONALE
+import com.anjo.starwarswikicompose.utils.Constants.REQUEST_PERM
+import com.anjo.starwarswikicompose.utils.Constants.SECOND_RATIONALE
 import com.anjo.starwarswikicompose.utils.getLocalHeight
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -48,8 +52,10 @@ import com.google.accompanist.permissions.shouldShowRationale
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionScreen(periodicWorker: () -> Unit,
-                     onDismissAction: () -> Unit) {
+fun PermissionScreen(
+        periodicWorker: () -> Unit,
+        onDismissAction: () -> Unit,
+) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val postNotificationPerm = rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
         if (postNotificationPerm.status.isGranted) {
@@ -67,10 +73,15 @@ fun PermissionScreen(periodicWorker: () -> Unit,
 @Composable
 fun AccessPermissionBox(
         postNotificationPerm: PermissionState,
-        onDismissAction : () -> Unit
+        onDismissAction: () -> Unit,
 ) {
-    val height = ((getLocalHeight()/3)).dp
+    val height = ((getLocalHeight() / 3)).dp
     val halfWidth = (getLocalWidth() / 3) * 2
+    val textToShow = if (postNotificationPerm.status.shouldShowRationale) {
+        FIRST_RATIONALE
+    } else {
+        SECOND_RATIONALE
+    }
     Dialog(onDismissRequest = onDismissAction) {
         Card(
                 modifier = Modifier
@@ -92,11 +103,6 @@ fun AccessPermissionBox(
                                 RoundedCornerShape(MEDIUM_PADDING)),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
-                    val textToShow = if (postNotificationPerm.status.shouldShowRationale) {
-                        "The notification reminds you about the news in Star Wars world.\nPlease grant the permission."
-                    } else {
-                        "Notification are not available.\nDo you want turn on notification?"
-                    }
                     Text(textToShow,
                             modifier = Modifier.width(halfWidth.dp)
                                     .padding(SMALL_PADDING),
@@ -106,18 +112,18 @@ fun AccessPermissionBox(
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(onClick = {
                         postNotificationPerm.launchPermissionRequest()
-                       onDismissAction()
+                        onDismissAction()
                     }, colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.mainBackgroundColors
                     )
                     ) {
-                        Text("Request permission",
+                        Text(REQUEST_PERM,
                                 color = Color.White)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(onClick = { onDismissAction() }, colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.mainBackgroundColors)) {
-                        Text("Cancel",
+                        Text(CANCEL,
                                 color = Color.White)
                     }
                     Spacer(modifier = Modifier.height(8.dp))

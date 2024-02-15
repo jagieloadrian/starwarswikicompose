@@ -21,7 +21,8 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 
 @Composable
 fun Movies(
-        navController: NavHostController, homeMovieViewModel: HomeMovieViewModel = hiltViewModel(),
+        navController: NavHostController,
+        homeMovieViewModel: HomeMovieViewModel = hiltViewModel(),
         refresh: Boolean,
 ) {
     val item by homeMovieViewModel.fetchedFilms.collectAsState()
@@ -32,6 +33,17 @@ fun Movies(
         init.value = false
     }
 
+    HomeMovieContent(item, navController)
+    if (!refresh) {
+        homeMovieViewModel.fetchFilms()
+    }
+}
+
+@Composable
+fun HomeMovieContent(
+        item: HomeMovieViewModel.MovieState,
+        navController: NavHostController,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (item.isLoading) {
             ShimmerEffect()
@@ -43,8 +55,5 @@ fun Movies(
                 }
             }
         }
-    }
-    if (!refresh) {
-        homeMovieViewModel.fetchFilms()
     }
 }

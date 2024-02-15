@@ -24,6 +24,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,41 +49,36 @@ import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTo
 import com.anjo.starwarswikicompose.ui.theme.LARGE_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.utils.Constants.COPIED_TO_CLIPBOARD
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ImageScreen(
         navController: NavHostController,
         imageViewModel: ImageViewModel = hiltViewModel(),
 ) {
+    val snackBarHostState = remember { SnackbarHostState() }
+    Scaffold(
+            topBar = { CustomTopAppBar(navController) },
+            bottomBar = { CustomBottomAppBar(navController) },
+            snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) { padding ->
+        ImageGalleryVisualisation(padding,  imageViewModel, snackBarHostState)
+    }
+}
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ImageGalleryVisualisation(
+        padding: PaddingValues,
+        imageViewModel: ImageViewModel,
+        snackBarHostState: SnackbarHostState,
+) {
     val searchQuery by imageViewModel.searchQuery
     val photoResponse by imageViewModel.fetchedPhotoInfos.collectAsState()
-    val enabled = remember { mutableStateOf(true) }
-    val lazyListState = rememberLazyListState()
-
     val extractPhotos = photoResponse.photos?.photo
-
-    val refreshScope = rememberCoroutineScope()
-    var refreshing by remember { mutableStateOf(false) }
-    fun refresh() {
-        refreshScope.launch {
-            refreshing = true
-            if (searchQuery.isEmpty()) {
-                imageViewModel.fetchRecentPhotos()
-            } else {
-                imageViewModel.fetchPhotoInfo(searchQuery)
-            }
-            delay(2500)
-            refreshing = false
-        }
-    }
-
-    val snackBarHostState = remember { SnackbarHostState() }
-    val state = rememberPullRefreshState(refreshing, ::refresh)
     var startAnimation by remember { mutableStateOf(false) }
     val alphaAnim by animateFloatAsState(
             targetValue = if (startAnimation) ContentAlpha.high else 0f,
@@ -90,65 +86,65 @@ fun ImageScreen(
                     durationMillis = 2000
             ), label = ""
     )
-
+    val lazyListState = rememberLazyListState()
+    var enabled by remember { mutableStateOf(true) }
     LaunchedEffect(key1 = true) {
         startAnimation = true
     }
     LaunchedEffect(photoResponse) {
         lazyListState.animateScrollToItem(0)
     }
+    val refreshScope = rememberCoroutineScope()
+    val refreshing = remember { mutableStateOf(false) }
+    val state =
+        rememberPullRefreshState(refreshing.value, { refresh(refreshScope, refreshing, searchQuery, imageViewModel) })
 
-    Scaffold(
-            topBar = { CustomTopAppBar(navController) },
-            bottomBar = { CustomBottomAppBar(navController) },
-            snackbarHost = { SnackbarHost(snackBarHostState) }
-    ) { padding ->
-        Box(modifier = Modifier
-                .padding(padding)
-                .pullRefresh(state)
-                .fillMaxSize()
-                .alpha(alphaAnim)) {
-            if (!refreshing) {
-                Column(modifier = Modifier
-                        .fillMaxSize()
-                        .paint(painter = painterResource(R.drawable.stars_image),
-                                contentScale = ContentScale.FillBounds)
-                ) {
-                    SearchBar(text = searchQuery,
-                            onTextChange = { imageViewModel.updateSearchQuery(query = it) },
-                            onSearchClicked = { query ->
-                                if (query.isEmpty()) {
-                                    imageViewModel.fetchRecentPhotos()
-                                } else {
-                                    imageViewModel.fetchPhotoInfo(query)
-                                }
-                            },
-                            onClosedClicked = {
-                                enabled.value = false
-                            },
-                            enabled = enabled.value,
-                            lazyListState = lazyListState,
-                            modifier = Modifier.clickable {
-                                if (!enabled.value) {
-                                    enabled.value = true
-                                }
-                            })
-                    when (photoResponse.stat) {
-                        FlickrStatus.error -> ErrorScreen(photoResponse.message)
-                        FlickrStatus.fail  -> EmptyScreen(null, text = "images")
-                        FlickrStatus.ok    -> extractPhotos?.let {
-                            LazyColumnPhotos(extractPhotos,
-                                    lazyListState) {
-                                refreshScope.launch {
-                                    snackBarHostState.showSnackbar(COPIED_TO_CLIPBOARD)
-                                }
+
+    Box(modifier = Modifier
+            .padding(padding)
+            .pullRefresh(state)
+            .fillMaxSize()
+            .alpha(alphaAnim)) {
+        if (!refreshing.value) {
+            Column(modifier = Modifier
+                    .fillMaxSize()
+                    .paint(painter = painterResource(R.drawable.stars_image),
+                            contentScale = ContentScale.FillBounds)
+            ) {
+                SearchBar(text = searchQuery,
+                        onTextChange = { imageViewModel.updateSearchQuery(query = it) },
+                        onSearchClicked = { query ->
+                            if (query.isEmpty()) {
+                                imageViewModel.fetchRecentPhotos()
+                            } else {
+                                imageViewModel.fetchPhotoInfo(query)
+                            }
+                        },
+                        onClosedClicked = {
+                            enabled = false
+                        },
+                        enabled = enabled,
+                        lazyListState = lazyListState,
+                        modifier = Modifier.clickable {
+                            if (!enabled) {
+                                enabled = true
+                            }
+                        })
+                when (photoResponse.stat) {
+                    FlickrStatus.error -> ErrorScreen(photoResponse.message)
+                    FlickrStatus.fail  -> EmptyScreen(null, text = "images")
+                    FlickrStatus.ok    -> extractPhotos?.let {
+                        LazyColumnPhotos(extractPhotos,
+                                lazyListState) {
+                            refreshScope.launch {
+                                snackBarHostState.showSnackbar(COPIED_TO_CLIPBOARD)
                             }
                         }
                     }
                 }
             }
-            PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
         }
+        PullRefreshIndicator(refreshing.value, state, Modifier.align(Alignment.TopCenter))
     }
 }
 
@@ -165,5 +161,21 @@ fun LazyColumnPhotos(
         items(photos) { photo ->
             ImageBox(photo = photo) { addCopyAction() }
         }
+    }
+}
+
+fun refresh(scope: CoroutineScope,
+        refreshing: MutableState<Boolean>,
+        searchQuery: String,
+        imageViewModel: ImageViewModel) {
+    scope.launch {
+        refreshing.value = true
+        if (searchQuery.isEmpty()) {
+            imageViewModel.fetchRecentPhotos()
+        } else {
+            imageViewModel.fetchPhotoInfo(searchQuery)
+        }
+        delay(2500)
+        refreshing.value = false
     }
 }

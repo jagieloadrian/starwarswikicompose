@@ -3,6 +3,7 @@ package com.anjo.starwarswikicompose.presentation.screens.home
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -38,19 +39,8 @@ import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(navController: NavHostController) {
-    val tabs = Category.entries.toTypedArray()
-    var selectedIndex by remember { mutableIntStateOf(0) }
-    val pagerState = rememberPagerState(
-            initialPage = 0,
-            initialPageOffsetFraction = 0f
-    ) {
-        tabs.size
-    }
-    val scope = rememberCoroutineScope()
-
     val systemUiController = rememberSystemUiController()
     val sytemBarColor = MaterialTheme.colors.mainBackgroundColors
 
@@ -62,24 +52,43 @@ fun HomeScreen(navController: NavHostController) {
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) }
+    ) { padding ->
+        HomeContentScreen(padding, navController)
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun HomeContentScreen(
+        paddingValues: PaddingValues,
+        navController: NavHostController,
+) {
+    val tabs = Category.entries.toTypedArray()
+    val scope = rememberCoroutineScope()
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    val pagerState = rememberPagerState(
+            initialPage = 0,
+            initialPageOffsetFraction = 0f
     ) {
-        Column(modifier = Modifier.fillMaxSize()
-                .padding(it)
-                .paint(painter = painterResource(R.drawable.stars_image),
-                        contentScale = ContentScale.FillBounds)) {
-            ScrollableTabRow(
-                    selectedTabIndex = pagerState.currentPage,
-                    backgroundColor = MaterialTheme.colors.mainBackgroundColors) {
-                tabs.forEachIndexed { index, category ->
-                    val selected = selectedIndex == index
-                    CustomTab(selected, category) {
-                        selectedIndex = index
-                        scope.launch { pagerState.animateScrollToPage(index) }
-                    }
+        tabs.size
+    }
+
+    Column(modifier = Modifier.fillMaxSize()
+            .padding(paddingValues)
+            .paint(painter = painterResource(R.drawable.stars_image),
+                    contentScale = ContentScale.FillBounds)) {
+        ScrollableTabRow(
+                selectedTabIndex = pagerState.currentPage,
+                backgroundColor = MaterialTheme.colors.mainBackgroundColors) {
+            tabs.forEachIndexed { index, category ->
+                val selected = selectedIndex == index
+                CustomTab(selected, category) {
+                    selectedIndex = index
+                    scope.launch { pagerState.animateScrollToPage(index) }
                 }
             }
-            TabContent(navController, pagerState, tabs)
         }
+        TabContent(navController, pagerState, tabs)
     }
 }
 

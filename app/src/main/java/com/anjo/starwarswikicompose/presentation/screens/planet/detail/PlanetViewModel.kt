@@ -17,17 +17,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PlanetViewModel @Inject constructor(
+open class PlanetViewModel @Inject constructor(
         private val useCase: UseCases,
         private val imageSliderUseCases: ImageSliderUseCases,
         private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _selectedPlanet: MutableStateFlow<Planet> = MutableStateFlow(Planet())
-    val selectedPlanet: StateFlow<Planet> = _selectedPlanet
+    open val selectedPlanet: StateFlow<Planet> = _selectedPlanet
 
     private var _images = MutableStateFlow(emptyList<ImageSliderModel>())
-    val images: StateFlow<List<ImageSliderModel>> = _images
+    open val images: StateFlow<List<ImageSliderModel>> = _images
 
     fun getPlanet() {
         viewModelScope.launch(Dispatchers.IO) {

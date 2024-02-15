@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CornerButton(
         imageVector: ImageVector,
+        contentDescription: String,
         onClick: () -> Unit,
 ) {
     IconButton(onClick = onClick, modifier = Modifier
@@ -27,7 +28,7 @@ fun CornerButton(
                 modifier = Modifier.background(Color.DarkGray, shape = CircleShape)
                         .alpha(0.5f)
                         .padding(15.dp)) {
-            Icon(imageVector = imageVector, contentDescription = "",
+            Icon(imageVector = imageVector, contentDescription = contentDescription,
                     modifier = Modifier.background(Color.Transparent),
                     tint = Color.White)
         }

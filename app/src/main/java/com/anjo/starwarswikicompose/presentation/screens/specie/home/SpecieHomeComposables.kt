@@ -32,6 +32,17 @@ fun Species(
         init.value = false
     }
 
+    HomeSpecieContent(item, navController)
+        if (!refresh) {
+            homeSpecieViewModel.fetchSpecies()
+        }
+    }
+
+@Composable
+fun HomeSpecieContent(
+        item: HomeSpecieViewModel.SpecieState,
+        navController: NavHostController
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (item.isLoading) {
             ShimmerEffect()
@@ -39,12 +50,9 @@ fun Species(
             LazyColumn(contentPadding = PaddingValues(all = SMALL_PADDING),
                     verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)) {
                 items(items = item.species) { item ->
-                    CommonButton(navController, item,   Category.SPECIES)
+                    CommonButton(navController, item, Category.SPECIES)
                 }
             }
-        }
-        if (!refresh) {
-            homeSpecieViewModel.fetchSpecies()
         }
     }
 }

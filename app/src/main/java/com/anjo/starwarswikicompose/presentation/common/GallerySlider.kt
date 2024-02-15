@@ -118,13 +118,14 @@ fun ImageBox(
         onCLickLeft: () -> Unit,
         onCLickRight: (ImageSliderModel) -> Unit,
 ) {
+    val currentImage = images[index]
     Box(modifier = Modifier
             .fillMaxWidth()) {
         AsyncImage(
-                model = images[index].url,
+                model = currentImage.url,
                 placeholder = painterResource(R.drawable.image_icon),
                 error = painterResource(R.drawable.ic_network_error),
-                contentDescription = stringResource(R.string.flickr_image),
+                contentDescription = "${stringResource(R.string.flickr_image)} ${currentImage.objectId}",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.height(PICTURE_HEIGHT)
                         .width(maxWidth)
@@ -132,7 +133,7 @@ fun ImageBox(
         Surface(modifier = Modifier.background(Color.Transparent)
                 .align(Alignment.TopStart),
                 color = Color.Transparent) {
-            CornerButton(imageVector = Icons.Filled.Refresh) {
+            CornerButton(imageVector = Icons.Filled.Refresh, contentDescription = "onClickLeft") {
                 onRefresh()
                 onCLickLeft()
             }
@@ -141,7 +142,7 @@ fun ImageBox(
         Surface(modifier = Modifier.background(Color.Transparent)
                 .align(Alignment.TopEnd),
                 color = Color.Transparent) {
-            CornerButton(imageVector = Icons.Filled.Delete) {
+            CornerButton(imageVector = Icons.Filled.Delete, contentDescription = "onCLickRight") {
                 onCLickRight(images[index])
                 onRefresh()
             }

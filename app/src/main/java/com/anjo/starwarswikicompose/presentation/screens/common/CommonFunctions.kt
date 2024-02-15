@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,8 +28,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -49,6 +50,7 @@ import com.anjo.starwarswikicompose.ui.theme.INFO_BOX_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.RELATED_BOXES_COLORS
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING_FOR_INFOBOX
+import com.anjo.starwarswikicompose.utils.Constants.RELATED_BUTTON_TAG
 import com.anjo.starwarswikicompose.utils.calculatePathToImage
 import com.anjo.starwarswikicompose.utils.navigateToProperlyCompose
 
@@ -65,45 +67,17 @@ fun choosePainter(category: Category): Painter {
 }
 
 @Composable
-fun RelatedBox(
-        id: String,
-        name: String?,
-        category: Category,
-        modifier: Modifier = Modifier,
-        width: Dp,
+fun ShowHorizontalBoxes(
+        connection: Connection, category: Category, halfWidth: Dp,
         navController: NavHostController,
 ) {
-    val descriptionName = if (name.isNullOrEmpty()) "\uD83D\uDE4A" else name
-    Box(modifier = Modifier
-            .padding(EXTRA_SMALL_PADDING)
-            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))) {
-        Box(modifier = modifier
-                .width(width)
-                .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
-                .clickable {
-                    navigateToProperlyCompose(navController, id, category)
-                })
-        {
-            Column(modifier = Modifier.fillMaxSize()
-                    .align(Alignment.Center)
-                    .background(brush = Brush.linearGradient(RELATED_BOXES_COLORS), alpha = 0.8f)) {
-                AsyncImage(model = findImage(id, category),
-                        error = choosePainter(category),
-                        contentDescription = stringResource(R.string.movies),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier.weight(1f)
-                                .padding(EXTRA_SMALL_PADDING)
-                                .clip(CircleShape)
-                                .align(Alignment.CenterHorizontally)
-                                .background(Color.Magenta))
-                Text(modifier = Modifier.align(Alignment.CenterHorizontally),
-                        text = descriptionName,
-                        style = MaterialTheme.typography.subtitle1,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.ExtraBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                )
+    val count = connection.totalCount
+    if (shouldInstanceLazyRow(count)) {
+        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                .fillMaxWidth(),
+                horizontalArrangement = clickableArrangementInLazyRow(count)) {
+            items(items = connection.objects) { item ->
+                RelatedBox(item.id, item.name, category, width = halfWidth, navController = navController)
             }
         }
     }
@@ -204,30 +178,107 @@ fun InfoBoxColumn(
     }
 }
 
+@Composable
+fun clickableArrangementInLazyRow(count: Int) = if (count != 1) Arrangement.SpaceBetween else Arrangement.Center
+
+@Composable
+private fun RelatedBox(
+        id: String,
+        name: String?,
+        category: Category,
+        modifier: Modifier = Modifier,
+        width: Dp,
+        navController: NavHostController,
+) {
+    val descriptionName = if (name.isNullOrEmpty()) "\uD83D\uDE4A" else name
+    Box(modifier = Modifier
+            .padding(EXTRA_SMALL_PADDING)
+            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))) {
+        Box(modifier = modifier
+                .width(width)
+                .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
+                .clickable {
+                    navigateToProperlyCompose(navController, id, category)
+                }.testTag(RELATED_BUTTON_TAG))
+        {
+            Column(modifier = Modifier.fillMaxSize()
+                    .align(Alignment.Center)
+                    .background(brush = Brush.linearGradient(RELATED_BOXES_COLORS), alpha = 0.8f)) {
+                AsyncImage(model = findImage(id, category),
+                        error = choosePainter(category),
+                        contentDescription = "RelatedBox $descriptionName",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.weight(1f)
+                                .padding(EXTRA_SMALL_PADDING)
+                                .clip(CircleShape)
+                                .align(Alignment.CenterHorizontally)
+                                .background(Color.Magenta))
+                Text(modifier = Modifier.align(Alignment.CenterHorizontally),
+                        text = descriptionName,
+                        style = MaterialTheme.typography.subtitle1,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.ExtraBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DoubleInfoBox(
+        firstCornerName:String,
+        firstValue:String,
+        secondCornerName:String,
+        secondValue:String,
+        halfWidth: Dp,
+) {
+    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+            .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly) {
+        InfoBox(
+                firstCornerName,
+                firstValue,
+                width = halfWidth)
+        InfoBox(
+                secondCornerName,
+                secondValue,
+                width = halfWidth)
+    }
+}
+
+@Composable
+fun TripleInfoBox(
+        firstCornerName:String,
+        firstValue:String,
+        secondCornerName:String,
+        secondValue:String,
+        thirdCornerName:String,
+        thirdValue:String,
+        thirdWidth: Dp,
+) {
+    Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+            .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly) {
+        InfoBox(
+                firstCornerName,
+                firstValue,
+                width = thirdWidth)
+        InfoBox( secondCornerName,
+                secondValue,
+                width = thirdWidth)
+        InfoBox(
+                thirdCornerName,
+                thirdValue,
+                width = thirdWidth)
+    }
+}
+
 fun shouldInstanceLazyRow(count: Int): Boolean {
     return count > 0
 }
 
 fun findImage(id: String, category: Category): String {
     return calculatePathToImage(category, id)
-}
-
-@Composable
-fun clickableArrangementInLazyRow(count: Int) = if (count != 1) Arrangement.SpaceBetween else Arrangement.Center
-
-@Composable
-fun ShowHorizontalBoxes(
-        connection: Connection, category: Category, halfWidth: Dp,
-        navController: NavHostController,
-) {
-    val count = connection.totalCount
-    if (shouldInstanceLazyRow(count)) {
-        LazyRow(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                .fillMaxWidth(),
-                horizontalArrangement = clickableArrangementInLazyRow(count)) {
-            items(items = connection.objects) { item ->
-                RelatedBox(item.id, item.name, category, width = halfWidth, navController = navController)
-            }
-        }
-    }
 }

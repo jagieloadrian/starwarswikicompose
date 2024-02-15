@@ -80,7 +80,7 @@ fun ImageBox(
             Surface(modifier = Modifier.background(Color.Transparent)
                     .align(Alignment.TopEnd),
                     color = Color.Transparent) {
-                CornerButton(imageVector = Icons.Filled.Share) {
+                CornerButton(imageVector = Icons.Filled.Share, "cornerButton") {
                     scope.launch(Dispatchers.IO) { sendIntent(photoUrl = photoUrl, context = context) }
                 }
 

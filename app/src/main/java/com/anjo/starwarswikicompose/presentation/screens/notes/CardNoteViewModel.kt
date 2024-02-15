@@ -13,11 +13,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CardNoteViewModel @Inject constructor(
+open class CardNoteViewModel @Inject constructor(
         private val notesUseCases: NotesUseCases,
 ) : ViewModel() {
     private var _notes: MutableStateFlow<NoteModel> = MutableStateFlow(NoteModel())
-    val note: StateFlow<NoteModel> = _notes
+    open val note: StateFlow<NoteModel> = _notes
 
     fun updateNote(newText: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -29,12 +29,12 @@ class CardNoteViewModel @Inject constructor(
     }
 
     fun getNotes() {
-        viewModelScope.launch(Dispatchers.Unconfined) {
+        viewModelScope.launch(Dispatchers.IO) {
             notesUseCases.getNotesUseCase().collect {
                 if (it.isEmpty()) {
                     _notes.value = NoteModel(text = DEFAULT_VALUE)
                 } else {
-                    _notes.value = it.first()
+                    _notes.value = it.maxBy { noteModel -> noteModel.lastChanged }
                 }
             }
         }
