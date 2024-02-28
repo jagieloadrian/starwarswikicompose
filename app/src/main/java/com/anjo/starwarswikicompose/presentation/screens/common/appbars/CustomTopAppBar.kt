@@ -261,7 +261,7 @@ fun runProperlyAction(
         feedbackDialog: MutableState<Boolean>,
         notificationPermissionRun: MutableState<Boolean>,
 ) {
-    val maxVol: Int = audioManager.getStreamMaxVolume((STREAM_MUSIC * 0.8).toInt())
+    val maxVol: Int = audioManager.getStreamMaxVolume(STREAM_MUSIC).times(0.3).toInt()
     when (menuItemData) {
         Notes        -> {
             openNotes.value = true

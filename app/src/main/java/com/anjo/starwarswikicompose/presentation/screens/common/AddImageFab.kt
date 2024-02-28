@@ -36,22 +36,25 @@ fun AddImageFabWrap(
         runSaving: (String) -> Unit,
         refreshScope: CoroutineScope,
         snackBarHostState: SnackbarHostState,
+        enable: Boolean,
 ) {
-    AddImageFab(extended = fabExtended) {
-        addImageFunction(clipManager, navController,
-                runSaving = { string ->
-                    runSaving(string)
-                },
-                runSavingSnackBar = {
-                    refreshScope.launch {
-                        snackBarHostState.showSnackbar("${Constants.SAVE_IN_PREFIX}${selectedName}")
-                    }
-                },
-                navControllerSnackBar = {
-                    refreshScope.launch {
-                        snackBarHostState.showSnackbar(Constants.IMAGE_NOT_FOUND)
-                    }
-                })
+    if (enable) {
+        AddImageFab(extended = fabExtended) {
+            addImageFunction(clipManager, navController,
+                    runSaving = { string ->
+                        runSaving(string)
+                    },
+                    runSavingSnackBar = {
+                        refreshScope.launch {
+                            snackBarHostState.showSnackbar("${Constants.SAVE_IN_PREFIX}${selectedName}")
+                        }
+                    },
+                    navControllerSnackBar = {
+                        refreshScope.launch {
+                            snackBarHostState.showSnackbar(Constants.IMAGE_NOT_FOUND)
+                        }
+                    })
+        }
     }
 }
 

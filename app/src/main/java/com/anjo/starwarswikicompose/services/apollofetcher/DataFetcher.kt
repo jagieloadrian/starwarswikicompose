@@ -11,15 +11,15 @@ import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 
 interface DataFetcher {
     suspend fun fetchFilms(): List<UniversalChunk>
-    suspend fun fetchOneFilm(id: String): Movie
+    suspend fun fetchOneFilm(id: String): Movie?
     suspend fun fetchPeoples(): List<UniversalChunk>
-    suspend fun fetchOnePerson(id: String): Person
+    suspend fun fetchOnePerson(id: String): Person?
     suspend fun fetchPlanets(): List<UniversalChunk>
-    suspend fun fetchOnePlanet(id: String): Planet
+    suspend fun fetchOnePlanet(id: String): Planet?
     suspend fun fetchSpecies(): List<UniversalChunk>
-    suspend fun fetchOneSpecie(id: String): Specie
+    suspend fun fetchOneSpecie(id: String): Specie?
     suspend fun fetchStarships(): List<UniversalChunk>
-    suspend fun fetchOneStarship(id: String): Starship
+    suspend fun fetchOneStarship(id: String): Starship?
     suspend fun fetchVehicles(): List<UniversalChunk>
-    suspend fun fetchOneVehicle(id: String): Vehicle
+    suspend fun fetchOneVehicle(id: String): Vehicle?
 }

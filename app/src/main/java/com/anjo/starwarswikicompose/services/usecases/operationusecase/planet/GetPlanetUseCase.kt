@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetPlanetUseCase @Inject constructor(
         private val dataFetcher: OperationRepository,
 ) {
-    suspend operator fun invoke(id: String): Planet {
+    suspend operator fun invoke(id: String): Planet? {
         return dataFetcher.fetchOnePlanet(id)
     }
 }

@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anjo.starwarswikicompose.domain.model.NoteModel
 import com.anjo.starwarswikicompose.services.usecases.notesusecase.NotesUseCases
-import com.anjo.starwarswikicompose.utils.Constants.DEFAULT_VALUE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +31,7 @@ open class CardNoteViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             notesUseCases.getNotesUseCase().collect {
                 if (it.isEmpty()) {
-                    _notes.value = NoteModel(text = DEFAULT_VALUE)
+                    _notes.value = NoteModel(text = "")
                 } else {
                     _notes.value = it.maxBy { noteModel -> noteModel.lastChanged }
                 }

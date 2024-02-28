@@ -54,7 +54,7 @@ fun CardNote(
         cardNoteViewModel: CardNoteViewModel = hiltViewModel(),
 ) {
     val height = ((getLocalHeight() / 3) * 2).dp
-    val userText = remember { mutableStateOf("Default Value") }
+    val userText = remember { mutableStateOf("This is place for your notes") }
     val init = remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
 
@@ -68,7 +68,7 @@ fun CardNote(
     }
 
 
-    CardNoteDialog(height, init, userText ) {
+    CardNoteDialog(height, init, userText) {
         cardNoteViewModel.updateNote(userText.value)
         onDismissAction()
     }

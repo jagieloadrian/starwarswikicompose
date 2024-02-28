@@ -3,7 +3,9 @@ package com.anjo.starwarswikicompose.presentation.screens.specie.detail
 import androidx.lifecycle.SavedStateHandle
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Category.SPECIES
+import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState
 import com.anjo.starwarswikicompose.domain.model.sw.Specie
+import com.anjo.starwarswikicompose.domain.model.sw.SpecieDetailState
 import com.anjo.starwarswikicompose.services.usecases.imagesliderusecase.ImageSliderUseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_SPECIE_ARGUMENT_KEY
@@ -41,15 +43,16 @@ class SpecieViewModelTest {
         val imageSliderModel = ImageSliderModel(1, objectId, "someUrl", SPECIES)
         val imageSliderModel2 = ImageSliderModel(2, objectId, "someUrl2", SPECIES)
         val expectedImages = listOf(imageSliderModel, imageSliderModel2)
-        val expected = Specie(id = objectId, "Title", classification = "1", designation = "mass")
+        val expected = SpecieDetailState(specie = Specie(id = objectId, "Title", classification = "1", designation = "mass"),
+                state = DetailObjectState.SUCCESS)
 
         coEvery { savedStateHandle.get<String>(DETAILS_SPECIE_ARGUMENT_KEY) } returns objectId
-        coEvery { useCases.getSpecieUseCase(objectId) } returns expected
+        coEvery { useCases.getSpecieUseCase(objectId) } returns expected.specie
         coEvery { imageSliderUseCases.getImagesForObjectUseCase(objectId, SPECIES) } returns expectedImages
 
         //when
         specieViewModel.getSpecie()
-        delay(50)
+        delay(2050)
         val actual = specieViewModel.selectedSpecie.value
         val actualImages = specieViewModel.images.value
 

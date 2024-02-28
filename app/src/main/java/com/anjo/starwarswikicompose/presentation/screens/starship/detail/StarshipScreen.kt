@@ -15,19 +15,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,36 +56,36 @@ import com.anjo.starwarswikicompose.ui.theme.VEHICLE_PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StarshipContentScreen(
         navController: NavHostController,
         starshipViewModel: StarshipViewModel = hiltViewModel(),
 ) {
-    val selectedStarship by starshipViewModel.selectedStarship.collectAsState()
+    val starshipState by starshipViewModel.selectedStarship.collectAsState()
     val init = remember { mutableStateOf(true) }
 
     if (init.value) {
         starshipViewModel.getStarship()
         init.value = false
     }
+
     DetailVisualisationComponent(
-            refreshImages = { starshipViewModel.refreshImages(selectedStarship.id) },
-            selectedName = selectedStarship.name,
-            saveInDatabase = { starshipViewModel.saveInDatabase(selectedStarship.id, it) },
+            refreshImages = { starshipViewModel.refreshImages(starshipState.starship.id) },
+            selectedName = starshipState.starship.name,
+            saveInDatabase = { starshipViewModel.saveInDatabase(starshipState.starship.id, it) },
             navController = navController,
-            content = { padding, state, scope, snackBarHostState, imagesStateRefresh ->
+            stateObject = starshipState.state,
+            content = { padding, state, scope, snackBarHostState, imagesStateRefresh, modifier ->
                 StarshipContentScreen(padding, state, scope,
-                        snackBarHostState, imagesStateRefresh,
-                        navController, selectedStarship, starshipViewModel)
+                        snackBarHostState, imagesStateRefresh, modifier,
+                        navController, starshipState.starship, starshipViewModel)
             }
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StarshipContentScreen(
         padding: PaddingValues,
@@ -97,6 +93,7 @@ fun StarshipContentScreen(
         refreshScope: CoroutineScope,
         snackBarHostState: SnackbarHostState,
         imagesStateRefresh: MutableState<Boolean>,
+        modifier: Modifier,
         navController: NavHostController,
         selected: Starship,
         starshipViewModel: StarshipViewModel,
@@ -105,102 +102,90 @@ fun StarshipContentScreen(
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val imagesState by starshipViewModel.images.collectAsState()
-    var isRefreshing by remember { mutableStateOf(false) }
-    val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
-        isRefreshing = true
-        refreshScope.launch {
-            starshipViewModel.refreshImages(selected.id)
-            delay(1500)
-            isRefreshing = false
-        }
-    })
 
-    Box(modifier = Modifier.fillMaxSize().padding(padding)
+    Box(modifier = modifier.fillMaxSize().padding(padding)
             .paint(painter = painterResource(R.drawable.stars_image),
                     contentScale = ContentScale.FillBounds)) {
         Column(modifier = Modifier.verticalScroll(state),
                 horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!isRefreshing) {
-                AsyncImage(model = findImage(selected.id, STARSHIPS),
-                        error = choosePainter(STARSHIPS),
-                        contentDescription = stringResource(R.string.starships),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                                .height(VEHICLE_PICTURE_HEIGHT)
-                                .align(alignment = Alignment.CenterHorizontally)
-                                .clip(CircleShape)
-                                .background(Color.Magenta))
-                Text(text = selected.name,
-                        fontFamily = SOLOFontName,
-                        modifier = Modifier.fillMaxWidth()
-                                .height(NAME_PLACEHOLDER_HEIGHT)
-                                .basicMarquee(),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.h2,
-                        color = Color.White
-                )
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBox(
-                            stringResource(R.string.model_box_name),
-                            selected.model,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.starship_class_box_name),
-                            selected.starshipClass,
-                            width = thirdWidth)
-                    InfoBoxColumn(
-                            stringResource(R.string.manufacturers_box_name),
-                            null, selected.manufacturers,
-                            width = thirdWidth)
-                }
-                TripleInfoBox(
-                        stringResource(R.string.cost_box_name),
-                        selected.cost,
-                        stringResource(R.string.length_box_name),
-                        selected.length,
-                        stringResource(R.string.cargo_box_name),
-                        selected.cargoCapacity,
-                        thirdWidth = thirdWidth
-                )
-                TripleInfoBox(
-                        stringResource(R.string.v_max_box_name),
-                        selected.vMax,
-                        stringResource(R.string.hyperdrive_box_name),
-                        selected.hyperdriveRating,
-                        stringResource(R.string.mglt_box_name),
-                        selected.megalight,
-                        thirdWidth = thirdWidth
-                )
-                TripleInfoBox(
-                        stringResource(R.string.crew_box_name),
-                        selected.crew,
-                        stringResource(R.string.passengers_box_name),
-                        selected.passengers,
-                        stringResource(R.string.consumables_box_name),
-                        selected.consumables,
-                        thirdWidth = thirdWidth
-                )
-                ShowHorizontalBoxes(selected.characterConnection, Category.PEOPLE, halfWidth, navController)
-                ShowHorizontalBoxes(selected.movieConnection, Category.FILMS, halfWidth, navController)
-                GallerySlider(images = imagesState,
-                        onCLickLeft = {
-                            refreshScope.launch {
-                                snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
-                            }
-                            imagesStateRefresh.value = true
-                        },
-                        onCLickRight = {
-                            refreshScope.launch {
-                                snackBarHostState.showSnackbar(Constants.DELETE_AND_REFRESH_IMAGES)
-                            }
-                            starshipViewModel.deleteFromDatabase(it)
-                            imagesStateRefresh.value = true
-                        })
+            AsyncImage(model = findImage(selected.id, STARSHIPS),
+                    error = choosePainter(STARSHIPS),
+                    contentDescription = stringResource(R.string.starships),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                            .height(VEHICLE_PICTURE_HEIGHT)
+                            .align(alignment = Alignment.CenterHorizontally)
+                            .clip(CircleShape)
+                            .background(Color.Magenta))
+            Text(text = selected.name,
+                    fontFamily = SOLOFontName,
+                    modifier = Modifier.fillMaxWidth()
+                            .height(NAME_PLACEHOLDER_HEIGHT)
+                            .basicMarquee(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.h2,
+                    color = Color.White
+            )
+            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                    .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly) {
+                InfoBox(
+                        stringResource(R.string.model_box_name),
+                        selected.model,
+                        width = thirdWidth)
+                InfoBox(
+                        stringResource(R.string.starship_class_box_name),
+                        selected.starshipClass,
+                        width = thirdWidth)
+                InfoBoxColumn(
+                        stringResource(R.string.manufacturers_box_name),
+                        null, selected.manufacturers,
+                        width = thirdWidth)
             }
+            TripleInfoBox(
+                    stringResource(R.string.cost_box_name),
+                    selected.cost,
+                    stringResource(R.string.length_box_name),
+                    selected.length,
+                    stringResource(R.string.cargo_box_name),
+                    selected.cargoCapacity,
+                    thirdWidth = thirdWidth
+            )
+            TripleInfoBox(
+                    stringResource(R.string.v_max_box_name),
+                    selected.vMax,
+                    stringResource(R.string.hyperdrive_box_name),
+                    selected.hyperdriveRating,
+                    stringResource(R.string.mglt_box_name),
+                    selected.megalight,
+                    thirdWidth = thirdWidth
+            )
+            TripleInfoBox(
+                    stringResource(R.string.crew_box_name),
+                    selected.crew,
+                    stringResource(R.string.passengers_box_name),
+                    selected.passengers,
+                    stringResource(R.string.consumables_box_name),
+                    selected.consumables,
+                    thirdWidth = thirdWidth
+            )
+            ShowHorizontalBoxes(selected.characterConnection, Category.PEOPLE, halfWidth, navController)
+            ShowHorizontalBoxes(selected.movieConnection, Category.FILMS, halfWidth, navController)
+            GallerySlider(images = imagesState,
+                    onCLickLeft = {
+                        refreshScope.launch {
+                            snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
+                        }
+                        imagesStateRefresh.value = true
+                    },
+                    onCLickRight = {
+                        refreshScope.launch {
+                            snackBarHostState.showSnackbar(Constants.DELETE_AND_REFRESH_IMAGES)
+                        }
+                        starshipViewModel.deleteFromDatabase(it)
+                        imagesStateRefresh.value = true
+                    })
         }
-        PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
     }
 }

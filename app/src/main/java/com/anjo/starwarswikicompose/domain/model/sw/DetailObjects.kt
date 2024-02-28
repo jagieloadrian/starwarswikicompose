@@ -1,5 +1,6 @@
 package com.anjo.starwarswikicompose.domain.model.sw
 
+import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState.ERROR
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
 import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.utils.emptyConnection
@@ -20,19 +21,19 @@ data class Movie(
 )
 
 data class Person(
-        val id: String= "",
-        val name: String= "",
+        val id: String = "",
+        val name: String = "",
         val homeworld: UniversalChunk = UniversalChunk(),
         val specie: UniversalChunk = UniversalChunk(),
-        val birthYear: String= "",
-        val height: String= "",
-        val mass: String= "",
-        val gender: String= "",
-        val hair: String= "",
-        val skin: String= "",
-        val movieConnection: Connection= emptyConnection(),
-        val starshipConnection: Connection= emptyConnection(),
-        val vehicleConnection: Connection= emptyConnection(),
+        val birthYear: String = "",
+        val height: String = "",
+        val mass: String = "",
+        val gender: String = "",
+        val hair: String = "",
+        val skin: String = "",
+        val movieConnection: Connection = emptyConnection(),
+        val starshipConnection: Connection = emptyConnection(),
+        val vehicleConnection: Connection = emptyConnection(),
 )
 
 data class Planet(
@@ -101,3 +102,10 @@ data class Starship(
         val characterConnection: Connection = emptyConnection(),
         val movieConnection: Connection = emptyConnection(),
 )
+
+data class MovieDetailState(val movie: Movie = Movie(), val state: DetailObjectState = ERROR)
+data class PersonDetailState(val person: Person = Person(), val state: DetailObjectState = ERROR)
+data class PlanetDetailState(val planet: Planet = Planet(), val state: DetailObjectState = ERROR)
+data class SpecieDetailState(val specie: Specie = Specie(), val state: DetailObjectState = ERROR)
+data class VehicleDetailState(val vehicle: Vehicle = Vehicle(), val state: DetailObjectState = ERROR)
+data class StarshipsDetailState(val starship: Starship = Starship(), val state: DetailObjectState = ERROR)

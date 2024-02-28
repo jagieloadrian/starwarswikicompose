@@ -19,15 +19,12 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,16 +60,14 @@ import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PlanetContentScreen(
         navController: NavHostController,
         planetViewModel: PlanetViewModel = hiltViewModel(),
 ) {
-    val selectedPlanet by planetViewModel.selectedPlanet.collectAsState()
+    val planetState by planetViewModel.selectedPlanet.collectAsState()
     val init = remember { mutableStateOf(true) }
 
     if (init.value) {
@@ -81,14 +76,15 @@ fun PlanetContentScreen(
     }
 
     DetailVisualisationComponent(
-            refreshImages = { planetViewModel.refreshImages(selectedPlanet.id) },
-            selectedName = selectedPlanet.name,
-            saveInDatabase = { planetViewModel.saveInDatabase(selectedPlanet.id, it) },
+            refreshImages = { planetViewModel.refreshImages(planetState.planet.id) },
+            selectedName = planetState.planet.name,
+            saveInDatabase = { planetViewModel.saveInDatabase(planetState.planet.id, it) },
             navController = navController,
-            content = { padding, state, scope, snackBarHostState, imagesStateRefresh ->
+            stateObject = planetState.state,
+            content = { padding, state, scope, snackBarHostState, imagesStateRefresh, modifier ->
                 PlanetScreenContent(padding, state, scope,
-                        snackBarHostState, imagesStateRefresh,
-                        navController, selectedPlanet, planetViewModel)
+                        snackBarHostState, imagesStateRefresh, modifier,
+                        navController, planetState.planet, planetViewModel)
             }
     )
 }
@@ -101,6 +97,7 @@ fun PlanetScreenContent(
         refreshScope: CoroutineScope,
         snackBarHostState: SnackbarHostState,
         imagesStateRefresh: MutableState<Boolean>,
+        modifier: Modifier,
         navController: NavHostController,
         selected: Planet,
         planetViewModel: PlanetViewModel,
@@ -109,89 +106,77 @@ fun PlanetScreenContent(
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val imagesState by planetViewModel.images.collectAsState()
-    var isRefreshing by remember { mutableStateOf(false) }
-    val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
-        isRefreshing = true
-        refreshScope.launch {
-            planetViewModel.refreshImages(selected.id)
-            delay(1500)
-            isRefreshing = false
-        }
-    })
 
-    Box(modifier = Modifier.fillMaxSize().padding(padding)
+    Box(modifier = modifier.fillMaxSize().padding(padding)
             .paint(painter = painterResource(R.drawable.stars_image),
                     contentScale = ContentScale.FillBounds)) {
         Column(modifier = Modifier.verticalScroll(state),
                 horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!isRefreshing) {
-                AsyncImage(model = findImage(selected.id, PLANETS),
-                        error = choosePainter(PLANETS),
-                        contentDescription = stringResource(R.string.planets),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                                .height(PICTURE_HEIGHT)
-                                .align(alignment = Alignment.CenterHorizontally)
-                                .clip(CircleShape)
-                                .background(Color.Magenta))
-                Text(text = selected.name,
-                        fontFamily = SOLOFontName,
-                        modifier = Modifier.fillMaxWidth()
-                                .height(NAME_PLACEHOLDER_HEIGHT)
-                                .basicMarquee(),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.h2,
-                        color = Color.White
-                )
-                TripleInfoBox(
-                        stringResource(R.string.diameter_box_name),
-                        selected.diameter,
-                        stringResource(R.string.gravity_box_name),
-                        selected.gravity,
-                        stringResource(R.string.population_box_name),
-                        formatPopulation(selected.population),
-                        thirdWidth = thirdWidth
-                )
-                DoubleInfoBox(stringResource(R.string.rotation_period_box_name),
-                        selected.rotationPeriod,
-                        stringResource(R.string.orbital_period_box_name),
-                        selected.orbitalPeriod,
-                        halfWidth)
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBoxColumn(
-                            stringResource(R.string.climates_box_name),
-                            null, selected.climates,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.surface_water_box_name),
-                            selected.surfaceWater,
-                            width = thirdWidth)
-                    InfoBoxColumn(
-                            stringResource(R.string.terrains_box_name),
-                            null, selected.terrains,
-                            width = thirdWidth)
-                }
-                ShowHorizontalBoxes(selected.characterConnection, PEOPLE, halfWidth, navController)
-                ShowHorizontalBoxes(selected.movieConnection, FILMS, halfWidth, navController)
-                GallerySlider(images = imagesState,
-                        onCLickLeft = {
-                            refreshScope.launch {
-                                snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
-                            }
-                            imagesStateRefresh.value = true
-                        },
-                        onCLickRight = {
-                            refreshScope.launch {
-                                snackBarHostState.showSnackbar(Constants.DELETE_AND_REFRESH_IMAGES)
-                            }
-                            planetViewModel.deleteFromDatabase(it)
-                            imagesStateRefresh.value = true
-                        })
+            AsyncImage(model = findImage(selected.id, PLANETS),
+                    error = choosePainter(PLANETS),
+                    contentDescription = stringResource(R.string.planets),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                            .height(PICTURE_HEIGHT)
+                            .align(alignment = Alignment.CenterHorizontally)
+                            .clip(CircleShape)
+                            .background(Color.Magenta))
+            Text(text = selected.name,
+                    fontFamily = SOLOFontName,
+                    modifier = Modifier.fillMaxWidth()
+                            .height(NAME_PLACEHOLDER_HEIGHT)
+                            .basicMarquee(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.h2,
+                    color = Color.White
+            )
+            TripleInfoBox(
+                    stringResource(R.string.diameter_box_name),
+                    selected.diameter,
+                    stringResource(R.string.gravity_box_name),
+                    selected.gravity,
+                    stringResource(R.string.population_box_name),
+                    formatPopulation(selected.population),
+                    thirdWidth = thirdWidth
+            )
+            DoubleInfoBox(stringResource(R.string.rotation_period_box_name),
+                    selected.rotationPeriod,
+                    stringResource(R.string.orbital_period_box_name),
+                    selected.orbitalPeriod,
+                    halfWidth)
+            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                    .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly) {
+                InfoBoxColumn(
+                        stringResource(R.string.climates_box_name),
+                        null, selected.climates,
+                        width = thirdWidth)
+                InfoBox(
+                        stringResource(R.string.surface_water_box_name),
+                        selected.surfaceWater,
+                        width = thirdWidth)
+                InfoBoxColumn(
+                        stringResource(R.string.terrains_box_name),
+                        null, selected.terrains,
+                        width = thirdWidth)
             }
+            ShowHorizontalBoxes(selected.characterConnection, PEOPLE, halfWidth, navController)
+            ShowHorizontalBoxes(selected.movieConnection, FILMS, halfWidth, navController)
+            GallerySlider(images = imagesState,
+                    onCLickLeft = {
+                        refreshScope.launch {
+                            snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
+                        }
+                        imagesStateRefresh.value = true
+                    },
+                    onCLickRight = {
+                        refreshScope.launch {
+                            snackBarHostState.showSnackbar(Constants.DELETE_AND_REFRESH_IMAGES)
+                        }
+                        planetViewModel.deleteFromDatabase(it)
+                        imagesStateRefresh.value = true
+                    })
         }
-        PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
     }
 }

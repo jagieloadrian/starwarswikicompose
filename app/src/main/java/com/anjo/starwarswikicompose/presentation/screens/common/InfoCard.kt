@@ -67,7 +67,9 @@ fun InfoDialog(onDismissAction: () -> Unit) {
                             color = Color.White)
                     InfoRow("Version name: ", versionName)
                     InfoRow("Version code: ", versionCode.toString())
-                    InfoRow("Is in debug mode: ", debug.toString())
+                    if (debug) {
+                        InfoRow("Is in debug mode: ", debug.toString())
+                    }
                     Text(text = copyright,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.ExtraBold,

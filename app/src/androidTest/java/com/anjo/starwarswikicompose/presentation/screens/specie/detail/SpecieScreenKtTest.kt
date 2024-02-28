@@ -5,13 +5,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -78,7 +78,7 @@ class SpecieScreenKtTest {
             val imagesStateRefresh = remember { mutableStateOf(true) }
             val state = rememberScrollState()
             SpecieScreenContent(PaddingValues(0.dp), state, scope, snackBarHostState,
-                    imagesStateRefresh, navHostController, specie, specieViewModel)
+                    imagesStateRefresh, Modifier,navHostController, specie, specieViewModel)
         }
 
         //when and then
@@ -124,6 +124,8 @@ class SpecieScreenKtTest {
         val hair = composeTestRule.onNodeWithText("Hair Colors", useUnmergedTree = true)
         hair.assertIsDisplayed()
 
+        composeTestRule.onRoot().performTouchInput { swipeUp() }
+
         val characterBox = composeTestRule.onNodeWithContentDescription("RelatedBox charName", useUnmergedTree = true)
         characterBox.assertIsDisplayed()
         characterBox.assertIsEnabled()
@@ -131,10 +133,6 @@ class SpecieScreenKtTest {
 
 
         val movieBox = composeTestRule.onNodeWithContentDescription("RelatedBox movieName", useUnmergedTree = true)
-        movieBox.assertIsNotDisplayed()
-
-        composeTestRule.onRoot().performTouchInput { swipeUp() }
-
         movieBox.assertIsDisplayed()
         movieBox.assertIsEnabled()
         movieBox.onSibling().assertTextEquals(specie.movieConnection.objects[0].name)

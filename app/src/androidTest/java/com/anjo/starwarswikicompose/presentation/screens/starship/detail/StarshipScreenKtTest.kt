@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -75,7 +76,7 @@ class StarshipScreenKtTest {
             val imagesStateRefresh = remember { mutableStateOf(true) }
             val state = rememberScrollState()
             StarshipContentScreen(PaddingValues(0.dp), state, scope, snackBarHostState,
-                    imagesStateRefresh, navHostController, starship, starshipViewModel)
+                    imagesStateRefresh, Modifier, navHostController, starship, starshipViewModel)
         }
 
         //when and then

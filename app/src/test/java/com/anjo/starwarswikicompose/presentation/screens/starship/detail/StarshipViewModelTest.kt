@@ -3,7 +3,9 @@ package com.anjo.starwarswikicompose.presentation.screens.starship.detail
 import androidx.lifecycle.SavedStateHandle
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Category.STARSHIPS
+import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState
 import com.anjo.starwarswikicompose.domain.model.sw.Starship
+import com.anjo.starwarswikicompose.domain.model.sw.StarshipsDetailState
 import com.anjo.starwarswikicompose.services.usecases.imagesliderusecase.ImageSliderUseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_STARSHIP_ARGUMENT_KEY
@@ -41,15 +43,16 @@ class StarshipViewModelTest{
         val imageSliderModel = ImageSliderModel(1, objectId, "someUrl", STARSHIPS)
         val imageSliderModel2 = ImageSliderModel(2, objectId, "someUrl2", STARSHIPS)
         val expectedImages = listOf(imageSliderModel, imageSliderModel2)
-        val expected = Starship(id = objectId, "Title", model = "1", starshipClass = "mass")
+        val expected = StarshipsDetailState(starship = Starship(id = objectId, "Title", model = "1", starshipClass = "mass"),
+                state = DetailObjectState.SUCCESS)
 
         coEvery { savedStateHandle.get<String>(DETAILS_STARSHIP_ARGUMENT_KEY) } returns objectId
-        coEvery { useCases.getStarshipUseCase(objectId) } returns expected
+        coEvery { useCases.getStarshipUseCase(objectId) } returns expected.starship
         coEvery { imageSliderUseCases.getImagesForObjectUseCase(objectId, STARSHIPS) } returns expectedImages
 
         //when
         starshipViewModel.getStarship()
-        delay(50)
+        delay(2050)
         val actual = starshipViewModel.selectedStarship.value
         val actualImages = starshipViewModel.images.value
 

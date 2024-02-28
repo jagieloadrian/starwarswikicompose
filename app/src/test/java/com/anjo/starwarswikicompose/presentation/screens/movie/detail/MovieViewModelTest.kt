@@ -48,8 +48,8 @@ class MovieViewModelTest {
 
         //when
         movieViewModel.getMovie()
-        delay(50)
-        val actual = movieViewModel.selectedMovie.value
+        delay(2050)
+        val actual = movieViewModel.selectedMovie.value.movie
         val actualImages = movieViewModel.images.value
 
         //then

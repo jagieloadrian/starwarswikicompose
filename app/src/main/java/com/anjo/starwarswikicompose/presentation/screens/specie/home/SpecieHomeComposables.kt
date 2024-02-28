@@ -33,15 +33,15 @@ fun Species(
     }
 
     HomeSpecieContent(item, navController)
-        if (!refresh) {
-            homeSpecieViewModel.fetchSpecies()
-        }
+    if (!refresh) {
+        homeSpecieViewModel.fetchSpecies()
     }
+}
 
 @Composable
 fun HomeSpecieContent(
         item: HomeSpecieViewModel.SpecieState,
-        navController: NavHostController
+        navController: NavHostController,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (item.isLoading) {

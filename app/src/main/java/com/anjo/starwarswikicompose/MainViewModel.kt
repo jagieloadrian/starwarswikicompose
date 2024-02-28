@@ -47,12 +47,13 @@ open class MainViewModel @Inject constructor() : ViewModel() {
                 .filterNot { workInfo -> workInfo.state.isFinished }
                 .count()
         if (checkIfExist == 0) {
-            val existingWorkPolicy = ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE
+            val existingWorkPolicy = ExistingPeriodicWorkPolicy.KEEP
             val workRequest =
                 PeriodicWorkRequestBuilder<NotificationWorker>(7, TimeUnit.DAYS)
                         .addTag(NOTIFICATION_WORK_TAG)
                         .build()
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(NOTIFICATION_WORK_TAG, existingWorkPolicy ,workRequest)
+            WorkManager.getInstance(context)
+                    .enqueueUniquePeriodicWork(NOTIFICATION_WORK_TAG, existingWorkPolicy, workRequest)
             Log.e("WORKERS", workRequest.toString())
         }
     }

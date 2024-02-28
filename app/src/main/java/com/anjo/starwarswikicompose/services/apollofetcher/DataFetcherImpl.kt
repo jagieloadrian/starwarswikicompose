@@ -45,9 +45,9 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
         return response.mapFromFilms()
     }
 
-    override suspend fun fetchOneFilm(id: String): Movie {
+    override suspend fun fetchOneFilm(id: String): Movie? {
         val query = GetFilmQuery(id = Optional.presentIfNotNull(id))
-        return getResponse(query, Category.FILMS)?.data?.film?.mapToMovie() ?: Movie()
+        return getResponse(query, Category.FILMS)?.data?.film?.mapToMovie()
     }
 
     override suspend fun fetchPeoples(): List<UniversalChunk> {
@@ -55,9 +55,9 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
         return response.mapFromPersons()
     }
 
-    override suspend fun fetchOnePerson(id: String): Person {
+    override suspend fun fetchOnePerson(id: String): Person? {
         val query = GetPersonQuery(id = Optional.presentIfNotNull(id))
-        return getResponse(query, Category.PEOPLE)?.data?.person?.mapToPerson() ?: Person()
+        return getResponse(query, Category.PEOPLE)?.data?.person?.mapToPerson()
     }
 
     override suspend fun fetchPlanets(): List<UniversalChunk> {
@@ -65,9 +65,9 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
         return response.mapFromPlanets()
     }
 
-    override suspend fun fetchOnePlanet(id: String): Planet {
+    override suspend fun fetchOnePlanet(id: String): Planet? {
         val query = GetPlanetQuery(id = Optional.presentIfNotNull(id))
-        return getResponse(query, Category.PLANETS)?.data?.planet?.mapToPlanet() ?: Planet()
+        return getResponse(query, Category.PLANETS)?.data?.planet?.mapToPlanet()
     }
 
     override suspend fun fetchSpecies(): List<UniversalChunk> {
@@ -75,19 +75,20 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
         return response.mapFromSpecies()
     }
 
-    override suspend fun fetchOneSpecie(id: String): Specie {
+    override suspend fun fetchOneSpecie(id: String): Specie? {
         val query = GetSpecieQuery(id = Optional.presentIfNotNull(id))
-        return getResponse(query, Category.SPECIES)?.data?.species?.mapToSpecie() ?: Specie()
+        return getResponse(query, Category.SPECIES)?.data?.species?.mapToSpecie()
     }
 
     override suspend fun fetchStarships(): List<UniversalChunk> {
-        val response = getResponse(GetAllStarshipsQuery(), Category.STARSHIPS)?.data?.allStarships?.starships ?: listOf()
+        val response =
+            getResponse(GetAllStarshipsQuery(), Category.STARSHIPS)?.data?.allStarships?.starships ?: listOf()
         return response.mapFromStarships()
     }
 
-    override suspend fun fetchOneStarship(id: String): Starship {
+    override suspend fun fetchOneStarship(id: String): Starship? {
         val query = GetStarshipQuery(id = Optional.presentIfNotNull(id))
-        return getResponse(query, Category.STARSHIPS)?.data?.starship?.mapToStarship() ?: Starship()
+        return getResponse(query, Category.STARSHIPS)?.data?.starship?.mapToStarship()
     }
 
     override suspend fun fetchVehicles(): List<UniversalChunk> {
@@ -95,9 +96,9 @@ class DataFetcherImpl(private val apolloClient: ApolloClient) : DataFetcher {
         return response.mapFromVehicles()
     }
 
-    override suspend fun fetchOneVehicle(id: String): Vehicle {
+    override suspend fun fetchOneVehicle(id: String): Vehicle? {
         val query = GetVehicleQuery(Optional.presentIfNotNull(id))
-        return getResponse(query, Category.VEHICLES)?.data?.vehicle?.mapToVehicle() ?: Vehicle()
+        return getResponse(query, Category.VEHICLES)?.data?.vehicle?.mapToVehicle()
     }
 
     private suspend fun <D : Query.Data> getResponse(query: Query<D>, enum: Category): ApolloResponse<D>? {

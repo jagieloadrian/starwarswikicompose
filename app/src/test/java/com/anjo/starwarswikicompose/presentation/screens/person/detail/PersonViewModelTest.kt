@@ -2,9 +2,10 @@ package com.anjo.starwarswikicompose.presentation.screens.person.detail
 
 import androidx.lifecycle.SavedStateHandle
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
-import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.domain.model.sw.Category.PEOPLE
+import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState.SUCCESS
 import com.anjo.starwarswikicompose.domain.model.sw.Person
+import com.anjo.starwarswikicompose.domain.model.sw.PersonDetailState
 import com.anjo.starwarswikicompose.services.usecases.imagesliderusecase.ImageSliderUseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_PERSON_ARGUMENT_KEY
@@ -42,15 +43,16 @@ class PersonViewModelTest {
         val imageSliderModel = ImageSliderModel(1, objectId, "someUrl", PEOPLE)
         val imageSliderModel2 = ImageSliderModel(2, objectId, "someUrl2", PEOPLE)
         val expectedImages = listOf(imageSliderModel, imageSliderModel2)
-        val expected = Person(id = objectId, "Title", birthYear = "1",  mass = "mass")
+        val expected = PersonDetailState(person = Person(id = objectId, "Title", birthYear = "1",  mass = "mass"),
+                state = SUCCESS)
 
         coEvery { savedStateHandle.get<String>(DETAILS_PERSON_ARGUMENT_KEY) } returns objectId
-        coEvery { useCases.getPersonUseCase(objectId) } returns expected
+        coEvery { useCases.getPersonUseCase(objectId) } returns expected.person
         coEvery { imageSliderUseCases.getImagesForObjectUseCase(objectId, PEOPLE) } returns expectedImages
 
         //when
         personViewModel.getPerson()
-        delay(50)
+        delay(2050)
         val actual = personViewModel.selectedPerson.value
         val actualImages = personViewModel.images.value
 

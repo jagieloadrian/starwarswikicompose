@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.images
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -50,7 +49,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ImageBox(
         photo: FlickrPhoto,

@@ -19,7 +19,6 @@ object Constants {
     const val APOLLO_BASE_URL = "https://swapi-graphql.eskerda.vercel.app/"
     const val FLICKR_BASE_URL = "https://www.flickr.com/"
     const val FLICKR_METHOD_SEARCH_PHOTOS = "flickr.photos.search"
-    const val FLICKR_METHOD_RECENT_PHOTOS = "flickr.photos.getRecent"
     const val FLICKR_BASE_URL_IMAGE = "https://live.staticflickr.com"
     const val FLICKR_EXT = ".jpg"
 
@@ -31,7 +30,7 @@ object Constants {
     const val PREFERENCES_KEY = "on_boarding-completed"
     const val IMAGE_SLIDER_TABLE = "image_slider_table"
     const val NOTES_TABLE = "notes_table"
-    const val DEFAULT_VALUE = "Default Value"
+    const val ERROR_UNAVAILABLE_INTERNET = "Internet Unavailable"
 
     const val SAVE_IN_PREFIX = "Save in "
     const val IMAGE_NOT_FOUND = "Image not found, go to searcher!"
@@ -40,8 +39,10 @@ object Constants {
     const val COPIED_TO_CLIPBOARD = "Copied to clipboard"
     const val ASKING_FOR_USER = "Where are you?"
     const val DESCRIPTION_ASKING_FOR_USER = "We missed you... Come look for new things \uD83D\uDE80"
+    const val ERROR_DESCRIPTION = "Ooops! Something went wrong!"
 
-    const val FIRST_RATIONALE = "The notification reminds you about the news in Star Wars world.\nPlease grant the permission."
+    const val FIRST_RATIONALE =
+        "The notification reminds you about the news in Star Wars world.\nPlease grant the permission."
     const val SECOND_RATIONALE = "Notification are not available.\\nDo you want turn on notification?"
     const val REQUEST_PERM = "Request permission"
     const val CANCEL = "Cancel"
@@ -60,4 +61,9 @@ object Constants {
     const val SHIMMER_EFFECT_TAG = "shimmer_effect_tag"
     const val FAB_BUTTON_TAG = "fab_button_tag"
     const val RELATED_BUTTON_TAG = "related_button_tag"
+    const val APOLLO_DB = "apollo.db"
+
+    const val CUSTOM_ANIMATED_LABEL = "CustomContentAnimated"
+    const val LOADING_ANIMATED_LABEL = "LoadingContentAnimated"
+    const val ERROR_ANIMATED_LABEL = "ErrorContentAnimated"
 }
