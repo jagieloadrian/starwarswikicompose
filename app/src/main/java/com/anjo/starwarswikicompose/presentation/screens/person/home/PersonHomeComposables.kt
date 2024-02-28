@@ -24,7 +24,8 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 fun People(
         navController: NavHostController,
         homePersonViewModel: HomePersonViewModel = hiltViewModel(),
-        refresh: Boolean) {
+        refresh: Boolean,
+) {
     val item by homePersonViewModel.fetchedPeople.collectAsState()
     val init = remember { mutableStateOf(true) }
 
@@ -42,7 +43,8 @@ fun People(
 @Composable
 fun HomePeopleContent(
         item: HomePersonViewModel.PeopleState,
-        navController: NavHostController) {
+        navController: NavHostController,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (item.isLoading) {
             ShimmerEffect()

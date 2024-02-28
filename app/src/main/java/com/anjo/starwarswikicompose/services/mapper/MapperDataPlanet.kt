@@ -6,7 +6,7 @@ import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
 import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.utils.emptyConnection
 
-fun GetPlanetQuery.Planet.mapToPlanet() : Planet {
+fun GetPlanetQuery.Planet.mapToPlanet(): Planet {
     return Planet(
             id = id,
             name = name ?: "",

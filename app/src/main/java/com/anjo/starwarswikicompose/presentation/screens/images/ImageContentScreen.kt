@@ -65,7 +65,7 @@ fun ImageScreen(
             bottomBar = { CustomBottomAppBar(navController) },
             snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { padding ->
-        ImageGalleryVisualisation(padding,  imageViewModel, snackBarHostState)
+        ImageGalleryVisualisation(padding, imageViewModel, snackBarHostState)
     }
 }
 
@@ -164,10 +164,12 @@ fun LazyColumnPhotos(
     }
 }
 
-fun refresh(scope: CoroutineScope,
+fun refresh(
+        scope: CoroutineScope,
         refreshing: MutableState<Boolean>,
         searchQuery: String,
-        imageViewModel: ImageViewModel) {
+        imageViewModel: ImageViewModel,
+) {
     scope.launch {
         refreshing.value = true
         if (searchQuery.isEmpty()) {

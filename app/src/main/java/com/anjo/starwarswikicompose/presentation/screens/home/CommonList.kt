@@ -27,8 +27,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CommonList(navController: NavHostController,
-        enum: Category) {
+fun CommonList(
+        navController: NavHostController,
+        enum: Category,
+) {
     val refreshScope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
 
@@ -44,16 +46,16 @@ fun CommonList(navController: NavHostController,
             .fillMaxSize()
             .pullRefresh(pullRefreshState)) {
         if (!isRefreshing) {
-            GenerateComposableContent(navController, enum, isRefreshing)
+            ChooseComposableContent(navController, enum, isRefreshing)
         }
         PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
     }
 }
 
 @Composable
-fun GenerateComposableContent(navController: NavHostController, enum: Category, refresh: Boolean) {
+fun ChooseComposableContent(navController: NavHostController, enum: Category, refresh: Boolean) {
     when (enum) {
-        Category.FILMS -> {
+        Category.FILMS     -> {
             Movies(navController, refresh = refresh)
         }
 

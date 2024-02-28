@@ -3,7 +3,9 @@ package com.anjo.starwarswikicompose.presentation.screens.planet.detail
 import androidx.lifecycle.SavedStateHandle
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
+import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState
 import com.anjo.starwarswikicompose.domain.model.sw.Planet
+import com.anjo.starwarswikicompose.domain.model.sw.PlanetDetailState
 import com.anjo.starwarswikicompose.services.usecases.imagesliderusecase.ImageSliderUseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_PLANET_ARGUMENT_KEY
@@ -41,15 +43,16 @@ class PlanetViewModelTest {
         val imageSliderModel = ImageSliderModel(1, objectId, "someUrl", PLANETS)
         val imageSliderModel2 = ImageSliderModel(2, objectId, "someUrl2", PLANETS)
         val expectedImages = listOf(imageSliderModel, imageSliderModel2)
-        val expected = Planet(id = objectId, "Title", population = "1", gravity = "mass")
+        val expected = PlanetDetailState(planet = Planet(id = objectId, "Title", population = "1", gravity = "mass"),
+                state = DetailObjectState.SUCCESS)
 
         coEvery { savedStateHandle.get<String>(DETAILS_PLANET_ARGUMENT_KEY) } returns objectId
-        coEvery { useCases.getPlanetUseCase(objectId) } returns expected
+        coEvery { useCases.getPlanetUseCase(objectId) } returns expected.planet
         coEvery { imageSliderUseCases.getImagesForObjectUseCase(objectId, PLANETS) } returns expectedImages
 
         //when
         planetViewModel.getPlanet()
-        delay(50)
+        delay(2050)
         val actual = planetViewModel.selectedPlanet.value
         val actualImages = planetViewModel.images.value
 

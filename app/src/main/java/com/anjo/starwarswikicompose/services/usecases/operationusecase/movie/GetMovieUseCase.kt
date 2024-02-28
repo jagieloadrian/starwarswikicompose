@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetMovieUseCase @Inject constructor(
         private val dataFetcher: OperationRepository,
 ) {
-    suspend operator fun invoke(id: String): Movie {
+    suspend operator fun invoke(id: String): Movie? {
         return dataFetcher.fetchOneFilm(id)
     }
 }

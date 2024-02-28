@@ -5,9 +5,6 @@
       <entry key="All Tests">
         <State />
       </entry>
-      <entry key="PersonHomeComposablesKtTest">
-        <State />
-      </entry>
       <entry key="WelcomeScreenKtTest">
         <State>
           <targetSelectedWithDropDown>
@@ -37,17 +34,8 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-01-25T20:54:18.394341963Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-02-17T11:41:05.432585669Z" />
         </State>
-      </entry>
-      <entry key="givenEmptyMoviesAndLoading_whenDisplayed_thenAssertOps()">
-        <State />
-      </entry>
-      <entry key="givenEmptyPlanetsAndLoading_whenDisplayed_thenAssertOps()">
-        <State />
-      </entry>
-      <entry key="givenWebView_whenDisplayed_thenAssertOps()">
-        <State />
       </entry>
     </value>
   </component>

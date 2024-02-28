@@ -93,7 +93,7 @@ fun InfoBox(
         navController: NavHostController? = null,
 ) {
     val descriptionName = name ?: "\uD83D\uDE4A"
-    val shouldBeClickable = id != null && category != null && navController != null
+    val shouldBeClickable = !(id.isNullOrEmpty()) && category != null && navController != null
     val brushColors = if (shouldBeClickable) CLICKABLE_BOXES_COLORS else BOXES_COLORS
     Box(modifier = Modifier
             .width(width)
@@ -228,10 +228,10 @@ private fun RelatedBox(
 
 @Composable
 fun DoubleInfoBox(
-        firstCornerName:String,
-        firstValue:String,
-        secondCornerName:String,
-        secondValue:String,
+        firstCornerName: String,
+        firstValue: String,
+        secondCornerName: String,
+        secondValue: String,
         halfWidth: Dp,
 ) {
     Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -250,12 +250,12 @@ fun DoubleInfoBox(
 
 @Composable
 fun TripleInfoBox(
-        firstCornerName:String,
-        firstValue:String,
-        secondCornerName:String,
-        secondValue:String,
-        thirdCornerName:String,
-        thirdValue:String,
+        firstCornerName: String,
+        firstValue: String,
+        secondCornerName: String,
+        secondValue: String,
+        thirdCornerName: String,
+        thirdValue: String,
         thirdWidth: Dp,
 ) {
     Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -265,7 +265,7 @@ fun TripleInfoBox(
                 firstCornerName,
                 firstValue,
                 width = thirdWidth)
-        InfoBox( secondCornerName,
+        InfoBox(secondCornerName,
                 secondValue,
                 width = thirdWidth)
         InfoBox(

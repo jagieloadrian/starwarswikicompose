@@ -3,7 +3,9 @@ package com.anjo.starwarswikicompose.presentation.screens.vehicle.detail
 import androidx.lifecycle.SavedStateHandle
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Category.VEHICLES
+import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState
 import com.anjo.starwarswikicompose.domain.model.sw.Vehicle
+import com.anjo.starwarswikicompose.domain.model.sw.VehicleDetailState
 import com.anjo.starwarswikicompose.services.usecases.imagesliderusecase.ImageSliderUseCases
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_VEHICLE_ARGUMENT_KEY
@@ -41,15 +43,16 @@ class VehicleViewModelTest {
         val imageSliderModel = ImageSliderModel(1, objectId, "someUrl", VEHICLES)
         val imageSliderModel2 = ImageSliderModel(2, objectId, "someUrl2", VEHICLES)
         val expectedImages = listOf(imageSliderModel, imageSliderModel2)
-        val expected = Vehicle(id = objectId, "Title", model = "1", vehicleClass = "mass")
+        val expected = VehicleDetailState(vehicle = Vehicle(id = objectId, "Title", model = "1", vehicleClass = "mass"),
+                state = DetailObjectState.SUCCESS)
 
         coEvery { savedStateHandle.get<String>(DETAILS_VEHICLE_ARGUMENT_KEY) } returns objectId
-        coEvery { useCases.getVehicleUseCase(objectId) } returns expected
+        coEvery { useCases.getVehicleUseCase(objectId) } returns expected.vehicle
         coEvery { imageSliderUseCases.getImagesForObjectUseCase(objectId, VEHICLES) } returns expectedImages
 
         //when
         vehicleViewModel.getVehicle()
-        delay(50)
+        delay(2050)
         val actual = vehicleViewModel.selectedVehicle.value
         val actualImages = vehicleViewModel.images.value
 

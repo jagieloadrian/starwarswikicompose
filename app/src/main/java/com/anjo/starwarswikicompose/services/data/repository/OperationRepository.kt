@@ -32,7 +32,7 @@ class OperationRepository @Inject constructor(
         return dataFetcher.fetchFilms()
     }
 
-    suspend fun fetchOneFilm(id: String): Movie {
+    suspend fun fetchOneFilm(id: String): Movie? {
         return dataFetcher.fetchOneFilm(id)
     }
 
@@ -40,7 +40,7 @@ class OperationRepository @Inject constructor(
         return dataFetcher.fetchPeoples()
     }
 
-    suspend fun fetchOnePerson(id: String): Person  {
+    suspend fun fetchOnePerson(id: String): Person? {
         return dataFetcher.fetchOnePerson(id)
     }
 
@@ -48,7 +48,7 @@ class OperationRepository @Inject constructor(
         return dataFetcher.fetchPlanets()
     }
 
-    suspend fun fetchOnePlanet(id: String):Planet {
+    suspend fun fetchOnePlanet(id: String): Planet? {
         return dataFetcher.fetchOnePlanet(id)
     }
 
@@ -56,7 +56,7 @@ class OperationRepository @Inject constructor(
         return dataFetcher.fetchSpecies()
     }
 
-    suspend fun fetchOneSpecie(id: String): Specie {
+    suspend fun fetchOneSpecie(id: String): Specie? {
         return dataFetcher.fetchOneSpecie(id)
     }
 
@@ -64,7 +64,7 @@ class OperationRepository @Inject constructor(
         return dataFetcher.fetchStarships()
     }
 
-    suspend fun fetchOneStarship(id: String): Starship {
+    suspend fun fetchOneStarship(id: String): Starship? {
         return dataFetcher.fetchOneStarship(id)
     }
 
@@ -72,7 +72,7 @@ class OperationRepository @Inject constructor(
         return dataFetcher.fetchVehicles()
     }
 
-    suspend fun fetchOneVehicle(id: String): Vehicle {
+    suspend fun fetchOneVehicle(id: String): Vehicle? {
         return dataFetcher.fetchOneVehicle(id)
     }
 

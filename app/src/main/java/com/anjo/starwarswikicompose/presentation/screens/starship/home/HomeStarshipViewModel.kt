@@ -19,7 +19,7 @@ class HomeStarshipViewModel @Inject constructor(private val useCase: UseCases) :
     private val _fetchedStarship = MutableStateFlow(StarshipState())
     val fetchedStarships = _fetchedStarship
 
-   fun getStarships() {
+    fun getStarships() {
         viewModelScope.launch(Dispatchers.IO) {
             _fetchedStarship.update {
                 it.copy(

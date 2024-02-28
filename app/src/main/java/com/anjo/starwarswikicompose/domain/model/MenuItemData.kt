@@ -8,7 +8,7 @@ import com.anjo.starwarswikicompose.R
 enum class MenuItemData(val text: String) {
     Notes("Notes"),
     Feedback("Feedback"),
-    Sound("Sound On"),
+    Sound("Sound"),
     Notification("Notification"),
     Info("Info");
 

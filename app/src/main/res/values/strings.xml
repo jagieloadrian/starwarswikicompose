@@ -14,7 +14,6 @@
     <string name="subject_placeholder">Fill the subject of your feedback</string>
     <string name="description">Description</string>
     <string name="description_placeholder">Provide your description :)</string>
-    <string name="default_value">Default Value</string>
     <string name="movies">MOVIES</string>
     <string name="people">PEOPLE</string>
     <string name="starships">STARSHIPS</string>
@@ -26,7 +25,6 @@
     <string name="home_icon">home icon</string>
     <string name="options">options</string>
     <string name="bottom_tab_description">bottom tab description</string>
-    <string name="browser_icon">browser icon</string>
     <string name="network_error_icon">network error icon</string>
     <string name="placeholder_search">Search images…</string>
     <string name="flickr_image">image from flickr</string>
@@ -40,7 +38,6 @@
     <string name="gender_box_name">Gender</string>
     <string name="hair_box_name">Hair</string>
     <string name="skin_box_name">Skin</string>
-    <string name="title_box_name">Title</string>
     <string name="episode_id_box_name">Episode</string>
     <string name="opening_crawl_box_name">Opening Crawl</string>
     <string name="director_box_name">Director</string>
@@ -62,8 +59,6 @@
     <string name="hair_colors_box_name">Hair Colors</string>
     <string name="skin_colors_box_name">Skin Colors</string>
     <string name="language_box_name">Language</string>
-    <string name="character_box_name">Characters</string>
-    <string name="movies_box_name">Movies</string>
     <string name="model_box_name">Model</string>
     <string name="starship_class_box_name">Starship class</string>
     <string name="vehicle_class_box_name">Vehicle class</string>

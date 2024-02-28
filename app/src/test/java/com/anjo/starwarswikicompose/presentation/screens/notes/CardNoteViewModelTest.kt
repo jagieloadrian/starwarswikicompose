@@ -2,7 +2,6 @@ package com.anjo.starwarswikicompose.presentation.screens.notes
 
 import com.anjo.starwarswikicompose.domain.model.NoteModel
 import com.anjo.starwarswikicompose.services.usecases.notesusecase.NotesUseCases
-import com.anjo.starwarswikicompose.utils.Constants.DEFAULT_VALUE
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
@@ -68,7 +67,7 @@ class CardNoteViewModelTest {
         val actual = cardNoteViewModel.note.value
 
         //then
-        actual.text shouldBe DEFAULT_VALUE
+        actual.text shouldBe ""
     }
 
     @Test

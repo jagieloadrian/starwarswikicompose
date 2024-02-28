@@ -24,25 +24,27 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 fun Vehicles(
         navController: NavHostController,
         homeVehicleViewModel: HomeVehicleViewModel = hiltViewModel(),
-        refresh: Boolean) {
+        refresh: Boolean,
+) {
     val item by homeVehicleViewModel.fetchedVehicles.collectAsState()
     val init = remember { mutableStateOf(true) }
 
     if (init.value) {
-       homeVehicleViewModel.getVehicles()
+        homeVehicleViewModel.getVehicles()
         init.value = false
     }
 
     HomeVehicleContent(item, navController)
-        if (!refresh) {
-            homeVehicleViewModel.fetchVehicles()
-        }
+    if (!refresh) {
+        homeVehicleViewModel.fetchVehicles()
     }
+}
 
 @Composable
 fun HomeVehicleContent(
         item: HomeVehicleViewModel.VehicleState,
-        navController: NavHostController) {
+        navController: NavHostController,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (item.isLoading) {
             ShimmerEffect()

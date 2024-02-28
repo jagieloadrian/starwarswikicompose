@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -76,7 +77,7 @@ class PlanetScreenKtTest {
             val imagesStateRefresh = remember { mutableStateOf(true) }
             val state = rememberScrollState()
             PlanetScreenContent(PaddingValues(0.dp), state, scope, snackBarHostState,
-                    imagesStateRefresh, navHostController, planet, planetViewModel)
+                    imagesStateRefresh, Modifier, navHostController, planet, planetViewModel)
         }
         //when and then
         val mainImage = composeTestRule.onNodeWithContentDescription("PLANETS")

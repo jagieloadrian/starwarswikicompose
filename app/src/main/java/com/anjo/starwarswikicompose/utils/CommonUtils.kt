@@ -1,5 +1,6 @@
 package com.anjo.starwarswikicompose.utils
 
+import android.content.Context
 import android.media.AudioManager
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ClipboardManager
@@ -14,9 +15,14 @@ import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
 import com.anjo.starwarswikicompose.domain.model.sw.Category.SPECIES
 import com.anjo.starwarswikicompose.domain.model.sw.Category.STARSHIPS
 import com.anjo.starwarswikicompose.domain.model.sw.Category.VEHICLES
+import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState
+import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState.ERROR
+import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState.LOADING
+import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState.SUCCESS
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
 import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.navigation.Screen
+import com.anjo.starwarswikicompose.services.interceptor.NetworkConnectionInterceptor
 import com.anjo.starwarswikicompose.utils.Constants.ASSETS_PATH
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_BASE_URL_IMAGE
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_EXT
@@ -80,22 +86,22 @@ fun UniversalChunk.toImageSliderModel(photoUrl: String, category: Category): Ima
 
 fun navigateToProperlyCompose(navController: NavHostController, itemId: String, category: Category) {
     when (category) {
-        FILMS -> {
+        FILMS     -> {
             navController.navigate(Screen.MovieDetail.passMovieId(itemId))
             return
         }
 
-        PEOPLE -> {
+        PEOPLE    -> {
             navController.navigate(Screen.PersonDetail.passPersonId(itemId))
             return
         }
 
-        PLANETS -> {
+        PLANETS   -> {
             navController.navigate(Screen.PlanetDetail.passPlanetId(itemId))
             return
         }
 
-        SPECIES -> {
+        SPECIES   -> {
             navController.navigate(Screen.SpecieDetail.passSpecieId(itemId))
             return
         }
@@ -105,7 +111,7 @@ fun navigateToProperlyCompose(navController: NavHostController, itemId: String, 
             return
         }
 
-        VEHICLES -> {
+        VEHICLES  -> {
             navController.navigate(Screen.VehicleDetail.passVehicleId(itemId))
             return
         }
@@ -138,4 +144,21 @@ fun muteMusic(scope: CoroutineScope, audioManager: AudioManager) {
     }
 }
 
-fun emptyConnection() : Connection = Connection(0, listOf())
+fun emptyConnection(): Connection = Connection(0, listOf())
+
+fun hasInternetConnection(context: Context): Boolean {
+    val networkConnectionInterceptor = NetworkConnectionInterceptor(context)
+    return networkConnectionInterceptor.isInternetAvailable()
+}
+
+fun DetailObjectState.isSuccess(): Boolean {
+    return this == SUCCESS
+}
+
+fun DetailObjectState.isLoading(): Boolean {
+    return this == LOADING
+}
+
+fun DetailObjectState.isError(): Boolean {
+    return this == ERROR
+}

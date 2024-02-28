@@ -15,20 +15,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,7 +61,6 @@ import com.anjo.starwarswikicompose.utils.Constants.DELETE_AND_REFRESH_IMAGES
 import com.anjo.starwarswikicompose.utils.Constants.REFRESH_IMAGES
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -74,7 +68,7 @@ fun MovieContentScreen(
         navController: NavHostController,
         movieViewModel: MovieViewModel = hiltViewModel(),
 ) {
-    val selectedMovie by movieViewModel.selectedMovie.collectAsState()
+    val movieState by movieViewModel.selectedMovie.collectAsState()
     val init = remember { mutableStateOf(true) }
     if (init.value) {
         movieViewModel.getMovie()
@@ -82,19 +76,20 @@ fun MovieContentScreen(
     }
 
     DetailVisualisationComponent(
-            refreshImages = { movieViewModel.refreshImages(selectedMovie.id) },
-            selectedName = selectedMovie.title,
-            saveInDatabase = { movieViewModel.saveInDatabase(selectedMovie.id, it) },
+            refreshImages = { movieViewModel.refreshImages(movieState.movie.id) },
+            selectedName = movieState.movie.title,
+            saveInDatabase = { movieViewModel.saveInDatabase(movieState.movie.id, it) },
             navController = navController,
-            content = { padding, state, scope, snackBarHostState, imagesStateRefresh ->
+            stateObject = movieState.state,
+            content = { padding, state, scope, snackBarHostState, imagesStateRefresh, modifier ->
                 MovieScreen(padding, state, scope,
-                        snackBarHostState, imagesStateRefresh,
-                        navController, selectedMovie, movieViewModel)
+                        snackBarHostState, imagesStateRefresh, modifier,
+                        navController, movieState.movie, movieViewModel)
             }
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MovieScreen(
         padding: PaddingValues,
@@ -102,6 +97,7 @@ fun MovieScreen(
         refreshScope: CoroutineScope,
         snackBarHostState: SnackbarHostState,
         imagesStateRefresh: MutableState<Boolean>,
+        modifier: Modifier,
         navController: NavHostController,
         selected: Movie,
         movieViewModel: MovieViewModel,
@@ -111,92 +107,78 @@ fun MovieScreen(
     val thirdWidth = (width / 3).dp
     val twoThirdsWidth = thirdWidth * 2
     val imagesState by movieViewModel.images.collectAsState()
-    var isRefreshing by remember { mutableStateOf(false) }
-    val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
-        isRefreshing = true
-        refreshScope.launch {
-            movieViewModel.refreshImages(selected.id)
-            delay(1500)
-            isRefreshing = false
-        }
-    })
 
-    Box(modifier = Modifier.fillMaxSize().padding(padding)
-            .pullRefresh(pullRefreshState)
+    Box(modifier = modifier.fillMaxSize().padding(padding)
             .paint(painter = painterResource(R.drawable.stars_image),
                     contentScale = ContentScale.FillBounds)) {
         Column(modifier = Modifier.verticalScroll(state),
-                horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (!isRefreshing) {
-                AsyncImage(model = findImage(selected.id, FILMS),
-                        error = choosePainter(FILMS),
-                        contentDescription = stringResource(R.string.movies),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                                .height(PICTURE_HEIGHT)
-                                .align(alignment = Alignment.CenterHorizontally)
-                                .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
-                                .background(Color.Magenta))
-                Text(text = selected.title,
-                        fontFamily = SOLOFontName,
-                        modifier = Modifier.fillMaxWidth()
-                                .height(NAME_PLACEHOLDER_HEIGHT)
-                                .basicMarquee(),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.h2,
-                        color = Color.White
-                )
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround) {
-                    InfoBox(
-                            stringResource(R.string.episode_id_box_name),
-                            selected.episodeId,
-                            width = thirdWidth)
-                    InfoBoxDialog(
-                            stringResource(R.string.opening_crawl_box_name),
-                            selected.openingCrawl,
-                            width = twoThirdsWidth)
-                }
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBoxColumn(
-                            stringResource(R.string.producers_box_name),
-                            null,
-                            selected.producers,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.director_box_name),
-                            selected.director,
-                            width = thirdWidth)
-                    InfoBox(
-                            stringResource(R.string.release_date_box_name),
-                            selected.releaseDate,
-                            width = thirdWidth)
-                }
-                ShowHorizontalBoxes(selected.characterConnection, PEOPLE, halfWidth, navController)
-                ShowHorizontalBoxes(selected.planetConnection, PLANETS, halfWidth, navController)
-                ShowHorizontalBoxes(selected.starshipConnection, STARSHIPS, halfWidth, navController)
-                ShowHorizontalBoxes(selected.vehicleConnection, VEHICLES, halfWidth, navController)
-                ShowHorizontalBoxes(selected.specieConnection, SPECIES, halfWidth, navController)
-                GallerySlider(images = imagesState,
-                        onCLickLeft = {
-                            refreshScope.launch {
-                                snackBarHostState.showSnackbar(REFRESH_IMAGES)
-                            }
-                            imagesStateRefresh.value = true
-                        },
-                        onCLickRight = {
-                            refreshScope.launch {
-                                snackBarHostState.showSnackbar(DELETE_AND_REFRESH_IMAGES)
-                            }
-                            movieViewModel.deleteFromDatabase(it)
-                            imagesStateRefresh.value = true
-                        })
+                horizontalAlignment = Alignment.CenterHorizontally) {
+            AsyncImage(model = findImage(selected.id, FILMS),
+                    error = choosePainter(FILMS),
+                    contentDescription = stringResource(R.string.movies),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                            .height(PICTURE_HEIGHT)
+                            .align(alignment = Alignment.CenterHorizontally)
+                            .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
+                            .background(Color.Magenta))
+            Text(text = selected.title,
+                    fontFamily = SOLOFontName,
+                    modifier = Modifier.fillMaxWidth()
+                            .height(NAME_PLACEHOLDER_HEIGHT)
+                            .basicMarquee(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.h2,
+                    color = Color.White
+            )
+            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                    .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround) {
+                InfoBox(
+                        stringResource(R.string.episode_id_box_name),
+                        selected.episodeId,
+                        width = thirdWidth)
+                InfoBoxDialog(
+                        stringResource(R.string.opening_crawl_box_name),
+                        selected.openingCrawl,
+                        width = twoThirdsWidth)
             }
+            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                    .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly) {
+                InfoBoxColumn(
+                        stringResource(R.string.producers_box_name),
+                        null,
+                        selected.producers,
+                        width = thirdWidth)
+                InfoBox(
+                        stringResource(R.string.director_box_name),
+                        selected.director,
+                        width = thirdWidth)
+                InfoBox(
+                        stringResource(R.string.release_date_box_name),
+                        selected.releaseDate,
+                        width = thirdWidth)
+            }
+            ShowHorizontalBoxes(selected.characterConnection, PEOPLE, halfWidth, navController)
+            ShowHorizontalBoxes(selected.planetConnection, PLANETS, halfWidth, navController)
+            ShowHorizontalBoxes(selected.starshipConnection, STARSHIPS, halfWidth, navController)
+            ShowHorizontalBoxes(selected.vehicleConnection, VEHICLES, halfWidth, navController)
+            ShowHorizontalBoxes(selected.specieConnection, SPECIES, halfWidth, navController)
+            GallerySlider(images = imagesState,
+                    onCLickLeft = {
+                        refreshScope.launch {
+                            snackBarHostState.showSnackbar(REFRESH_IMAGES)
+                        }
+                        imagesStateRefresh.value = true
+                    },
+                    onCLickRight = {
+                        refreshScope.launch {
+                            snackBarHostState.showSnackbar(DELETE_AND_REFRESH_IMAGES)
+                        }
+                        movieViewModel.deleteFromDatabase(it)
+                        imagesStateRefresh.value = true
+                    })
         }
-        PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
     }
 }

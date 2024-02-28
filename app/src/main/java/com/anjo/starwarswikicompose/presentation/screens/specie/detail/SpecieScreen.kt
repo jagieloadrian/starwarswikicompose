@@ -15,19 +15,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,7 +58,6 @@ import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -70,7 +65,7 @@ fun SpecieContentScreen(
         navController: NavHostController,
         specieViewModel: SpecieViewModel = hiltViewModel(),
 ) {
-    val selectedSpecie by specieViewModel.selectedSpecie.collectAsState()
+    val specieState by specieViewModel.selectedSpecie.collectAsState()
     val init = remember { mutableStateOf(true) }
 
     if (init.value) {
@@ -79,19 +74,20 @@ fun SpecieContentScreen(
     }
 
     DetailVisualisationComponent(
-            refreshImages = { specieViewModel.refreshImages(selectedSpecie.id) },
-            selectedName = selectedSpecie.name,
-            saveInDatabase = { specieViewModel.saveInDatabase(selectedSpecie.id, it) },
+            refreshImages = { specieViewModel.refreshImages(specieState.specie.id) },
+            selectedName = specieState.specie.name,
+            saveInDatabase = { specieViewModel.saveInDatabase(specieState.specie.id, it) },
             navController = navController,
-            content = { padding, state, scope, snackBarHostState, imagesStateRefresh ->
+            stateObject = specieState.state,
+            content = { padding, state, scope, snackBarHostState, imagesStateRefresh, modifier ->
                 SpecieScreenContent(padding, state, scope,
-                        snackBarHostState, imagesStateRefresh,
-                        navController, selectedSpecie, specieViewModel)
+                        snackBarHostState, imagesStateRefresh, modifier,
+                        navController, specieState.specie, specieViewModel)
             }
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SpecieScreenContent(
         padding: PaddingValues,
@@ -99,6 +95,7 @@ fun SpecieScreenContent(
         refreshScope: CoroutineScope,
         snackBarHostState: SnackbarHostState,
         imagesStateRefresh: MutableState<Boolean>,
+        modifier: Modifier,
         navController: NavHostController,
         selected: Specie,
         specieViewModel: SpecieViewModel,
@@ -108,100 +105,87 @@ fun SpecieScreenContent(
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val imagesState by specieViewModel.images.collectAsState()
-    var isRefreshing by remember { mutableStateOf(false) }
-    val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
-        isRefreshing = true
-        refreshScope.launch {
-            specieViewModel.refreshImages(selected.id)
-            delay(1500)
-            isRefreshing = false
-        }
-    })
-
-    Box(modifier = Modifier.fillMaxSize().padding(padding)
+    Box(modifier = modifier.fillMaxSize().padding(padding)
             .paint(painter = painterResource(R.drawable.stars_image),
                     contentScale = ContentScale.FillBounds)) {
         Column(modifier = Modifier.verticalScroll(state),
                 horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!isRefreshing) {
-                AsyncImage(model = findImage(selected.id, SPECIES),
-                        error = choosePainter(SPECIES),
-                        contentDescription = stringResource(R.string.species),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                                .height(PICTURE_HEIGHT)
-                                .align(alignment = Alignment.CenterHorizontally)
-                                .clip(CircleShape)
-                                .background(Color.Magenta))
-                Text(text = selected.name,
-                        fontFamily = SOLOFontName,
-                        modifier = Modifier.fillMaxWidth()
-                                .height(NAME_PLACEHOLDER_HEIGHT)
-                                .basicMarquee(),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.h2,
-                        color = Color.White
-                )
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBox(
-                            stringResource(R.string.language_box_name),
-                            selected.language,
-                            width = halfWidth)
-                    InfoBox(
-                            stringResource(R.string.homeworld_box_name),
-                            selected.homeworld.name,
-                            id = selected.homeworld.id,
-                            category = PLANETS,
-                            width = halfWidth,
-                            navController)
-                }
-                DoubleInfoBox( stringResource(R.string.classification_box_name),
-                        selected.classification,
-                        stringResource(R.string.designation_box_name),
-                        selected.designation,
-                        halfWidth)
-                DoubleInfoBox(stringResource(R.string.avr_height_box_name),
-                        selected.averageHeight,
-                        stringResource(R.string.avr_lifespan_box_name),
-                        selected.averageLifespan,
-                        halfWidth)
-                Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-                    InfoBoxColumn(
-                            stringResource(R.string.eye_colors_box_name),
-                            null, selected.eyeColors,
-                            width = thirdWidth)
-                    InfoBoxColumn(
-                            stringResource(R.string.hair_colors_box_name),
-                            null, selected.hairColors,
-                            width = thirdWidth)
-                    InfoBoxColumn(
-                            stringResource(R.string.skin_colors_box_name),
-                            null, selected.skinColors,
-                            width = thirdWidth)
-                }
-                ShowHorizontalBoxes(selected.characterConnection, PEOPLE, halfWidth, navController)
-                ShowHorizontalBoxes(selected.movieConnection, FILMS, halfWidth, navController)
-                GallerySlider(images = imagesState,
-                        onCLickLeft = {
-                            refreshScope.launch {
-                                snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
-                            }
-                            imagesStateRefresh.value = true
-                        },
-                        onCLickRight = {
-                            refreshScope.launch {
-                                snackBarHostState.showSnackbar(Constants.DELETE_AND_REFRESH_IMAGES)
-                            }
-                            specieViewModel.deleteFromDatabase(it)
-                            imagesStateRefresh.value = true
-                        })
+            AsyncImage(model = findImage(selected.id, SPECIES),
+                    error = choosePainter(SPECIES),
+                    contentDescription = stringResource(R.string.species),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                            .height(PICTURE_HEIGHT)
+                            .align(alignment = Alignment.CenterHorizontally)
+                            .clip(CircleShape)
+                            .background(Color.Magenta))
+            Text(text = selected.name,
+                    fontFamily = SOLOFontName,
+                    modifier = Modifier.fillMaxWidth()
+                            .height(NAME_PLACEHOLDER_HEIGHT)
+                            .basicMarquee(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.h2,
+                    color = Color.White
+            )
+            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                    .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly) {
+                InfoBox(
+                        stringResource(R.string.language_box_name),
+                        selected.language,
+                        width = halfWidth)
+                InfoBox(
+                        stringResource(R.string.homeworld_box_name),
+                        selected.homeworld.name,
+                        id = selected.homeworld.id,
+                        category = PLANETS,
+                        width = halfWidth,
+                        navController)
             }
+            DoubleInfoBox(stringResource(R.string.classification_box_name),
+                    selected.classification,
+                    stringResource(R.string.designation_box_name),
+                    selected.designation,
+                    halfWidth)
+            DoubleInfoBox(stringResource(R.string.avr_height_box_name),
+                    selected.averageHeight,
+                    stringResource(R.string.avr_lifespan_box_name),
+                    selected.averageLifespan,
+                    halfWidth)
+            Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
+                    .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly) {
+                InfoBoxColumn(
+                        stringResource(R.string.eye_colors_box_name),
+                        null, selected.eyeColors,
+                        width = thirdWidth)
+                InfoBoxColumn(
+                        stringResource(R.string.hair_colors_box_name),
+                        null, selected.hairColors,
+                        width = thirdWidth)
+                InfoBoxColumn(
+                        stringResource(R.string.skin_colors_box_name),
+                        null, selected.skinColors,
+                        width = thirdWidth)
+            }
+            ShowHorizontalBoxes(selected.characterConnection, PEOPLE, halfWidth, navController)
+            ShowHorizontalBoxes(selected.movieConnection, FILMS, halfWidth, navController)
+            GallerySlider(images = imagesState,
+                    onCLickLeft = {
+                        refreshScope.launch {
+                            snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
+                        }
+                        imagesStateRefresh.value = true
+                    },
+                    onCLickRight = {
+                        refreshScope.launch {
+                            snackBarHostState.showSnackbar(Constants.DELETE_AND_REFRESH_IMAGES)
+                        }
+                        specieViewModel.deleteFromDatabase(it)
+                        imagesStateRefresh.value = true
+                    })
         }
-        PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
     }
 }
