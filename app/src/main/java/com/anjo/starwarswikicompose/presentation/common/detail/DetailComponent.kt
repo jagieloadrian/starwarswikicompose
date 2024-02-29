@@ -1,4 +1,4 @@
-package com.anjo.starwarswikicompose.presentation.screens.common.detail
+package com.anjo.starwarswikicompose.presentation.common.detail
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
@@ -30,18 +30,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState
+import com.anjo.starwarswikicompose.domain.model.sw.isError
+import com.anjo.starwarswikicompose.domain.model.sw.isLoading
+import com.anjo.starwarswikicompose.domain.model.sw.isSuccess
+import com.anjo.starwarswikicompose.presentation.common.AddImageFabWrap
+import com.anjo.starwarswikicompose.presentation.common.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.common.ErrorScreenWrapper
 import com.anjo.starwarswikicompose.presentation.common.LoadingScreen
-import com.anjo.starwarswikicompose.presentation.screens.common.AddImageFabWrap
-import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
-import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.utils.Constants.CUSTOM_ANIMATED_LABEL
 import com.anjo.starwarswikicompose.utils.Constants.ERROR_ANIMATED_LABEL
 import com.anjo.starwarswikicompose.utils.Constants.ERROR_DESCRIPTION
 import com.anjo.starwarswikicompose.utils.Constants.LOADING_ANIMATED_LABEL
-import com.anjo.starwarswikicompose.utils.isError
-import com.anjo.starwarswikicompose.utils.isLoading
-import com.anjo.starwarswikicompose.utils.isSuccess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

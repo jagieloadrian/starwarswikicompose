@@ -25,9 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
+import com.anjo.starwarswikicompose.presentation.common.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.common.ErrorScreenWrapper
-import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
-import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.utils.Constants.ERROR_UNAVAILABLE_INTERNET
 import com.anjo.starwarswikicompose.utils.Constants.WOOKIEPEDIA_URL
 import com.anjo.starwarswikicompose.utils.hasInternetConnection

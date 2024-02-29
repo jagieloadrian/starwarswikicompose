@@ -66,4 +66,5 @@ object Constants {
     const val CUSTOM_ANIMATED_LABEL = "CustomContentAnimated"
     const val LOADING_ANIMATED_LABEL = "LoadingContentAnimated"
     const val ERROR_ANIMATED_LABEL = "ErrorContentAnimated"
+    const val FAIL_ANIMATED_LABEL = "FailContentAnimated"
 }

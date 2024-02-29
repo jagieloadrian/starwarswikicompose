@@ -5,13 +5,13 @@ import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhotos
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrResponse
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrStatus.ok
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
+import com.anjo.starwarswikicompose.utils.Constants.ERROR_UNAVAILABLE_INTERNET
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -35,7 +35,7 @@ class ImageViewModelTest {
         //when
         imageViewModel.fetchRecentPhotos()
         delay(50)
-        val actual = imageViewModel.fetchedPhotoInfos.asStateFlow().value
+        val actual = imageViewModel.fetchedPhotoInfos.value
 
         //then
         actual shouldBe expected
@@ -52,7 +52,7 @@ class ImageViewModelTest {
         //when
         imageViewModel.fetchPhotoInfo(sampleQuery)
         delay(50)
-        val actual = imageViewModel.fetchedPhotoInfos.asStateFlow().value
+        val actual = imageViewModel.fetchedPhotoInfos.value
 
         //then
         actual shouldBe expected
@@ -79,10 +79,10 @@ class ImageViewModelTest {
         //when
         imageViewModel.fetchRecentPhotos()
         delay(50)
-        val actual = imageViewModel.fetchedPhotoInfos.asStateFlow().value
+        val actual = imageViewModel.fetchedPhotoInfos.value
 
         //then
-        actual.message shouldBe HttpException(null, null).javaClass.simpleName
+        actual.message shouldBe ERROR_UNAVAILABLE_INTERNET
     }
 
     @Test
@@ -94,9 +94,9 @@ class ImageViewModelTest {
         //when
         imageViewModel.fetchPhotoInfo(sampleQuery)
         delay(50)
-        val actual = imageViewModel.fetchedPhotoInfos.asStateFlow().value
+        val actual = imageViewModel.fetchedPhotoInfos.value
 
         //then
-        actual.message shouldBe HttpException(null, null).javaClass.simpleName
+        actual.message shouldBe ERROR_UNAVAILABLE_INTERNET
     }
 }

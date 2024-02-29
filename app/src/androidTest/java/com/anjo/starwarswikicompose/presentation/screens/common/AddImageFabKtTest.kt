@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.anjo.starwarswikicompose.presentation.common.AddImageFab
 import com.anjo.starwarswikicompose.utils.Constants.FAB_BUTTON_TAG
 import io.kotest.matchers.shouldBe
 import org.junit.Rule

@@ -27,8 +27,8 @@ import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
-import com.anjo.starwarswikicompose.presentation.screens.common.choosePainter
-import com.anjo.starwarswikicompose.presentation.screens.common.findImage
+import com.anjo.starwarswikicompose.presentation.common.choosePainter
+import com.anjo.starwarswikicompose.presentation.common.findImage
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.utils.navigateToProperlyCompose
