@@ -20,6 +20,7 @@ import androidx.compose.ui.test.printToLog
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.anjo.starwarswikicompose.MainViewModel
+import com.anjo.starwarswikicompose.presentation.common.CustomTopAppBar
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -123,10 +124,10 @@ class CustomTopAppBarKtTest {
         soundOnSwitch.assertIsNotFocused()
         soundOnSwitch.assertIsDisplayed()
         soundOnSwitch.assertIsEnabled()
-        soundOnSwitch.assertIsToggleable().assertIsOn()
+        soundOnSwitch.assertIsToggleable().assertIsOff()
 
         soundOnSwitch.performClick()
 
-        soundOnSwitch.assertIsToggleable().assertIsOff()
+        soundOnSwitch.assertIsToggleable().assertIsOn()
     }
 }

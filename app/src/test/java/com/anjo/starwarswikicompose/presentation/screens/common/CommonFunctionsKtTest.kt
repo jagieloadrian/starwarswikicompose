@@ -1,6 +1,8 @@
 package com.anjo.starwarswikicompose.presentation.screens.common
 
 import com.anjo.starwarswikicompose.domain.model.sw.Category
+import com.anjo.starwarswikicompose.presentation.common.findImage
+import com.anjo.starwarswikicompose.presentation.common.shouldInstanceLazyRow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments

@@ -1,31 +1,24 @@
 package com.anjo.starwarswikicompose.utils
 
-import android.media.AudioManager
-import android.media.AudioManager.STREAM_MUSIC
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.navigation.NavHostController
-import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhoto
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Category
+import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.navigation.Screen
 import io.kotest.matchers.shouldBe
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.slot
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockKExtension::class)
 class CommonUtilsKtTest {
 
@@ -34,9 +27,6 @@ class CommonUtilsKtTest {
 
     @RelaxedMockK
     lateinit var clipboardManager: ClipboardManager
-
-    @RelaxedMockK
-    lateinit var audioManager: AudioManager
 
     @Test
     fun `given arguments when calculatePathToImage then return properly path`() {
@@ -145,68 +135,6 @@ class CommonUtilsKtTest {
             Category.STARSHIPS -> "details_starship"
             Category.VEHICLES  -> "details_vehicle"
         }
-    }
-
-    @Test
-    fun `given max volume as 0 when volumeUpMusic then nothing happen and verify calls`() = runTest {
-        //given
-        val zero = 0
-
-        coEvery { audioManager.getStreamVolume(STREAM_MUSIC) } returns zero
-        //when
-        volumeUpMusic(this, audioManager, zero)
-        advanceUntilIdle()
-
-        //then
-        verify(exactly = 1) { audioManager.getStreamVolume(STREAM_MUSIC) }
-    }
-
-    @Test
-    fun `given max volume as 3 when volumeUpMusic then verify calls`() = runTest {
-        //given
-        val zero = 0
-        val three = 3
-
-        coEvery { audioManager.getStreamVolume(STREAM_MUSIC) } returns zero
-
-        //when
-        volumeUpMusic(this, audioManager, three)
-        advanceUntilIdle()
-
-        //then
-        verify(exactly = 1) { audioManager.getStreamVolume(STREAM_MUSIC) }
-        verify(exactly = 4) { audioManager.setStreamVolume(STREAM_MUSIC, any(), 0) }
-    }
-
-    @Test
-    fun `given audio manager and current volume as 0 when muteMusic then nothing happen and verify calls`() = runTest {
-        //given
-        val zero = 0
-
-        coEvery { audioManager.getStreamVolume(STREAM_MUSIC) } returns zero
-
-        //when
-        muteMusic(this, audioManager)
-        advanceUntilIdle()
-
-        //then
-        verify(exactly = 1) { audioManager.getStreamVolume(STREAM_MUSIC) }
-    }
-
-    @Test
-    fun `given audio manager and current volume as 0 when muteMusic then verify calls`() = runTest {
-        //given
-        val three = 3
-
-        coEvery { audioManager.getStreamVolume(STREAM_MUSIC) } returns three
-
-        //when
-        muteMusic(this, audioManager)
-        advanceUntilIdle()
-
-        //then
-        verify(exactly = 2) { audioManager.getStreamVolume(STREAM_MUSIC) }
-        verify(exactly = 4) { audioManager.setStreamVolume(STREAM_MUSIC, any(), 0) }
     }
 
     @ParameterizedTest

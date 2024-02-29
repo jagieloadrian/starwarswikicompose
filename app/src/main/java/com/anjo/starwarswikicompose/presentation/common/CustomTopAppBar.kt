@@ -1,8 +1,6 @@
-package com.anjo.starwarswikicompose.presentation.screens.common.appbars
+package com.anjo.starwarswikicompose.presentation.common
 
 import android.content.Context
-import android.media.AudioManager
-import android.media.AudioManager.STREAM_MUSIC
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -29,7 +27,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,11 +50,8 @@ import com.anjo.starwarswikicompose.domain.model.MenuItemData.Notes
 import com.anjo.starwarswikicompose.domain.model.MenuItemData.Notification
 import com.anjo.starwarswikicompose.domain.model.MenuItemData.Sound
 import com.anjo.starwarswikicompose.navigation.Screen
-import com.anjo.starwarswikicompose.presentation.common.PermissionScreen
-import com.anjo.starwarswikicompose.presentation.common.checkNotificationPolicyAccess
-import com.anjo.starwarswikicompose.presentation.screens.common.FeedbackCard
-import com.anjo.starwarswikicompose.presentation.screens.common.InfoDialog
 import com.anjo.starwarswikicompose.presentation.screens.notes.CardNote
+import com.anjo.starwarswikicompose.services.music.MusicPlayerStatic
 import com.anjo.starwarswikicompose.ui.theme.HOME_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
@@ -65,9 +59,6 @@ import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 import com.anjo.starwarswikicompose.ui.theme.mainContentColor
 import com.anjo.starwarswikicompose.ui.theme.reverseMainBackgroundColors
 import com.anjo.starwarswikicompose.utils.getLocalWidth
-import com.anjo.starwarswikicompose.utils.muteMusic
-import com.anjo.starwarswikicompose.utils.volumeUpMusic
-import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -75,8 +66,7 @@ fun CustomTopAppBar(
         navHostController: NavHostController,
         mainViewModel: MainViewModel = hiltViewModel(),
 ) {
-    val scope = rememberCoroutineScope()
-    var soundOn by remember { mutableStateOf(true) }
+    var soundOn by remember { mutableStateOf(MusicPlayerStatic.isPlayingMusic()) }
     val notification = remember { mutableStateOf(false) }
     val notificationPermissionRun = remember { mutableStateOf(false) }
     val listItems = listOf(Notes, Feedback, Info, Notification, Sound)
@@ -86,7 +76,6 @@ fun CustomTopAppBar(
     val policy = checkNotificationPolicyAccess()
     val context = LocalContext.current
     val halfWidth = (getLocalWidth() / 2).dp
-    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     var expanded by remember {
         mutableStateOf(false)
     }
@@ -164,7 +153,7 @@ fun CustomTopAppBar(
                                     } else {
                                         runProperlyAction(menuItemData,
                                                 soundOn, openNotes, openDialog,
-                                                audioManager, scope, feedbackDialog, notificationPermissionRun)
+                                                feedbackDialog, notificationPermissionRun, mainViewModel)
                                         false
                                     }
                                 },
@@ -191,7 +180,7 @@ fun CustomTopAppBar(
                                         soundOn = it
                                         runProperlyAction(menuItemData,
                                                 soundOn, openNotes, openDialog,
-                                                audioManager, scope, feedbackDialog, notificationPermissionRun)
+                                                feedbackDialog, notificationPermissionRun, mainViewModel)
                                     },
                                             modifier = Modifier.weight(2f),
                                             colors = SwitchDefaults.colors(
@@ -209,7 +198,8 @@ fun CustomTopAppBar(
                                         notification.value = it
                                         runProperlyAction(menuItemData,
                                                 soundOn, openNotes, openDialog,
-                                                audioManager, scope, feedbackDialog, notificationPermissionRun)
+                                                feedbackDialog, notificationPermissionRun,
+                                                mainViewModel = mainViewModel)
                                     },
                                             modifier = Modifier.weight(2f),
                                             colors = SwitchDefaults.colors(
@@ -253,15 +243,14 @@ private fun PermissionLogic(
 }
 
 fun runProperlyAction(
-        menuItemData: MenuItemData, soundOn: Boolean,
+        menuItemData: MenuItemData,
+        soundOn: Boolean,
         openNotes: MutableState<Boolean>,
         openDialog: MutableState<Boolean>,
-        audioManager: AudioManager,
-        scope: CoroutineScope,
         feedbackDialog: MutableState<Boolean>,
         notificationPermissionRun: MutableState<Boolean>,
+        mainViewModel: MainViewModel,
 ) {
-    val maxVol: Int = audioManager.getStreamMaxVolume(STREAM_MUSIC).times(0.3).toInt()
     when (menuItemData) {
         Notes        -> {
             openNotes.value = true
@@ -277,9 +266,9 @@ fun runProperlyAction(
 
         Sound        -> {
             if (soundOn) {
-                volumeUpMusic(scope, audioManager, maxVol)
+                mainViewModel.playMusic()
             } else {
-                muteMusic(scope, audioManager)
+                mainViewModel.pauseMusic()
             }
         }
 

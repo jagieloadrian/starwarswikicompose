@@ -32,8 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.model.sw.Category
-import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomBottomAppBar
-import com.anjo.starwarswikicompose.presentation.screens.common.appbars.CustomTopAppBar
+import com.anjo.starwarswikicompose.presentation.common.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
 import com.google.accompanist.systemuicontroller.rememberSystemUiController

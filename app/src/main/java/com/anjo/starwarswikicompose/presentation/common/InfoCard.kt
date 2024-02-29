@@ -1,4 +1,4 @@
-package com.anjo.starwarswikicompose.presentation.screens.common
+package com.anjo.starwarswikicompose.presentation.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

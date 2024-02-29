@@ -13,6 +13,9 @@ import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
 import com.anjo.starwarswikicompose.domain.model.sw.Category.VEHICLES
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
 import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
+import com.anjo.starwarswikicompose.presentation.common.InfoBox
+import com.anjo.starwarswikicompose.presentation.common.InfoBoxColumn
+import com.anjo.starwarswikicompose.presentation.common.ShowHorizontalBoxes
 import com.anjo.starwarswikicompose.utils.getLocalWidth
 import org.junit.Rule
 import org.junit.Test
