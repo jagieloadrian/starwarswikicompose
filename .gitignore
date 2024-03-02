@@ -2,6 +2,10 @@
 .gradle
 /local.properties
 /passwords.properties
+/release-keystore.properties
+/app/release-keystore.jks
+/service-account.json
+/release-keystore.jks
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -14,3 +18,4 @@
 .externalNativeBuild
 .cxx
 local.properties
+playstorepublish/build
