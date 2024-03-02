@@ -59,7 +59,6 @@ Project is: _in progress_
 ## Room for Improvement
 
 Room for improvement:
-- Optimize application
 - Sign and release first version
 
 To do:
