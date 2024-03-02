@@ -4,6 +4,8 @@ variables:
   ANDROID_COMPILE_SDK: "33"
   ANDROID_BUILD_TOOLS: "33.0.2"
   ANDROID_SDK_TOOLS: "9477386"
+  PACKAGE_NAME: "com.anjo.starwarswikicompose"
+
 
 before_script:
   - apt-get --quiet update --yes
@@ -24,7 +26,7 @@ before_script:
   - sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}"
 
   # Not necessary, but just for surity
-  - chmod +x ./gradlew 
+  - chmod +x ./gradlew
 
 stages:
   - test
@@ -48,9 +50,9 @@ unitTest:
       junit: [
         ./**/build/test-results/testDebugUnitTest/TEST-*.xml,
       ]
-  rules:  
+  rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-      when: always    
+      when: always
 build:
   stage: build
   variables:
@@ -77,12 +79,22 @@ buildToDeploy:
   timeout: 20 minutes
   script:
     - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
-    - ./gradlew assemble
-    - echo "Publish artifact!"
+    - ./gradlew assembleRelease
+    - echo "App assembled"
+    - ./gradlew bundleRelease
+    - echo "Created bundle file!"
+    - ./gradlew playstorepublish:installDist |
+      AAB_PATH=/builds/jagieloadrian/starwarswikicompose/app/build/outputs/bundle/release/StarWarsWikiCompose-release.aab
+      UPLOADER=/builds/jagieloadrian/starwarswikicompose/playstorepublish/build/install/playstorepublish/bin/playstorepublish
+      GOOGLE_PLAY_PRIVATE_KEY_JSON=/builds/jagieloadrian/service-account.json
+      echo Deploying "${PACKAGE_NAME}" to Play Console, using "${AAB_PATH}"
+      chmod +x $UPLOADER
+      $UPLOADER $PACKAGE_NAME $AAB_PATH $GOOGLE_PLAY_PRIVATE_KEY_JSON
+    - echo "Published artifact!"
   artifacts:
     name: 'SW_COMPOSE-$CI_PIPELINE_IID'
     paths:
-      - /builds/jagieloadrian/starwarswikicompose/app/build/outputs/apk/debug/*.apk
+      - /builds/jagieloadrian/starwarswikicompose/app/build/outputs/apk/release/*.apk
     expire_in: 30 days
   rules:
     - if: $executeManualJob == "true"
