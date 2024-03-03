@@ -86,7 +86,7 @@ buildToDeploy:
     - ./gradlew playstorepublish:installDist
     - AAB_PATH=/builds/jagieloadrian/starwarswikicompose/app/build/outputs/bundle/release/StarWarsWikiCompose-release.aab
     - UPLOADER=/builds/jagieloadrian/starwarswikicompose/playstorepublish/build/install/playstorepublish/bin/playstorepublish
-    - GOOGLE_PLAY_PRIVATE_KEY_JSON=/builds/jagieloadrian/service-account.json
+    - GOOGLE_PLAY_PRIVATE_KEY_JSON=/builds/jagieloadrian/starwarswikicompose/service-account.json
     - echo Deploying "${PACKAGE_NAME}" to Play Console, using "${AAB_PATH}"
     - chmod +x $UPLOADER
     - $UPLOADER $PACKAGE_NAME $AAB_PATH $GOOGLE_PLAY_PRIVATE_KEY_JSON
