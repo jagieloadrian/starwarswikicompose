@@ -51,6 +51,7 @@ import com.anjo.starwarswikicompose.ui.theme.RELATED_BOXES_COLORS
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING_FOR_INFOBOX
 import com.anjo.starwarswikicompose.utils.Constants.RELATED_BUTTON_TAG
+import com.anjo.starwarswikicompose.utils.Constants.UNKNOWN
 import com.anjo.starwarswikicompose.utils.calculatePathToImage
 import com.anjo.starwarswikicompose.utils.navigateToProperlyCompose
 
@@ -86,14 +87,14 @@ fun ShowHorizontalBoxes(
 @Composable
 fun InfoBox(
         cornerName: String,
-        name: Any?,
+        name: String?,
         id: String? = null,
         category: Category? = null,
         width: Dp,
         navController: NavHostController? = null,
 ) {
-    val descriptionName = name ?: "\uD83D\uDE4A"
-    val shouldBeClickable = !(id.isNullOrEmpty()) && category != null && navController != null
+    val descriptionName = getDescriptionName(name)
+    val shouldBeClickable = !(id.isNullOrBlank()) && category != null && navController != null
     val brushColors = if (shouldBeClickable) CLICKABLE_BOXES_COLORS else BOXES_COLORS
     Box(modifier = Modifier
             .width(width)
@@ -118,7 +119,7 @@ fun InfoBox(
                         modifier = Modifier.weight(1f)
                                 .fillMaxWidth()
                                 .padding(SMALL_PADDING_FOR_INFOBOX))
-                Text(text = descriptionName.toString(),
+                Text(text = descriptionName,
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.body1,
                         modifier = Modifier.weight(2f)
@@ -133,6 +134,11 @@ fun InfoBox(
     }
 }
 
+private fun getDescriptionName(name: String?): String {
+    val description = if (name.isNullOrBlank()) "\uD83D\uDE4A" else name
+    return if (description.equals(UNKNOWN, true)) "\uD83D\uDE4A" else description
+}
+
 
 @Composable
 fun InfoBoxColumn(
@@ -142,7 +148,7 @@ fun InfoBoxColumn(
         width: Dp,
 ) {
 
-    var descriptionName = name ?: strings ?: "U+1FAE2"
+    var descriptionName = getNameOrNull(name) ?: strings ?: "\uD83D\uDE4A"
     if (descriptionName is List<*>) {
         strings?.joinToString(separator = "\n")?.also { descriptionName = it }
     }
@@ -176,6 +182,10 @@ fun InfoBoxColumn(
             }
         }
     }
+}
+
+private fun getNameOrNull(name: String?): String? {
+    return if (name.isNullOrBlank() || name.equals(UNKNOWN, true)) null else name
 }
 
 @Composable

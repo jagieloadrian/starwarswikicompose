@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.anjo.starwarswikicompose.BuildConfig.VERSION_CODE
 import com.anjo.starwarswikicompose.presentation.common.InfoDialog
 import io.kotest.matchers.shouldBe
 import org.junit.Rule
@@ -44,7 +45,7 @@ class InfoCardKtTest {
         versionCodeLabel.assertIsDisplayed()
         versionCodeLabel.assertIsEnabled()
 
-        val versionCodeValue = composeTestRule.onNodeWithText("1")
+        val versionCodeValue = composeTestRule.onNodeWithText(VERSION_CODE.toString())
         versionCodeValue.assertIsDisplayed()
         versionCodeValue.assertIsEnabled()
 
