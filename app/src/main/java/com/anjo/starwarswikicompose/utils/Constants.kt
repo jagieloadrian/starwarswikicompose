@@ -46,6 +46,7 @@ object Constants {
     const val SECOND_RATIONALE = "Notification are not available.\\nDo you want turn on notification?"
     const val REQUEST_PERM = "Request permission"
     const val CANCEL = "Cancel"
+    const val UNKNOWN = "unknown"
 
     const val SHARE_ADDITIONAL_MESSAGE = "Wow, look at this awesome image from Star Wars Wiki!"
     const val AUTHORITY_INTENT = "com.anjo.starwarswikicompose.fileprovider"
