@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.Unit
 import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
 import com.anjo.starwarswikicompose.domain.model.sw.Category.PEOPLE
 import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
@@ -134,16 +135,21 @@ fun PlanetScreenContent(
             TripleInfoBox(
                     stringResource(R.string.diameter_box_name),
                     selected.diameter,
+                    Unit.KM,
                     stringResource(R.string.gravity_box_name),
                     selected.gravity,
+                    null,
                     stringResource(R.string.population_box_name),
                     formatPopulation(selected.population),
+                    null,
                     thirdWidth = thirdWidth
             )
             DoubleInfoBox(stringResource(R.string.rotation_period_box_name),
                     selected.rotationPeriod,
+                    Unit.H,
                     stringResource(R.string.orbital_period_box_name),
                     selected.orbitalPeriod,
+                    Unit.DAYS,
                     halfWidth)
             Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
                     .fillMaxWidth(),
@@ -155,6 +161,7 @@ fun PlanetScreenContent(
                 InfoBox(
                         stringResource(R.string.surface_water_box_name),
                         selected.surfaceWater,
+                        unit = Unit.PERCENT,
                         width = thirdWidth)
                 InfoBoxColumn(
                         stringResource(R.string.terrains_box_name),

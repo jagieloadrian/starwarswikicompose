@@ -1,6 +1,8 @@
 package com.anjo.starwarswikicompose.presentation.common
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.Unit
 import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
 import com.anjo.starwarswikicompose.ui.theme.BOXES_COLORS
@@ -50,9 +53,11 @@ import com.anjo.starwarswikicompose.ui.theme.INFO_BOX_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.RELATED_BOXES_COLORS
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING_FOR_INFOBOX
+import com.anjo.starwarswikicompose.utils.Constants.EMOJI
 import com.anjo.starwarswikicompose.utils.Constants.RELATED_BUTTON_TAG
 import com.anjo.starwarswikicompose.utils.Constants.UNKNOWN
 import com.anjo.starwarswikicompose.utils.calculatePathToImage
+import com.anjo.starwarswikicompose.utils.getDescriptionName
 import com.anjo.starwarswikicompose.utils.navigateToProperlyCompose
 
 @Composable
@@ -84,16 +89,18 @@ fun ShowHorizontalBoxes(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun InfoBox(
         cornerName: String,
         name: String?,
+        unit: Unit? = null,
         id: String? = null,
         category: Category? = null,
         width: Dp,
         navController: NavHostController? = null,
 ) {
-    val descriptionName = getDescriptionName(name)
+    val descriptionName = getDescriptionName(name, unit)
     val shouldBeClickable = !(id.isNullOrBlank()) && category != null && navController != null
     val brushColors = if (shouldBeClickable) CLICKABLE_BOXES_COLORS else BOXES_COLORS
     Box(modifier = Modifier
@@ -125,7 +132,8 @@ fun InfoBox(
                         modifier = Modifier.weight(2f)
                                 .fillMaxWidth()
                                 .align(Alignment.CenterHorizontally)
-                                .padding(vertical = if (name != null) 8.dp else 0.dp),
+                                .padding(vertical = if (name != null) 8.dp else 0.dp)
+                                .basicMarquee(),
                         fontSize = if (name != null) TextUnit.Unspecified else 36.sp,
                         fontWeight = if (shouldBeClickable) FontWeight.ExtraBold else FontWeight.Normal,
                         textDecoration = if (shouldBeClickable) TextDecoration.Underline else TextDecoration.None)
@@ -133,12 +141,6 @@ fun InfoBox(
         }
     }
 }
-
-private fun getDescriptionName(name: String?): String {
-    val description = if (name.isNullOrBlank()) "\uD83D\uDE4A" else name
-    return if (description.equals(UNKNOWN, true)) "\uD83D\uDE4A" else description
-}
-
 
 @Composable
 fun InfoBoxColumn(
@@ -148,7 +150,7 @@ fun InfoBoxColumn(
         width: Dp,
 ) {
 
-    var descriptionName = getNameOrNull(name) ?: strings ?: "\uD83D\uDE4A"
+    var descriptionName = getNameOrNull(name) ?: strings ?: EMOJI
     if (descriptionName is List<*>) {
         strings?.joinToString(separator = "\n")?.also { descriptionName = it }
     }
@@ -200,7 +202,7 @@ private fun RelatedBox(
         width: Dp,
         navController: NavHostController,
 ) {
-    val descriptionName = if (name.isNullOrEmpty()) "\uD83D\uDE4A" else name
+    val descriptionName = if (name.isNullOrEmpty()) EMOJI else name
     Box(modifier = Modifier
             .padding(EXTRA_SMALL_PADDING)
             .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))) {
@@ -240,8 +242,10 @@ private fun RelatedBox(
 fun DoubleInfoBox(
         firstCornerName: String,
         firstValue: String,
+        firstUnit: Unit?,
         secondCornerName: String,
         secondValue: String,
+        secondUnit: Unit?,
         halfWidth: Dp,
 ) {
     Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -250,10 +254,12 @@ fun DoubleInfoBox(
         InfoBox(
                 firstCornerName,
                 firstValue,
+                firstUnit,
                 width = halfWidth)
         InfoBox(
                 secondCornerName,
                 secondValue,
+                secondUnit,
                 width = halfWidth)
     }
 }
@@ -262,10 +268,13 @@ fun DoubleInfoBox(
 fun TripleInfoBox(
         firstCornerName: String,
         firstValue: String,
+        firstUnit: Unit?,
         secondCornerName: String,
         secondValue: String,
+        secondUnit: Unit?,
         thirdCornerName: String,
         thirdValue: String,
+        thirdUnit: Unit?,
         thirdWidth: Dp,
 ) {
     Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -274,13 +283,16 @@ fun TripleInfoBox(
         InfoBox(
                 firstCornerName,
                 firstValue,
+                firstUnit,
                 width = thirdWidth)
         InfoBox(secondCornerName,
                 secondValue,
+                secondUnit,
                 width = thirdWidth)
         InfoBox(
                 thirdCornerName,
                 thirdValue,
+                thirdUnit,
                 width = thirdWidth)
     }
 }

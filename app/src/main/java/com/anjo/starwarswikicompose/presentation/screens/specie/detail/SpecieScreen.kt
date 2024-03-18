@@ -38,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.Unit
 import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
 import com.anjo.starwarswikicompose.domain.model.sw.Category.PEOPLE
 import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
@@ -142,17 +143,17 @@ fun SpecieScreenContent(
                         id = selected.homeworld.id,
                         category = PLANETS,
                         width = halfWidth,
-                        navController)
+                        navController = navController)
             }
             DoubleInfoBox(stringResource(R.string.classification_box_name),
-                    selected.classification,
+                    selected.classification, null,
                     stringResource(R.string.designation_box_name),
-                    selected.designation,
+                    selected.designation, null,
                     halfWidth)
             DoubleInfoBox(stringResource(R.string.avr_height_box_name),
-                    selected.averageHeight,
+                    selected.averageHeight, Unit.CM,
                     stringResource(R.string.avr_lifespan_box_name),
-                    selected.averageLifespan,
+                    selected.averageLifespan, Unit.YEARS,
                     halfWidth)
             Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
                     .fillMaxWidth(),

@@ -116,3 +116,11 @@ fun hasInternetConnection(context: Context): Boolean {
     val networkConnectionInterceptor = NetworkConnectionInterceptor(context)
     return networkConnectionInterceptor.isInternetAvailable()
 }
+
+fun getDescriptionName(name: String?, unit: com.anjo.starwarswikicompose.domain.model.Unit?): String {
+    val description = if (name.isNullOrBlank()) Constants.EMOJI else name
+    val realDescription = if (listOf(Constants.UNKNOWN, Constants.NA).contains(description)) Constants.EMOJI else description
+    return if (realDescription == Constants.EMOJI) Constants.EMOJI else if (unit != null) {
+        "$realDescription ${unit.description}"
+    } else realDescription
+}

@@ -124,10 +124,10 @@ class CustomTopAppBarKtTest {
         soundOnSwitch.assertIsNotFocused()
         soundOnSwitch.assertIsDisplayed()
         soundOnSwitch.assertIsEnabled()
-        soundOnSwitch.assertIsToggleable().assertIsOff()
+        soundOnSwitch.assertIsToggleable().assertIsOn()
 
         soundOnSwitch.performClick()
 
-        soundOnSwitch.assertIsToggleable().assertIsOn()
+        soundOnSwitch.assertIsToggleable().assertIsOff()
     }
 }

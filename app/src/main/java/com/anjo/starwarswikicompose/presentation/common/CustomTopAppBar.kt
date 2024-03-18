@@ -66,7 +66,7 @@ fun CustomTopAppBar(
         navHostController: NavHostController,
         mainViewModel: MainViewModel = hiltViewModel(),
 ) {
-    var soundOn by remember { mutableStateOf(MusicPlayerStatic.isPlayingMusic()) }
+    var soundOn by remember { mutableStateOf(MusicPlayerStatic.shouldPlayMusic()) }
     val notification = remember { mutableStateOf(false) }
     val notificationPermissionRun = remember { mutableStateOf(false) }
     val listItems = listOf(Notes, Feedback, Info, Notification, Sound)
@@ -266,8 +266,10 @@ fun runProperlyAction(
 
         Sound        -> {
             if (soundOn) {
+                mainViewModel.changeStateOfMusic()
                 mainViewModel.playMusic()
             } else {
+                mainViewModel.changeStateOfMusic()
                 mainViewModel.pauseMusic()
             }
         }

@@ -34,7 +34,7 @@ class CommonFunctionsKtTest {
         composeTestRule.setContent {
             val thirdWidth = (getLocalWidth() / 3).dp
             val navController = rememberNavController()
-            InfoBox("cornerName", "name", "objectId", FILMS, thirdWidth, navController)
+            InfoBox("cornerName", "name", null,"objectId", FILMS, thirdWidth, navController)
         }
 
         //when and then

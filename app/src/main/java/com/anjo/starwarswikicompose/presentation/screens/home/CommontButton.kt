@@ -31,6 +31,7 @@ import com.anjo.starwarswikicompose.presentation.common.choosePainter
 import com.anjo.starwarswikicompose.presentation.common.findImage
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
+import com.anjo.starwarswikicompose.utils.getDescriptionName
 import com.anjo.starwarswikicompose.utils.navigateToProperlyCompose
 
 @Composable
@@ -84,9 +85,10 @@ fun UniversalRowText(item: UniversalChunk, modifier: Modifier) {
 
 @Composable
 fun UniversalColumnText(item: UniversalChunk, modifier: Modifier) {
+    val descritpion = getDescriptionName(item.desc, null)
     Column(modifier = modifier.fillMaxSize()) {
         Text(text = item.name,
                 fontWeight = FontWeight.ExtraBold)
-        Text(text = item.desc)
+        Text(text = descritpion)
     }
 }

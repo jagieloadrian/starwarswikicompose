@@ -47,6 +47,8 @@ object Constants {
     const val REQUEST_PERM = "Request permission"
     const val CANCEL = "Cancel"
     const val UNKNOWN = "unknown"
+    const val NA = "n/a"
+    const val EMOJI = "\uD83D\uDE4A"
 
     const val SHARE_ADDITIONAL_MESSAGE = "Wow, look at this awesome image from Star Wars Wiki!"
     const val AUTHORITY_INTENT = "com.anjo.starwarswikicompose.fileprovider"
