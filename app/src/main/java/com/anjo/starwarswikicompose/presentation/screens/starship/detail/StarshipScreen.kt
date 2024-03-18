@@ -38,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.Unit
 import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.domain.model.sw.Category.STARSHIPS
 import com.anjo.starwarswikicompose.domain.model.sw.Starship
@@ -145,29 +146,29 @@ fun StarshipContentScreen(
             }
             TripleInfoBox(
                     stringResource(R.string.cost_box_name),
-                    selected.cost,
+                    selected.cost, Unit.CREDITS,
                     stringResource(R.string.length_box_name),
-                    selected.length,
+                    selected.length, Unit.M,
                     stringResource(R.string.cargo_box_name),
-                    selected.cargoCapacity,
+                    selected.cargoCapacity, Unit.KG,
                     thirdWidth = thirdWidth
             )
             TripleInfoBox(
                     stringResource(R.string.v_max_box_name),
-                    selected.vMax,
+                    selected.vMax, Unit.KMPERHOUR,
                     stringResource(R.string.hyperdrive_box_name),
-                    selected.hyperdriveRating,
+                    selected.hyperdriveRating, Unit.CLASS,
                     stringResource(R.string.mglt_box_name),
-                    selected.megalight,
+                    selected.megalight, Unit.PERHOUR,
                     thirdWidth = thirdWidth
             )
             TripleInfoBox(
                     stringResource(R.string.crew_box_name),
-                    selected.crew,
+                    selected.crew,Unit.MEN,
                     stringResource(R.string.passengers_box_name),
-                    selected.passengers,
+                    selected.passengers,Unit.MEN,
                     stringResource(R.string.consumables_box_name),
-                    selected.consumables,
+                    selected.consumables, null,
                     thirdWidth = thirdWidth
             )
             ShowHorizontalBoxes(selected.characterConnection, Category.PEOPLE, halfWidth, navController)

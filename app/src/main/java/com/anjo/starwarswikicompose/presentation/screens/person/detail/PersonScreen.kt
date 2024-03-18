@@ -38,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.domain.model.Unit
 import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
 import com.anjo.starwarswikicompose.domain.model.sw.Category.PEOPLE
 import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
@@ -140,31 +141,37 @@ fun PersonScreenContent(
                         id = selected.homeworld.id,
                         category = PLANETS,
                         width = halfWidth,
-                        navController)
+                        navController = navController)
                 InfoBox(
                         stringResource(R.string.species_box_name),
                         selected.specie.name,
                         id = selected.specie.id,
                         category = SPECIES,
                         width = halfWidth,
-                        navController)
+                        navController = navController)
             }
             TripleInfoBox(
                     stringResource(R.string.birth_box_name),
                     selected.birthYear,
+                    firstUnit = null,
                     stringResource(R.string.height_box_name),
                     selected.height,
+                    secondUnit = Unit.CM,
                     stringResource(R.string.mass_box_name),
                     selected.mass,
+                    thirdUnit = Unit.KG,
                     thirdWidth = thirdWidth
             )
             TripleInfoBox(
                     stringResource(R.string.gender_box_name),
                     selected.gender,
+                    null,
                     stringResource(R.string.hair_box_name),
                     selected.hair,
+                    null,
                     stringResource(R.string.skin_box_name),
                     selected.skin,
+                    null,
                     thirdWidth = thirdWidth
             )
             ShowHorizontalBoxes(selected.movieConnection, FILMS, halfWidth, navController)

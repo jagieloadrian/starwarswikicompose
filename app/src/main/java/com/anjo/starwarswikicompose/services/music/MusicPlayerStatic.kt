@@ -7,6 +7,7 @@ import com.anjo.starwarswikicompose.R
 
 object MusicPlayerStatic {
     private var player = MediaPlayer()
+    private var shouldPlayMusic = true
 
     fun createMusic(context: Context) {
         player.setAudioAttributes(AudioAttributes.Builder()
@@ -25,7 +26,11 @@ object MusicPlayerStatic {
             player.pause()
     }
 
-    fun isPlayingMusic() : Boolean{
-       return player.isPlaying
+    fun shouldPlayMusic() : Boolean{
+      return shouldPlayMusic
+    }
+
+    fun changeShouldPlayMusic() {
+        shouldPlayMusic = !shouldPlayMusic
     }
 }

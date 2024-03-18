@@ -16,18 +16,20 @@ import javax.inject.Inject
 @HiltViewModel
 open class MainViewModel @Inject constructor() : ViewModel() {
 
+    fun changeStateOfMusic() {
+        MusicPlayerStatic.changeShouldPlayMusic()
+    }
+
     fun createMusic(context: Context) {
         MusicPlayerStatic.createMusic(context)
     }
 
     fun pauseMusic() {
-        if (MusicPlayerStatic.isPlayingMusic()) {
-            MusicPlayerStatic.pauseMusic()
-        }
+        MusicPlayerStatic.pauseMusic()
     }
 
     fun playMusic() {
-        if (!MusicPlayerStatic.isPlayingMusic()) {
+        if (MusicPlayerStatic.shouldPlayMusic()) {
             MusicPlayerStatic.playMusic()
         }
     }

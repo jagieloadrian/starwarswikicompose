@@ -42,6 +42,7 @@ import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_SPACING
 import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
+import com.anjo.starwarswikicompose.utils.Constants.EMOJI
 import com.anjo.starwarswikicompose.utils.Constants.MAX_LINES_NUMBER
 import com.anjo.starwarswikicompose.utils.Constants.MEDIUM_WHITE_BACKGROUND_COPY
 import com.anjo.starwarswikicompose.utils.buildImageUrl
@@ -54,8 +55,8 @@ fun ImageBox(
         photo: FlickrPhoto,
         addCopyAction: () -> Unit,
 ) {
-    val title = photo.title.ifEmpty { "\uD83D\uDE4A" }
-    val authorName = photo.ownername.ifEmpty { "\uD83D\uDE4A" }
+    val title = photo.title.ifEmpty { EMOJI }
+    val authorName = photo.ownername.ifEmpty { EMOJI }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val clipboardManager = LocalClipboardManager.current

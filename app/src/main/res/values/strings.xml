@@ -38,7 +38,7 @@
     <string name="gender_box_name">Gender</string>
     <string name="hair_box_name">Hair</string>
     <string name="skin_box_name">Skin</string>
-    <string name="episode_id_box_name">Episode</string>
+    <string name="episode_id_box_name">Episode No</string>
     <string name="opening_crawl_box_name">Opening Crawl</string>
     <string name="director_box_name">Director</string>
     <string name="producers_box_name">Producers</string>
@@ -68,10 +68,10 @@
     <string name="crew_box_name">Crew</string>
     <string name="passengers_box_name">Passengers</string>
     <string name="v_max_box_name">V Max</string>
-    <string name="hyperdrive_box_name">Hyperdrive</string>
+    <string name="hyperdrive_box_name">Hyperdrive Class</string>
     <string name="mglt_box_name">Megalight</string>
     <string name="cargo_box_name">Cargo</string>
-    <string name="consumables_box_name">Consumables</string>
+    <string name="consumables_box_name">Consumables supply</string>
 
     <string name="wiki_bottom_bar">WIKI</string>
     <string name="images_bottom_bar">IMAGES</string>

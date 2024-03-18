@@ -42,6 +42,7 @@ import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING_FOR_INFOBOX
+import com.anjo.starwarswikicompose.utils.Constants.EMOJI
 import com.anjo.starwarswikicompose.utils.Constants.LESS_WHITE_BACKGROUND_COPY
 import com.anjo.starwarswikicompose.utils.Constants.MAX_LINES_NUMBER
 import com.anjo.starwarswikicompose.utils.getLocalHeight
@@ -53,7 +54,7 @@ fun InfoBoxDialog(
         width: Dp,
 ) {
     val openDialog = remember { mutableStateOf(false) }
-    val descriptionNotNull = description ?: "\uD83D\uDE4A"
+    val descriptionNotNull = description ?: EMOJI
 
     if (openDialog.value) {
         DialogWithOpeningCrawl(description = descriptionNotNull,
