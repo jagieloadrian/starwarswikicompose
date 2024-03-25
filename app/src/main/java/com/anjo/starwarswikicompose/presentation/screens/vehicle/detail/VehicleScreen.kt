@@ -7,12 +7,10 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
@@ -79,8 +77,8 @@ fun VehicleContentScreen(
             saveInDatabase = { vehicleViewModel.saveInDatabase(vehicleState.vehicle.id, it) },
             navController = navController,
             stateObject = vehicleState.state,
-            content = { padding, state, scope, snackBarHostState, imagesStateRefresh, modifier ->
-                VehicleContentScreen(padding, state, scope,
+            content = { state, scope, snackBarHostState, imagesStateRefresh, modifier ->
+                VehicleContentScreen(state, scope,
                         snackBarHostState, imagesStateRefresh, modifier,
                         navController, vehicleState.vehicle, vehicleViewModel)
             }
@@ -90,7 +88,6 @@ fun VehicleContentScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VehicleContentScreen(
-        padding: PaddingValues,
         state: ScrollState,
         refreshScope: CoroutineScope,
         snackBarHostState: SnackbarHostState,
@@ -106,7 +103,6 @@ fun VehicleContentScreen(
     val imagesState by vehicleViewModel.images.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()
-            .padding(padding)
             .paint(painter = painterResource(R.drawable.stars_image),
                     contentScale = ContentScale.FillBounds)) {
         Column(modifier = Modifier.verticalScroll(state),

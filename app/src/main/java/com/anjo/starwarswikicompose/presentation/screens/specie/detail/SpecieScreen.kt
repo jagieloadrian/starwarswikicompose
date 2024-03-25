@@ -7,12 +7,10 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
@@ -80,8 +78,8 @@ fun SpecieContentScreen(
             saveInDatabase = { specieViewModel.saveInDatabase(specieState.specie.id, it) },
             navController = navController,
             stateObject = specieState.state,
-            content = { padding, state, scope, snackBarHostState, imagesStateRefresh, modifier ->
-                SpecieScreenContent(padding, state, scope,
+            content = { state, scope, snackBarHostState, imagesStateRefresh, modifier ->
+                SpecieScreenContent(state, scope,
                         snackBarHostState, imagesStateRefresh, modifier,
                         navController, specieState.specie, specieViewModel)
             }
@@ -91,7 +89,6 @@ fun SpecieContentScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SpecieScreenContent(
-        padding: PaddingValues,
         state: ScrollState,
         refreshScope: CoroutineScope,
         snackBarHostState: SnackbarHostState,
@@ -106,7 +103,7 @@ fun SpecieScreenContent(
     val halfWidth = (width / 2).dp
     val thirdWidth = (width / 3).dp
     val imagesState by specieViewModel.images.collectAsState()
-    Box(modifier = modifier.fillMaxSize().padding(padding)
+    Box(modifier = modifier.fillMaxSize()
             .paint(painter = painterResource(R.drawable.stars_image),
                     contentScale = ContentScale.FillBounds)) {
         Column(modifier = Modifier.verticalScroll(state),

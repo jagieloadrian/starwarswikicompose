@@ -125,7 +125,8 @@ fun InfoBox(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                                 .fillMaxWidth()
-                                .padding(SMALL_PADDING_FOR_INFOBOX))
+                                .padding(SMALL_PADDING_FOR_INFOBOX)
+                                .basicMarquee())
                 Text(text = descriptionName,
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.body1,
@@ -142,6 +143,7 @@ fun InfoBox(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun InfoBoxColumn(
         cornerName: String,
@@ -171,7 +173,8 @@ fun InfoBoxColumn(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                                 .fillMaxWidth()
-                                .padding(SMALL_PADDING_FOR_INFOBOX))
+                                .padding(SMALL_PADDING_FOR_INFOBOX)
+                                .basicMarquee())
                 Text(text = descriptionName as String,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,

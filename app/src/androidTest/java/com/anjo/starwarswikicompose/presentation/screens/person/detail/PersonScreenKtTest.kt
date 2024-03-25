@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.person.detail
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
@@ -22,10 +21,11 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.anjo.starwarswikicompose.domain.model.Unit.CM
+import com.anjo.starwarswikicompose.domain.model.Unit.KG
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Person
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
@@ -77,7 +77,7 @@ class PersonScreenKtTest {
             val snackBarHostState = remember { SnackbarHostState() }
             val imagesStateRefresh = remember { mutableStateOf(true) }
             val state = rememberScrollState()
-            PersonScreenContent(PaddingValues(0.dp), state, scope, snackBarHostState,
+            PersonScreenContent(state, scope, snackBarHostState,
                     imagesStateRefresh, Modifier, navHostController, person, personViewModel)
         }
         //when and then
@@ -103,11 +103,11 @@ class PersonScreenKtTest {
 
         val height = composeTestRule.onNodeWithText("Height", useUnmergedTree = true)
         height.assertIsDisplayed()
-        height.onSibling().assertTextEquals(person.height)
+        height.onSibling().assertTextEquals("${person.height} ${CM.description}")
 
         val mass = composeTestRule.onNodeWithText("Mass", useUnmergedTree = true)
         mass.assertIsDisplayed()
-        mass.onSibling().assertTextEquals(person.mass)
+        mass.onSibling().assertTextEquals("${person.mass} ${KG.description}")
 
         val gender = composeTestRule.onNodeWithText("Gender", useUnmergedTree = true)
         gender.assertIsDisplayed()

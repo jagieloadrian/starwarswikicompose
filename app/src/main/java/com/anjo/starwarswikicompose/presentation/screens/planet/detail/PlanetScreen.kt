@@ -7,15 +7,12 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
@@ -82,18 +79,17 @@ fun PlanetContentScreen(
             saveInDatabase = { planetViewModel.saveInDatabase(planetState.planet.id, it) },
             navController = navController,
             stateObject = planetState.state,
-            content = { padding, state, scope, snackBarHostState, imagesStateRefresh, modifier ->
-                PlanetScreenContent(padding, state, scope,
+            content = { state, scope, snackBarHostState, imagesStateRefresh, modifier ->
+                PlanetScreenContent(state, scope,
                         snackBarHostState, imagesStateRefresh, modifier,
                         navController, planetState.planet, planetViewModel)
             }
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PlanetScreenContent(
-        padding: PaddingValues,
         state: ScrollState,
         refreshScope: CoroutineScope,
         snackBarHostState: SnackbarHostState,
@@ -108,7 +104,7 @@ fun PlanetScreenContent(
     val thirdWidth = (width / 3).dp
     val imagesState by planetViewModel.images.collectAsState()
 
-    Box(modifier = modifier.fillMaxSize().padding(padding)
+    Box(modifier = modifier.fillMaxSize()
             .paint(painter = painterResource(R.drawable.stars_image),
                     contentScale = ContentScale.FillBounds)) {
         Column(modifier = Modifier.verticalScroll(state),

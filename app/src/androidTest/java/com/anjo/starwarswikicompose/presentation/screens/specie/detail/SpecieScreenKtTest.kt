@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.specie.detail
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
@@ -22,9 +21,10 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.anjo.starwarswikicompose.domain.model.Unit.CM
+import com.anjo.starwarswikicompose.domain.model.Unit.YEARS
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Specie
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
@@ -77,7 +77,7 @@ class SpecieScreenKtTest {
             val snackBarHostState = remember { SnackbarHostState() }
             val imagesStateRefresh = remember { mutableStateOf(true) }
             val state = rememberScrollState()
-            SpecieScreenContent(PaddingValues(0.dp), state, scope, snackBarHostState,
+            SpecieScreenContent(state, scope, snackBarHostState,
                     imagesStateRefresh, Modifier,navHostController, specie, specieViewModel)
         }
 
@@ -109,11 +109,11 @@ class SpecieScreenKtTest {
 
         val averageHeight = composeTestRule.onNodeWithText("Average Height", useUnmergedTree = true)
         averageHeight.assertIsDisplayed()
-        averageHeight.onSibling().assertTextEquals(specie.averageHeight)
+        averageHeight.onSibling().assertTextEquals("${specie.averageHeight} ${CM.description}")
 
         val lifespan = composeTestRule.onNodeWithText("Average Lifespan", useUnmergedTree = true)
         lifespan.assertIsDisplayed()
-        lifespan.onSibling().assertTextEquals(specie.averageLifespan)
+        lifespan.onSibling().assertTextEquals("${specie.averageLifespan} ${YEARS.description}")
 
         val eyes = composeTestRule.onNodeWithText("Eye Colors", useUnmergedTree = true)
         eyes.assertIsDisplayed()

@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.starship.detail
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
@@ -22,9 +21,15 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.anjo.starwarswikicompose.domain.model.Unit.CLASS
+import com.anjo.starwarswikicompose.domain.model.Unit.CREDITS
+import com.anjo.starwarswikicompose.domain.model.Unit.KG
+import com.anjo.starwarswikicompose.domain.model.Unit.KMPERHOUR
+import com.anjo.starwarswikicompose.domain.model.Unit.M
+import com.anjo.starwarswikicompose.domain.model.Unit.MEN
+import com.anjo.starwarswikicompose.domain.model.Unit.PERHOUR
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Starship
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
@@ -75,7 +80,7 @@ class StarshipScreenKtTest {
             val snackBarHostState = remember { SnackbarHostState() }
             val imagesStateRefresh = remember { mutableStateOf(true) }
             val state = rememberScrollState()
-            StarshipContentScreen(PaddingValues(0.dp), state, scope, snackBarHostState,
+            StarshipContentScreen(state, scope, snackBarHostState,
                     imagesStateRefresh, Modifier, navHostController, starship, starshipViewModel)
         }
 
@@ -102,37 +107,37 @@ class StarshipScreenKtTest {
 
         val cost = composeTestRule.onNodeWithText("Cost", useUnmergedTree = true)
         cost.assertIsDisplayed()
-        cost.onSibling().assertTextEquals(starship.cost)
+        cost.onSibling().assertTextEquals("${starship.cost} ${CREDITS.description}")
 
         val length = composeTestRule.onNodeWithText("Length", useUnmergedTree = true)
         length.assertIsDisplayed()
-        length.onSibling().assertTextEquals(starship.length)
+        length.onSibling().assertTextEquals("${starship.length} ${M.description}")
 
         val cargo = composeTestRule.onNodeWithText("Cargo", useUnmergedTree = true)
         cargo.assertIsDisplayed()
-        cargo.onSibling().assertTextEquals(starship.cargoCapacity)
+        cargo.onSibling().assertTextEquals("${starship.cargoCapacity} ${KG.description}")
 
         val vMax = composeTestRule.onNodeWithText("V Max", useUnmergedTree = true)
         vMax.assertIsDisplayed()
-        vMax.onSibling().assertTextEquals(starship.vMax)
+        vMax.onSibling().assertTextEquals("${starship.vMax} ${KMPERHOUR.description}")
 
-        val hyperdrive = composeTestRule.onNodeWithText("Hyperdrive", useUnmergedTree = true)
+        val hyperdrive = composeTestRule.onNodeWithText("Hyperdrive Class", useUnmergedTree = true)
         hyperdrive.assertIsDisplayed()
-        hyperdrive.onSibling().assertTextEquals(starship.hyperdriveRating)
+        hyperdrive.onSibling().assertTextEquals("${starship.hyperdriveRating} ${CLASS.description}")
 
         val megalight = composeTestRule.onNodeWithText("Megalight", useUnmergedTree = true)
         megalight.assertIsDisplayed()
-        megalight.onSibling().assertTextEquals(starship.megalight)
+        megalight.onSibling().assertTextEquals("${starship.megalight} ${PERHOUR.description}")
 
         val crew = composeTestRule.onNodeWithText("Crew", useUnmergedTree = true)
         crew.assertIsDisplayed()
-        crew.onSibling().assertTextEquals(starship.crew)
+        crew.onSibling().assertTextEquals("${starship.crew} ${MEN.description}")
 
         val passengers = composeTestRule.onNodeWithText("Passengers", useUnmergedTree = true)
         passengers.assertIsDisplayed()
-        passengers.onSibling().assertTextEquals(starship.passengers)
+        passengers.onSibling().assertTextEquals("${starship.passengers} ${MEN.description}")
 
-        val consumables = composeTestRule.onNodeWithText("Consumables", useUnmergedTree = true)
+        val consumables = composeTestRule.onNodeWithText("Consumables supply", useUnmergedTree = true)
         consumables.assertIsDisplayed()
         consumables.onSibling().assertTextEquals(starship.consumables)
 
