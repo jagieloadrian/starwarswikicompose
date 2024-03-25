@@ -5,7 +5,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -54,7 +53,7 @@ fun DetailVisualisationComponent(
         saveInDatabase: (String) -> Unit,
         navController: NavHostController,
         stateObject: DetailObjectState,
-        content: @Composable (PaddingValues, ScrollState, CoroutineScope, SnackbarHostState, MutableState<Boolean>, Modifier) -> Unit,
+        content: @Composable (ScrollState, CoroutineScope, SnackbarHostState, MutableState<Boolean>, Modifier) -> Unit,
 ) {
     val state = rememberScrollState()
     var fabExtended by remember { mutableStateOf(true) }
@@ -103,7 +102,7 @@ fun DetailVisualisationComponent(
                 contentAlignment = Alignment.Center) {
             if (!isRefreshing) {
                 DetailVisualisationState(stateObject, modifier)
-                { content(padding, state, refreshScope, snackBarHostState, imagesStateRefresh, modifier) }
+                { content(state, refreshScope, snackBarHostState, imagesStateRefresh, modifier) }
             }
             PullRefreshIndicator(isRefreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
         }

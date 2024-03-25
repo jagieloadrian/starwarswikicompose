@@ -7,12 +7,10 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
@@ -78,8 +76,8 @@ fun StarshipContentScreen(
             saveInDatabase = { starshipViewModel.saveInDatabase(starshipState.starship.id, it) },
             navController = navController,
             stateObject = starshipState.state,
-            content = { padding, state, scope, snackBarHostState, imagesStateRefresh, modifier ->
-                StarshipContentScreen(padding, state, scope,
+            content = {state, scope, snackBarHostState, imagesStateRefresh, modifier ->
+                StarshipContentScreen(state, scope,
                         snackBarHostState, imagesStateRefresh, modifier,
                         navController, starshipState.starship, starshipViewModel)
             }
@@ -89,7 +87,6 @@ fun StarshipContentScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StarshipContentScreen(
-        padding: PaddingValues,
         state: ScrollState,
         refreshScope: CoroutineScope,
         snackBarHostState: SnackbarHostState,
@@ -104,7 +101,7 @@ fun StarshipContentScreen(
     val thirdWidth = (width / 3).dp
     val imagesState by starshipViewModel.images.collectAsState()
 
-    Box(modifier = modifier.fillMaxSize().padding(padding)
+    Box(modifier = modifier.fillMaxSize()
             .paint(painter = painterResource(R.drawable.stars_image),
                     contentScale = ContentScale.FillBounds)) {
         Column(modifier = Modifier.verticalScroll(state),

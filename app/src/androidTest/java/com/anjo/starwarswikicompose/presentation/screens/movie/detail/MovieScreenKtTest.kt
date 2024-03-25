@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.movie.detail
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
@@ -23,7 +22,6 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -79,7 +77,7 @@ class MovieScreenKtTest {
             val snackBarHostState = remember { SnackbarHostState() }
             val imagesStateRefresh = remember { mutableStateOf(true) }
             val state = rememberScrollState()
-            MovieScreen(PaddingValues(0.dp), state,scope, snackBarHostState,
+            MovieScreen(state,scope, snackBarHostState,
                     imagesStateRefresh, Modifier, navHostController, movie, movieViewModel)
         }
         //when and then
@@ -92,7 +90,7 @@ class MovieScreenKtTest {
         mainTitle.assertIsDisplayed()
         mainTitle.assertIsEnabled()
 
-        val episodeBox = composeRule.onNodeWithText("Episode")
+        val episodeBox = composeRule.onNodeWithText("Episode No")
         episodeBox.assertIsDisplayed()
         episodeBox.assertIsNotEnabled()
 

@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.planet.detail
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
@@ -23,10 +22,13 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.anjo.starwarswikicompose.domain.model.Unit.DAYS
+import com.anjo.starwarswikicompose.domain.model.Unit.H
+import com.anjo.starwarswikicompose.domain.model.Unit.KM
+import com.anjo.starwarswikicompose.domain.model.Unit.PERCENT
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Planet
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
@@ -76,7 +78,7 @@ class PlanetScreenKtTest {
             val snackBarHostState = remember { SnackbarHostState() }
             val imagesStateRefresh = remember { mutableStateOf(true) }
             val state = rememberScrollState()
-            PlanetScreenContent(PaddingValues(0.dp), state, scope, snackBarHostState,
+            PlanetScreenContent(state, scope, snackBarHostState,
                     imagesStateRefresh, Modifier, navHostController, planet, planetViewModel)
         }
         //when and then
@@ -91,7 +93,7 @@ class PlanetScreenKtTest {
 
         val diameter = composeTestRule.onNodeWithText("Diameter", useUnmergedTree = true)
         diameter.assertIsDisplayed()
-        diameter.onSibling().assertTextEquals(planet.diameter)
+        diameter.onSibling().assertTextEquals("${planet.diameter} ${KM.description}")
 
         val gravity = composeTestRule.onNodeWithText("Gravity", useUnmergedTree = true)
         gravity.assertIsDisplayed()
@@ -103,18 +105,18 @@ class PlanetScreenKtTest {
 
         val rotationPeriod = composeTestRule.onNodeWithText("Rotation Period", useUnmergedTree = true)
         rotationPeriod.assertIsDisplayed()
-        rotationPeriod.onSibling().assertTextEquals(planet.rotationPeriod)
+        rotationPeriod.onSibling().assertTextEquals("${planet.rotationPeriod} ${H.description}")
 
         val orbitalPeriod = composeTestRule.onNodeWithText("Orbital Period", useUnmergedTree = true)
         orbitalPeriod.assertIsDisplayed()
-        orbitalPeriod.onSibling().assertTextEquals(planet.orbitalPeriod)
+        orbitalPeriod.onSibling().assertTextEquals("${planet.orbitalPeriod} ${DAYS.description}")
 
         val climates = composeTestRule.onNodeWithText("Climates", useUnmergedTree = true)
         climates.assertIsDisplayed()
 
         val surfaceWater = composeTestRule.onNodeWithText("Surface Water", useUnmergedTree = true)
         surfaceWater.assertIsDisplayed()
-        surfaceWater.onSibling().assertTextEquals(planet.surfaceWater)
+        surfaceWater.onSibling().assertTextEquals("${planet.surfaceWater} ${PERCENT.description}")
 
         val terrains = composeTestRule.onNodeWithText("Terrains", useUnmergedTree = true)
         terrains.assertIsDisplayed()

@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.screens.vehicle.detail
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
@@ -22,9 +21,13 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.anjo.starwarswikicompose.domain.model.Unit.CREDITS
+import com.anjo.starwarswikicompose.domain.model.Unit.KG
+import com.anjo.starwarswikicompose.domain.model.Unit.KMPERHOUR
+import com.anjo.starwarswikicompose.domain.model.Unit.M
+import com.anjo.starwarswikicompose.domain.model.Unit.MEN
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Vehicle
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
@@ -74,7 +77,7 @@ class VehicleScreenKtTest{
             val snackBarHostState = remember { SnackbarHostState() }
             val imagesStateRefresh = remember { mutableStateOf(true) }
             val state = rememberScrollState()
-            VehicleContentScreen(PaddingValues(0.dp), state, scope, snackBarHostState,
+            VehicleContentScreen(state, scope, snackBarHostState,
                     imagesStateRefresh, Modifier, navHostController, vehicle, vehicleViewModel)
         }
 
@@ -101,29 +104,29 @@ class VehicleScreenKtTest{
 
         val cost = composeTestRule.onNodeWithText("Cost", useUnmergedTree = true)
         cost.assertIsDisplayed()
-        cost.onSibling().assertTextEquals(vehicle.cost)
+        cost.onSibling().assertTextEquals("${vehicle.cost} ${CREDITS.description}")
 
         val length = composeTestRule.onNodeWithText("Length", useUnmergedTree = true)
         length.assertIsDisplayed()
-        length.onSibling().assertTextEquals(vehicle.length)
+        length.onSibling().assertTextEquals("${vehicle.length} ${M.description}")
 
         val cargo = composeTestRule.onNodeWithText("Cargo", useUnmergedTree = true)
         cargo.assertIsDisplayed()
-        cargo.onSibling().assertTextEquals(vehicle.cargoCapacity)
+        cargo.onSibling().assertTextEquals("${vehicle.cargoCapacity} ${KG.description}")
 
         val vMax = composeTestRule.onNodeWithText("V Max", useUnmergedTree = true)
         vMax.assertIsDisplayed()
-        vMax.onSibling().assertTextEquals(vehicle.vMax)
+        vMax.onSibling().assertTextEquals("${vehicle.vMax} ${KMPERHOUR.description}")
 
         val crew = composeTestRule.onNodeWithText("Crew", useUnmergedTree = true)
         crew.assertIsDisplayed()
-        crew.onSibling().assertTextEquals(vehicle.crew)
+        crew.onSibling().assertTextEquals("${vehicle.crew} ${MEN.description}")
 
         val passengers = composeTestRule.onNodeWithText("Passengers", useUnmergedTree = true)
         passengers.assertIsDisplayed()
-        passengers.onSibling().assertTextEquals(vehicle.passengers)
+        passengers.onSibling().assertTextEquals("${vehicle.passengers} ${MEN.description}")
 
-        val consumables = composeTestRule.onNodeWithText("Consumables", useUnmergedTree = true)
+        val consumables = composeTestRule.onNodeWithText("Consumables supply", useUnmergedTree = true)
         consumables.assertIsDisplayed()
         consumables.onSibling().assertTextEquals(vehicle.consumables)
 

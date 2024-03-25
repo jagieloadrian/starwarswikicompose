@@ -7,12 +7,10 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
@@ -82,8 +80,8 @@ fun PersonContentScreen(
             saveInDatabase = { personViewModel.saveInDatabase(personState.person.id, it) },
             navController = navController,
             stateObject = personState.state,
-            content = { padding, state, scope, snackBarHostState, imagesStateRefresh, modifier ->
-                PersonScreenContent(padding, state, scope,
+            content = { state, scope, snackBarHostState, imagesStateRefresh, modifier ->
+                PersonScreenContent(state, scope,
                         snackBarHostState, imagesStateRefresh, modifier,
                         navController, personState.person, personViewModel)
             }
@@ -93,7 +91,6 @@ fun PersonContentScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PersonScreenContent(
-        padding: PaddingValues,
         state: ScrollState,
         refreshScope: CoroutineScope,
         snackBarHostState: SnackbarHostState,
@@ -108,7 +105,7 @@ fun PersonScreenContent(
     val thirdWidth = (width / 3).dp
     val imagesState by personViewModel.images.collectAsState()
 
-    Box(modifier = modifier.fillMaxSize().padding(padding)
+    Box(modifier = modifier.fillMaxSize()
             .paint(painter = painterResource(R.drawable.stars_image),
                     contentScale = ContentScale.FillBounds)) {
         Column(modifier = Modifier.verticalScroll(state),
