@@ -101,7 +101,7 @@ class CustomTopAppBarKtTest {
         notificationIcon.assertIsDisplayed()
         notificationIcon.assertIsEnabled()
 
-        val notificationSwitch =  notification.onSiblings().filterToOne(semanticSwitch)
+        val notificationSwitch = notification.onSiblings().filterToOne(semanticSwitch)
 
         notificationSwitch.assertIsNotFocused()
         notificationSwitch.assertIsDisplayed()
@@ -119,7 +119,7 @@ class CustomTopAppBarKtTest {
         soundOnIcon.assertIsDisplayed()
         soundOnIcon.assertIsEnabled()
 
-        val soundOnSwitch =  soundOn.onSiblings().filterToOne(semanticSwitch)
+        val soundOnSwitch = soundOn.onSiblings().filterToOne(semanticSwitch)
 
         soundOnSwitch.assertIsNotFocused()
         soundOnSwitch.assertIsDisplayed()

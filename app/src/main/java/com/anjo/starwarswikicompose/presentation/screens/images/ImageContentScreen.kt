@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
@@ -53,6 +54,7 @@ import com.anjo.starwarswikicompose.presentation.common.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.common.EmptyScreen
 import com.anjo.starwarswikicompose.presentation.common.ErrorScreen
 import com.anjo.starwarswikicompose.presentation.common.LoadingScreen
+import com.anjo.starwarswikicompose.presentation.common.SearchBar
 import com.anjo.starwarswikicompose.ui.theme.LARGE_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.utils.Constants.COPIED_TO_CLIPBOARD
@@ -155,7 +157,8 @@ private fun ImagesContentVisualisation(
                             if (!enabled) {
                                 enabled = true
                             }
-                        })
+                        },
+                        placeholder = stringResource(R.string.placeholder_search))
                 PhotoContent(photoResponse, lazyListState, snackBarHostState, refreshScope)
             }
         }

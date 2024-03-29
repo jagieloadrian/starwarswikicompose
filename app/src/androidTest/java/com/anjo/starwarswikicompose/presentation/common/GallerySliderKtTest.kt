@@ -56,7 +56,7 @@ class GallerySliderKtTest {
 
         rightButton.performClick()
         composeTestRule.mainClock.advanceTimeBy(2000)
-        rightClick shouldBe  images[0].objectId
+        rightClick shouldBe images[0].objectId
 
         image1.performTouchInput { swipeLeft() }
 

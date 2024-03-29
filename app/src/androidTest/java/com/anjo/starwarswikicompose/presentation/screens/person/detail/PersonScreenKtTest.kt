@@ -24,8 +24,8 @@ import androidx.compose.ui.test.swipeUp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.anjo.starwarswikicompose.domain.model.Unit.CM
-import com.anjo.starwarswikicompose.domain.model.Unit.KG
+import com.anjo.starwarswikicompose.domain.model.UnitName.CM
+import com.anjo.starwarswikicompose.domain.model.UnitName.KG
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Person
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
@@ -129,12 +129,13 @@ class PersonScreenKtTest {
 
         composeTestRule.onRoot().performTouchInput { swipeUp() }
 
-        val starshipBox = composeTestRule.onNodeWithContentDescription("RelatedBox StarshipName", useUnmergedTree = true)
+        val starshipBox =
+            composeTestRule.onNodeWithContentDescription("RelatedBox StarshipName", useUnmergedTree = true)
         starshipBox.assertIsDisplayed()
         starshipBox.assertIsEnabled()
         starshipBox.onSibling().assertTextEquals(person.starshipConnection.objects[0].name)
 
-            val vehicleBox = composeTestRule.onNodeWithContentDescription("RelatedBox vehicleName", useUnmergedTree = true)
+        val vehicleBox = composeTestRule.onNodeWithContentDescription("RelatedBox vehicleName", useUnmergedTree = true)
         vehicleBox.assertIsDisplayed()
         vehicleBox.assertIsEnabled()
         vehicleBox.onSibling().assertTextEquals(person.vehicleConnection.objects[0].name)
@@ -153,7 +154,7 @@ class PersonScreenKtTest {
         onClickLeft.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
         onClickLeft.onParent().assertIsNotFocused()
 
-        val onClickRight = composeTestRule.onNodeWithContentDescription("onCLickRight",  useUnmergedTree = true)
+        val onClickRight = composeTestRule.onNodeWithContentDescription("onCLickRight", useUnmergedTree = true)
         onClickRight.assertIsDisplayed()
         onClickRight.assertIsEnabled()
         onClickRight.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))

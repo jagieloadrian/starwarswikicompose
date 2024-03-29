@@ -23,8 +23,8 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.anjo.starwarswikicompose.domain.model.Unit.CM
-import com.anjo.starwarswikicompose.domain.model.Unit.YEARS
+import com.anjo.starwarswikicompose.domain.model.UnitName.CM
+import com.anjo.starwarswikicompose.domain.model.UnitName.YEARS
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Specie
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
@@ -78,7 +78,7 @@ class SpecieScreenKtTest {
             val imagesStateRefresh = remember { mutableStateOf(true) }
             val state = rememberScrollState()
             SpecieScreenContent(state, scope, snackBarHostState,
-                    imagesStateRefresh, Modifier,navHostController, specie, specieViewModel)
+                    imagesStateRefresh, Modifier, navHostController, specie, specieViewModel)
         }
 
         //when and then

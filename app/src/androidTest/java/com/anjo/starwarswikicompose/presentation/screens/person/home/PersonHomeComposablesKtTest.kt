@@ -3,12 +3,18 @@ package com.anjo.starwarswikicompose.presentation.screens.person.home
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsNotFocused
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performTextReplacement
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.testutils.assertIsVisibleWith
+import com.anjo.starwarswikicompose.utils.Constants.SEARCH_BAR_LABEL
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,6 +39,11 @@ class PersonHomeComposablesKtTest {
         }
         //when and then
         people.forEach { chunk -> chunk assertIsVisibleWith composeTestRule }
+
+        val searchbar = composeTestRule.onNodeWithTag(SEARCH_BAR_LABEL, true)
+        searchbar.assertIsNotFocused()
+        searchbar.onChild().performTextReplacement("2")
+        searchbar.onChild().assertTextEquals("2")
     }
 
     @Test

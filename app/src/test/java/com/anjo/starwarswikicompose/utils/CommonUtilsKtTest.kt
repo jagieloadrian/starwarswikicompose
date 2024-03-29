@@ -3,11 +3,16 @@ package com.anjo.starwarswikicompose.utils
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.navigation.NavHostController
+import com.anjo.starwarswikicompose.domain.model.UnitName
+import com.anjo.starwarswikicompose.domain.model.UnitName.CM
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhoto
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.navigation.Screen
+import com.anjo.starwarswikicompose.utils.Constants.EMOJI
+import com.anjo.starwarswikicompose.utils.Constants.NA
+import com.anjo.starwarswikicompose.utils.Constants.UNKNOWN
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
@@ -17,7 +22,9 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.MethodSource
 
 @ExtendWith(MockKExtension::class)
 class CommonUtilsKtTest {
@@ -154,5 +161,68 @@ class CommonUtilsKtTest {
 
         //then
         actual shouldBe expected
+    }
+
+    @ParameterizedTest
+    @MethodSource("stringAndUnits")
+    fun `given different descriptions when get description then return properly string`(
+            givenString: String?,
+            unitName: UnitName?,
+            expected: String,
+    ) {
+        //when
+        val actual = getDescriptionName(givenString, unitName)
+
+        //then
+        actual shouldBe expected
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("queryAndChunks")
+    fun `given list and searchQuery when filterItems then return expected list`(
+            searchQuery: String,
+            expected: List<UniversalChunk>,
+    ) {
+        //given
+        val items = listOf(UniversalChunk("1", "name1", "desc1"),
+                UniversalChunk("2", "name2", "desc2"),
+                UniversalChunk("3", "name3", "desc3"))
+
+        //when
+        val actual = filterItems(searchQuery, items)
+
+        //then
+        actual shouldBe expected
+    }
+
+    companion object {
+        @JvmStatic
+        fun stringAndUnits(): List<Arguments> {
+            return listOf(
+                    Arguments.of("description", null, "description"),
+                    Arguments.of(null, null, EMOJI),
+                    Arguments.of("  ", null, EMOJI),
+                    Arguments.of("", null, EMOJI),
+                    Arguments.of(UNKNOWN, null, EMOJI),
+                    Arguments.of(NA, null, EMOJI),
+                    Arguments.of("description", CM, "description cm"),
+            )
+        }
+
+        @JvmStatic
+        fun queryAndChunks(): List<Arguments> {
+            val item1 = UniversalChunk("1", "name1", "desc1")
+            val item2 = UniversalChunk("2", "name2", "desc2")
+            val item3 = UniversalChunk("3", "name3", "desc3")
+
+            return listOf(
+                    Arguments.of("description", emptyList<UniversalChunk>()),
+                    Arguments.of("", listOf(item1, item2, item3)),
+                    Arguments.of("      ", listOf(item1, item2, item3)),
+                    Arguments.of("   2   ", listOf(item2)),
+                    Arguments.of("name ", listOf(item1, item2, item3))
+            )
+        }
     }
 }

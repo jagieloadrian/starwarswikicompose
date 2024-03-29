@@ -36,7 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
-import com.anjo.starwarswikicompose.domain.model.Unit
+import com.anjo.starwarswikicompose.domain.model.UnitName
 import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
 import com.anjo.starwarswikicompose.domain.model.sw.Category.PEOPLE
 import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
@@ -150,13 +150,13 @@ fun PersonScreenContent(
             TripleInfoBox(
                     stringResource(R.string.birth_box_name),
                     selected.birthYear,
-                    firstUnit = null,
+                    firstUnitName = null,
                     stringResource(R.string.height_box_name),
                     selected.height,
-                    secondUnit = Unit.CM,
+                    secondUnitName = UnitName.CM,
                     stringResource(R.string.mass_box_name),
                     selected.mass,
-                    thirdUnit = Unit.KG,
+                    thirdUnitName = UnitName.KG,
                     thirdWidth = thirdWidth
             )
             TripleInfoBox(

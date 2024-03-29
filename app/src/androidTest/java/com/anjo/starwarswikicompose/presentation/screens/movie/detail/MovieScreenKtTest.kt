@@ -77,7 +77,7 @@ class MovieScreenKtTest {
             val snackBarHostState = remember { SnackbarHostState() }
             val imagesStateRefresh = remember { mutableStateOf(true) }
             val state = rememberScrollState()
-            MovieScreen(state,scope, snackBarHostState,
+            MovieScreen(state, scope, snackBarHostState,
                     imagesStateRefresh, Modifier, navHostController, movie, movieViewModel)
         }
         //when and then
@@ -155,7 +155,7 @@ class MovieScreenKtTest {
         onClickLeft.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
         onClickLeft.onParent().assertIsNotFocused()
 
-        val onClickRight = composeRule.onNodeWithContentDescription("onCLickRight",  useUnmergedTree = true)
+        val onClickRight = composeRule.onNodeWithContentDescription("onCLickRight", useUnmergedTree = true)
         onClickRight.assertIsDisplayed()
         onClickRight.assertIsEnabled()
         onClickRight.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))

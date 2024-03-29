@@ -70,4 +70,5 @@ object Constants {
     const val LOADING_ANIMATED_LABEL = "LoadingContentAnimated"
     const val ERROR_ANIMATED_LABEL = "ErrorContentAnimated"
     const val FAIL_ANIMATED_LABEL = "FailContentAnimated"
+    const val SEARCH_BAR_LABEL = "searchBarLabel"
 }
