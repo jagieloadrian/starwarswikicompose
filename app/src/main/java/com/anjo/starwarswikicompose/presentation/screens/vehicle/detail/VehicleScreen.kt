@@ -36,7 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
-import com.anjo.starwarswikicompose.domain.model.Unit
+import com.anjo.starwarswikicompose.domain.model.UnitName
 import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.domain.model.sw.Category.VEHICLES
 import com.anjo.starwarswikicompose.domain.model.sw.Vehicle
@@ -142,23 +142,23 @@ fun VehicleContentScreen(
                         width = halfWidth)
                 InfoBox(
                         stringResource(R.string.cost_box_name),
-                        selected.cost, Unit.CREDITS,
+                        selected.cost, UnitName.CREDITS,
                         width = halfWidth)
             }
             TripleInfoBox(
                     stringResource(R.string.length_box_name),
-                    selected.length, Unit.M,
+                    selected.length, UnitName.M,
                     stringResource(R.string.crew_box_name),
-                    selected.crew, Unit.MEN,
+                    selected.crew, UnitName.MEN,
                     stringResource(R.string.passengers_box_name),
-                    selected.passengers, Unit.MEN,
+                    selected.passengers, UnitName.MEN,
                     thirdWidth = thirdWidth
             )
             TripleInfoBox(
                     stringResource(R.string.v_max_box_name),
-                    selected.vMax, Unit.KMPERHOUR,
+                    selected.vMax, UnitName.KMPERHOUR,
                     stringResource(R.string.cargo_box_name),
-                    selected.cargoCapacity, Unit.KG,
+                    selected.cargoCapacity, UnitName.KG,
                     stringResource(R.string.consumables_box_name),
                     selected.consumables, null,
                     thirdWidth = thirdWidth

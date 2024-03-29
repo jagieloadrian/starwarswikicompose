@@ -19,15 +19,15 @@ object MusicPlayerStatic {
     }
 
     fun playMusic() {
-            player.start()
+        player.start()
     }
 
     fun pauseMusic() {
-            player.pause()
+        player.pause()
     }
 
-    fun shouldPlayMusic() : Boolean{
-      return shouldPlayMusic
+    fun shouldPlayMusic(): Boolean {
+        return shouldPlayMusic
     }
 
     fun changeShouldPlayMusic() {

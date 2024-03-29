@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
-import com.anjo.starwarswikicompose.domain.model.Unit
+import com.anjo.starwarswikicompose.domain.model.UnitName
 import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
 import com.anjo.starwarswikicompose.ui.theme.BOXES_COLORS
@@ -94,13 +94,13 @@ fun ShowHorizontalBoxes(
 fun InfoBox(
         cornerName: String,
         name: String?,
-        unit: Unit? = null,
+        unitName: UnitName? = null,
         id: String? = null,
         category: Category? = null,
         width: Dp,
         navController: NavHostController? = null,
 ) {
-    val descriptionName = getDescriptionName(name, unit)
+    val descriptionName = getDescriptionName(name, unitName)
     val shouldBeClickable = !(id.isNullOrBlank()) && category != null && navController != null
     val brushColors = if (shouldBeClickable) CLICKABLE_BOXES_COLORS else BOXES_COLORS
     Box(modifier = Modifier
@@ -245,10 +245,10 @@ private fun RelatedBox(
 fun DoubleInfoBox(
         firstCornerName: String,
         firstValue: String,
-        firstUnit: Unit?,
+        firstUnitName: UnitName?,
         secondCornerName: String,
         secondValue: String,
-        secondUnit: Unit?,
+        secondUnitName: UnitName?,
         halfWidth: Dp,
 ) {
     Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -257,12 +257,12 @@ fun DoubleInfoBox(
         InfoBox(
                 firstCornerName,
                 firstValue,
-                firstUnit,
+                firstUnitName,
                 width = halfWidth)
         InfoBox(
                 secondCornerName,
                 secondValue,
-                secondUnit,
+                secondUnitName,
                 width = halfWidth)
     }
 }
@@ -271,13 +271,13 @@ fun DoubleInfoBox(
 fun TripleInfoBox(
         firstCornerName: String,
         firstValue: String,
-        firstUnit: Unit?,
+        firstUnitName: UnitName?,
         secondCornerName: String,
         secondValue: String,
-        secondUnit: Unit?,
+        secondUnitName: UnitName?,
         thirdCornerName: String,
         thirdValue: String,
-        thirdUnit: Unit?,
+        thirdUnitName: UnitName?,
         thirdWidth: Dp,
 ) {
     Row(modifier = Modifier.height(INFO_BOX_HEIGHT)
@@ -286,16 +286,16 @@ fun TripleInfoBox(
         InfoBox(
                 firstCornerName,
                 firstValue,
-                firstUnit,
+                firstUnitName,
                 width = thirdWidth)
         InfoBox(secondCornerName,
                 secondValue,
-                secondUnit,
+                secondUnitName,
                 width = thirdWidth)
         InfoBox(
                 thirdCornerName,
                 thirdValue,
-                thirdUnit,
+                thirdUnitName,
                 width = thirdWidth)
     }
 }

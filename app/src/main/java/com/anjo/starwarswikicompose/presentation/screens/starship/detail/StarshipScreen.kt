@@ -36,7 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
-import com.anjo.starwarswikicompose.domain.model.Unit
+import com.anjo.starwarswikicompose.domain.model.UnitName
 import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.domain.model.sw.Category.STARSHIPS
 import com.anjo.starwarswikicompose.domain.model.sw.Starship
@@ -76,7 +76,7 @@ fun StarshipContentScreen(
             saveInDatabase = { starshipViewModel.saveInDatabase(starshipState.starship.id, it) },
             navController = navController,
             stateObject = starshipState.state,
-            content = {state, scope, snackBarHostState, imagesStateRefresh, modifier ->
+            content = { state, scope, snackBarHostState, imagesStateRefresh, modifier ->
                 StarshipContentScreen(state, scope,
                         snackBarHostState, imagesStateRefresh, modifier,
                         navController, starshipState.starship, starshipViewModel)
@@ -143,27 +143,27 @@ fun StarshipContentScreen(
             }
             TripleInfoBox(
                     stringResource(R.string.cost_box_name),
-                    selected.cost, Unit.CREDITS,
+                    selected.cost, UnitName.CREDITS,
                     stringResource(R.string.length_box_name),
-                    selected.length, Unit.M,
+                    selected.length, UnitName.M,
                     stringResource(R.string.cargo_box_name),
-                    selected.cargoCapacity, Unit.KG,
+                    selected.cargoCapacity, UnitName.KG,
                     thirdWidth = thirdWidth
             )
             TripleInfoBox(
                     stringResource(R.string.v_max_box_name),
-                    selected.vMax, Unit.KMPERHOUR,
+                    selected.vMax, UnitName.KMPERHOUR,
                     stringResource(R.string.hyperdrive_box_name),
-                    selected.hyperdriveRating, Unit.CLASS,
+                    selected.hyperdriveRating, UnitName.CLASS,
                     stringResource(R.string.mglt_box_name),
-                    selected.megalight, Unit.PERHOUR,
+                    selected.megalight, UnitName.PERHOUR,
                     thirdWidth = thirdWidth
             )
             TripleInfoBox(
                     stringResource(R.string.crew_box_name),
-                    selected.crew,Unit.MEN,
+                    selected.crew, UnitName.MEN,
                     stringResource(R.string.passengers_box_name),
-                    selected.passengers,Unit.MEN,
+                    selected.passengers, UnitName.MEN,
                     stringResource(R.string.consumables_box_name),
                     selected.consumables, null,
                     thirdWidth = thirdWidth

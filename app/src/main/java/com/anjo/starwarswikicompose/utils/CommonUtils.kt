@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavHostController
+import com.anjo.starwarswikicompose.domain.model.UnitName
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhoto
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Category
@@ -19,6 +20,7 @@ import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
 import com.anjo.starwarswikicompose.navigation.Screen
 import com.anjo.starwarswikicompose.services.interceptor.NetworkConnectionInterceptor
 import com.anjo.starwarswikicompose.utils.Constants.ASSETS_PATH
+import com.anjo.starwarswikicompose.utils.Constants.EMOJI
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_BASE_URL_IMAGE
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_EXT
 
@@ -117,10 +119,18 @@ fun hasInternetConnection(context: Context): Boolean {
     return networkConnectionInterceptor.isInternetAvailable()
 }
 
-fun getDescriptionName(name: String?, unit: com.anjo.starwarswikicompose.domain.model.Unit?): String {
-    val description = if (name.isNullOrBlank()) Constants.EMOJI else name
-    val realDescription = if (listOf(Constants.UNKNOWN, Constants.NA).contains(description)) Constants.EMOJI else description
-    return if (realDescription == Constants.EMOJI) Constants.EMOJI else if (unit != null) {
-        "$realDescription ${unit.description}"
+fun getDescriptionName(name: String?, unitName: UnitName?): String {
+    val description = if (name.isNullOrBlank()) EMOJI else name
+    val realDescription =
+        if (listOf(Constants.UNKNOWN, Constants.NA).contains(description)) EMOJI else description
+    return if (realDescription == EMOJI) EMOJI else if (unitName != null) {
+        "$realDescription ${unitName.description}"
     } else realDescription
+}
+
+fun filterItems(searchQuery: String, items: List<UniversalChunk>): List<UniversalChunk> {
+    if (searchQuery.isBlank()) {
+        return items
+    }
+    return items.filter { it.name.lowercase().contains(searchQuery.lowercase().trim()) }
 }

@@ -1,6 +1,6 @@
 package com.anjo.starwarswikicompose.domain.model
 
-enum class Unit(val description:String) {
+enum class UnitName(val description: String) {
     CM("cm"),
     M("m"),
     KG("kg"),

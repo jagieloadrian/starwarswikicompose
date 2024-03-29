@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">StarWarsWikiCompose</string>
+    <string name="app_name">Star Wars Wiki</string>
     <string name="app_name_top_bar">StarWarsWiki</string>
     <string name="on_boarding_image">On boarding Image</string>
     <string name="close_text">Close</string>

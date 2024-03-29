@@ -25,10 +25,10 @@ import androidx.compose.ui.test.swipeUp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.anjo.starwarswikicompose.domain.model.Unit.DAYS
-import com.anjo.starwarswikicompose.domain.model.Unit.H
-import com.anjo.starwarswikicompose.domain.model.Unit.KM
-import com.anjo.starwarswikicompose.domain.model.Unit.PERCENT
+import com.anjo.starwarswikicompose.domain.model.UnitName.DAYS
+import com.anjo.starwarswikicompose.domain.model.UnitName.H
+import com.anjo.starwarswikicompose.domain.model.UnitName.KM
+import com.anjo.starwarswikicompose.domain.model.UnitName.PERCENT
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Planet
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
@@ -148,7 +148,7 @@ class PlanetScreenKtTest {
         onClickLeft.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
         onClickLeft.onParent().assertIsNotFocused()
 
-        val onClickRight = composeTestRule.onNodeWithContentDescription("onCLickRight",  useUnmergedTree = true)
+        val onClickRight = composeTestRule.onNodeWithContentDescription("onCLickRight", useUnmergedTree = true)
         onClickRight.assertIsDisplayed()
         onClickRight.assertIsEnabled()
         onClickRight.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))

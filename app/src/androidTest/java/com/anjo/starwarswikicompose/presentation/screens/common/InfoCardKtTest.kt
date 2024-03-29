@@ -28,7 +28,7 @@ class InfoCardKtTest {
             InfoDialog { result = expected }
         }
         //when and then
-        val appName = composeTestRule.onNodeWithText("StarWarsWikiCompose")
+        val appName = composeTestRule.onNodeWithText("Star Wars Wiki")
 
         appName.assertIsDisplayed()
         appName.assertIsEnabled()

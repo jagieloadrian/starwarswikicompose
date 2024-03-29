@@ -23,11 +23,11 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.anjo.starwarswikicompose.domain.model.Unit.CREDITS
-import com.anjo.starwarswikicompose.domain.model.Unit.KG
-import com.anjo.starwarswikicompose.domain.model.Unit.KMPERHOUR
-import com.anjo.starwarswikicompose.domain.model.Unit.M
-import com.anjo.starwarswikicompose.domain.model.Unit.MEN
+import com.anjo.starwarswikicompose.domain.model.UnitName.CREDITS
+import com.anjo.starwarswikicompose.domain.model.UnitName.KG
+import com.anjo.starwarswikicompose.domain.model.UnitName.KMPERHOUR
+import com.anjo.starwarswikicompose.domain.model.UnitName.M
+import com.anjo.starwarswikicompose.domain.model.UnitName.MEN
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
 import com.anjo.starwarswikicompose.domain.model.sw.Vehicle
 import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
@@ -45,7 +45,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.stub
 
 @RunWith(AndroidJUnit4::class)
-class VehicleScreenKtTest{
+class VehicleScreenKtTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 

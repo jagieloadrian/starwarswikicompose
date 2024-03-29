@@ -45,7 +45,7 @@ open class ImageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _fetchedPhotoInfos.update {
-                    val response =   useCases.getSearchImagesUseCase(searchText = query)
+                    val response = useCases.getSearchImagesUseCase(searchText = query)
                     it.copy(photos = response.photos, stat = response.stat, code = response.code,
                             message = response.message)
                 }
@@ -67,7 +67,7 @@ open class ImageViewModel @Inject constructor(
                 }
             } catch (exc: Exception) {
                 _fetchedPhotoInfos.update {
-                  FlickrResponse(message = ERROR_UNAVAILABLE_INTERNET)
+                    FlickrResponse(message = ERROR_UNAVAILABLE_INTERNET)
                 }
             }
         }

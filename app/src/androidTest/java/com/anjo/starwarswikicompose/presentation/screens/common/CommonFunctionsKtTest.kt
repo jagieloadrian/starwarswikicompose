@@ -34,7 +34,7 @@ class CommonFunctionsKtTest {
         composeTestRule.setContent {
             val thirdWidth = (getLocalWidth() / 3).dp
             val navController = rememberNavController()
-            InfoBox("cornerName", "name", null,"objectId", FILMS, thirdWidth, navController)
+            InfoBox("cornerName", "name", null, "objectId", FILMS, thirdWidth, navController)
         }
 
         //when and then
@@ -68,7 +68,8 @@ class CommonFunctionsKtTest {
     @Test
     fun givenHorizontalBoxes_whenDisplayed_thenAssertComponents() {
         //given
-        val connection = Connection(2, listOf(UniversalChunk(id = "vehicleId1", name = "vehicleName1"), UniversalChunk(id = "vehicleId2", name = "vehicleName2")))
+        val connection = Connection(2, listOf(UniversalChunk(id = "vehicleId1", name = "vehicleName1"),
+                UniversalChunk(id = "vehicleId2", name = "vehicleName2")))
 
         composeTestRule.setContent {
             val halfWidth = (getLocalWidth() / 2).dp
