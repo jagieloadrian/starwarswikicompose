@@ -1,13 +1,13 @@
 package com.anjo.starwarswikicompose.services.usecases.operationusecase.planet
 
-import com.anjo.starwarswikicompose.domain.model.sw.Planet
+import com.anjo.starwarswikicompose.domain.dto.PlanetDto
 import com.anjo.starwarswikicompose.services.data.repository.OperationRepository
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 class GetPlanetUseCase @Inject constructor(
         private val dataFetcher: OperationRepository,
 ) {
-    suspend operator fun invoke(id: String): Planet? {
+    suspend operator fun invoke(id: String): PlanetDto? {
         return dataFetcher.fetchOnePlanet(id)
     }
 }

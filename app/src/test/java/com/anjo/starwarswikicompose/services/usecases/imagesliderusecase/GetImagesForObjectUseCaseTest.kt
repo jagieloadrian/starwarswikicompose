@@ -8,7 +8,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -23,7 +23,7 @@ class GetImagesForObjectUseCaseTest {
     lateinit var getImagesForObjectUseCase: GetImagesForObjectUseCase
 
     @Test
-    fun `given imageRepo when invoke getImagesForObjectUseCase then return list of imageModel`() = runBlocking {
+    fun `given imageRepo when invoke getImagesForObjectUseCase then return list of imageModel`() = runTest {
         //given
         val category = Category.FILMS
         val objectId = "objectId1"

@@ -6,12 +6,8 @@
 /app/release-keystore.jks
 /service-account.json
 /release-keystore.jks
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+/.idea*
+/.kotlin*
 .DS_Store
 /build
 /captures

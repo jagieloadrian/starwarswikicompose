@@ -7,9 +7,9 @@ import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -23,15 +23,15 @@ class GetNotesUseCaseTest {
     lateinit var getNotesUseCase: GetNotesUseCase
 
     @Test
-    fun `given notesRepo when invoke getNotesUseCase then return list of noteModel`() = runBlocking {
+    fun `given notesRepo when invoke getNotesUseCase then return list of noteModel`() = runTest {
         //given
         val expectedList = listOf(NoteModel(1, "someText1"), NoteModel(2, "someText2"), NoteModel(3, "someText3"))
 
         coEvery { notesRepository.getNotes() } returns flow { emit(expectedList) }
         //when
-        val actual = getNotesUseCase().firstOrNull()
+        val actual = getNotesUseCase().first()
 
         //then
-        actual!! shouldBe expectedList
+        actual shouldBe expectedList
     }
 }

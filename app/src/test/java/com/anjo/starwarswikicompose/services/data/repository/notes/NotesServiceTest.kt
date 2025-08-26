@@ -8,9 +8,9 @@ import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -24,20 +24,20 @@ class NotesServiceTest {
     lateinit var notesService: NotesService
 
     @Test
-    fun `given notesDao when getNotes then return list of noteModel`() = runBlocking {
+    fun `given notesDao when getNotes then return list of noteModel`() = runTest {
         //given
         val expectedList = listOf(NoteModel(1, "someText1"), NoteModel(2, "someText2"), NoteModel(3, "someText3"))
 
         coEvery { notesDao.getNotes() } returns flow { emit(expectedList) }
         //when
-        val actual = notesService.getNotes().firstOrNull()
+        val actual = notesService.getNotes().first()
 
         //then
-        actual!! shouldBe expectedList
+        actual shouldBe expectedList
     }
 
     @Test
-    fun `given note model when  deleteNote then verify call`() = runBlocking {
+    fun `given note model when  deleteNote then verify call`() = runTest {
         //given
         val noteModel = NoteModel(id = 1, "someText")
 
@@ -51,7 +51,7 @@ class NotesServiceTest {
     }
 
     @Test
-    fun `given note model when addNote then verify call`() = runBlocking {
+    fun `given note model when addNote then verify call`() = runTest {
         //given
         val noteModel = NoteModel(id = 1, "someText")
 

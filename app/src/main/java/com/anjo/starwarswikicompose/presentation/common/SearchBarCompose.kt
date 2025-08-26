@@ -9,17 +9,16 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -35,8 +34,7 @@ import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING_FOR_INFOBOX
 import com.anjo.starwarswikicompose.ui.theme.TOP_APP_BAR_HEIGHT
-import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
-import com.anjo.starwarswikicompose.utils.Constants.SEARCH_BAR_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.SEARCH_BAR_LABEL
 
 @Composable
 fun SearchBar(
@@ -50,7 +48,10 @@ fun SearchBar(
         placeholder: String,
 ) {
     val focusManager = LocalFocusManager.current
-    Surface(modifier = modifier) {
+    Surface(
+            modifier = modifier,
+            color = Color.Transparent,
+    ) {
         TextField(
                 modifier = modifier
                         .fillMaxWidth()
@@ -61,7 +62,7 @@ fun SearchBar(
                 onValueChange = { onTextChange(it) },
                 leadingIcon = {
                     IconButton(
-                            modifier = Modifier.alpha(alpha = ContentAlpha.medium),
+                            modifier = Modifier.alpha(alpha = 0.5f),
                             onClick = {
                                 onSearchClicked(text)
                                 focusManager.clearFocus()
@@ -70,6 +71,7 @@ fun SearchBar(
                         Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = stringResource(R.string.search_icon),
+                                tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -88,16 +90,22 @@ fun SearchBar(
                     ) {
                         Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = stringResource(R.string.close_icon)
+                                contentDescription = stringResource(R.string.close_icon),
+                                tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
                 singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = MaterialTheme.colors.surface
+                colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedTextColor = MaterialTheme.colorScheme.onSecondary
                 ),
                 placeholder = {
-                    Text(placeholder)
+                    Text(
+                            placeholder,
+                            color = MaterialTheme.colorScheme.primary,
+                    )
                 },
                 keyboardActions = KeyboardActions(
                         onSearch = {
@@ -118,7 +126,7 @@ fun SearchBarForChunks(
         text: String,
         onTextChange: (String) -> Unit,
         onClosedClicked: () -> Unit,
-        enabled: Boolean,
+        enabled: Boolean = true,
         lazyListState: LazyListState,
         placeholder: String,
 ) {
@@ -126,7 +134,7 @@ fun SearchBarForChunks(
             .testTag(SEARCH_BAR_LABEL),
             color = Color.Transparent,
             shape = RoundedCornerShape(SMALL_PADDING_FOR_INFOBOX),
-            border = BorderStroke(SMALL_BORDER, MaterialTheme.colors.mainBackgroundColors)) {
+            border = BorderStroke(SMALL_BORDER, MaterialTheme.colorScheme.primary)) {
         TextField(
                 modifier = modifier
                         .fillMaxWidth()
@@ -139,7 +147,7 @@ fun SearchBarForChunks(
                     Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(R.string.search_icon),
-                            tint = MaterialTheme.colors.mainBackgroundColors
+                            tint = MaterialTheme.colorScheme.primary
                     )
                 },
                 trailingIcon = {
@@ -158,15 +166,15 @@ fun SearchBarForChunks(
                         Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = stringResource(R.string.close_icon),
-                                tint = MaterialTheme.colors.mainBackgroundColors
+                                tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
                 singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
-                        textColor = MaterialTheme.colors.mainBackgroundColors
-
+                colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedTextColor = MaterialTheme.colorScheme.onSecondary
                 ),
                 placeholder = {
                     Text(placeholder)

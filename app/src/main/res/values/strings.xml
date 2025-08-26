@@ -5,11 +5,9 @@
     <string name="close_text">Close</string>
     <string name="title_text">Title:</string>
     <string name="author_text">Author name:</string>
-    <string name="save_close">Save &amp; Close</string>
-    <string name="send_close">Send &amp; Close</string>
+    <string name="save">Save</string>
+    <string name="send">Send</string>
     <string name="label_notes">Your notes</string>
-    <string name="user_email">User email</string>
-    <string name="user_email_placeholder">[Optional] example@mail.com</string>
     <string name="subject">Subject</string>
     <string name="subject_placeholder">Fill the subject of your feedback</string>
     <string name="description">Description</string>

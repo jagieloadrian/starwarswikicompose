@@ -1,12 +1,10 @@
 package com.anjo.starwarswikicompose.ui.theme
 
-import androidx.compose.material.Colors
+import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
 
 val LightGray = Color(0xFFD8D8D8)
 val DarkGray = Color(0xFF2A2A2A)
@@ -22,30 +20,8 @@ val CLICKABLE_BOXES_COLORS = listOf(Color.Yellow, Color.Red)
 val RELATED_BOXES_COLORS = listOf(Color.Yellow, Color.Red, Color.Blue)
 val SHIMMER_COLORS = RELATED_BOXES_COLORS
 
+fun ColorScheme.isLight() = this.background.luminance() > 0.5
 
-val Colors.welcomeScreenBackgroundColor
-    get() = if (isLight) Color.White else Color.Black
-
-val Colors.welcomeScreenImageBackgroundColor
-    get() = if (isLight) listOf(Color.Black, ShimmerMediumGray, Color.White) else listOf(Color.White, ShimmerMediumGray,
-            Color.Black)
-
-
-val Colors.titleColor
-    get() = if (isLight) DarkGray else LightGray
-
-val Colors.descriptionColor
-    get() = if (isLight) DarkGray.copy(alpha = 0.5f) else LightGray.copy(0.5f)
-
-val Colors.welcomeImageBackground
-    get() = if (isLight) Color.White else Color.Black
-
-val Colors.mainContentColor: Color
-    get() = if (isLight) Color.White else LightGray
-
-val Colors.mainBackgroundColors: Color
-    get() = if (isLight) GoldColor else GoldOrangeColor
-
-
-val Colors.reverseMainBackgroundColors: Color
-    get() = if (isLight) GoldOrangeColor else GoldColor
+val ColorScheme.welcomeScreenImageBackgroundColor
+    get() = if (isLight()) listOf(Color.Black, ShimmerMediumGray, Color.White)
+    else listOf(Color.White, ShimmerMediumGray, Color.Black)

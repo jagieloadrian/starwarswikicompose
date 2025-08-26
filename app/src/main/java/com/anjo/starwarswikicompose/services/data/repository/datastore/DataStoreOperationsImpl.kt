@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.anjo.starwarswikicompose.utils.Constants.NOTIFICATIONS_KEY
 import com.anjo.starwarswikicompose.utils.Constants.PREFERENCES_KEY
 import com.anjo.starwarswikicompose.utils.Constants.PREFERENCES_NAME
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +21,7 @@ class DataStoreOperationImpl(context: Context) : DataStoreOperations {
 
     private object PreferencesKey {
         val onBoardingKey = booleanPreferencesKey(name = PREFERENCES_KEY)
+        val notificationKey = booleanPreferencesKey(name = NOTIFICATIONS_KEY)
     }
 
     private val dataStore = context.dataStore
@@ -39,6 +41,26 @@ class DataStoreOperationImpl(context: Context) : DataStoreOperations {
                     }
                 }.map { preferences ->
                     val onBoardingState = preferences[PreferencesKey.onBoardingKey] ?: false
+                    onBoardingState
+                }
+    }
+
+    override suspend fun saveNotificationEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKey.notificationKey] = enabled
+        }
+    }
+
+    override fun readNotificationEnabled(): Flow<Boolean> {
+        return dataStore.data
+                .catch { exception ->
+                    if (exception is IOException) {
+                        emit(emptyPreferences())
+                    } else {
+                        throw exception
+                    }
+                }.map { preferences ->
+                    val onBoardingState = preferences[PreferencesKey.notificationKey] ?: false
                     onBoardingState
                 }
     }

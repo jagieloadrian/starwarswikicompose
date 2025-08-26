@@ -13,7 +13,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -45,9 +45,9 @@ class NotificationWorkerTest {
     lateinit var notificationWorker: NotificationWorker
 
     @Test
-    fun `given mocks when call doWork then return response`() = runBlocking {
+    fun `given mocks when call doWork then return response`(): Unit = runTest {
         //given
-        val mockContext = mockk<Context>() {
+        val mockContext = mockk<Context> {
 
         }
         every { workerParameters.taskExecutor } returns executor

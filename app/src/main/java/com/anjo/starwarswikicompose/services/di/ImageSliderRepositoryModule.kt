@@ -16,14 +16,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object ImageSliderRepositoryModule {
 
     @Provides
-    @Singleton
     fun provideImageSliderDb(
             @ApplicationContext
             context: Context,
@@ -33,13 +31,11 @@ object ImageSliderRepositoryModule {
             IMAGE_SLIDER_TABLE).build()
 
     @Provides
-    @Singleton
     fun provideImageSliderDao(
             imageSliderDb: ImageSliderDb,
     ) = imageSliderDb.imageSliderDao
 
     @Provides
-    @Singleton
     fun provideImageSliderRepository(
             imageSliderDao: ImageSliderDao,
     ): ImageSliderRepository {
@@ -49,7 +45,6 @@ object ImageSliderRepositoryModule {
     }
 
     @Provides
-    @Singleton
     fun provideImageSliderUseCases(repository: ImageSliderRepository): ImageSliderUseCases {
         return ImageSliderUseCases(
                 getImagesForObjectUseCase = GetImagesForObjectUseCase(repository),

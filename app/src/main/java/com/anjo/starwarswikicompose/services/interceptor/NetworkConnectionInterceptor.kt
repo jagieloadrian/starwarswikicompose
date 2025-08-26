@@ -2,7 +2,9 @@ package com.anjo.starwarswikicompose.services.interceptor
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
+import android.net.NetworkCapabilities.TRANSPORT_CELLULAR
+import android.net.NetworkCapabilities.TRANSPORT_ETHERNET
+import android.net.NetworkCapabilities.TRANSPORT_WIFI
 import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -27,10 +29,10 @@ class NetworkConnectionInterceptor(
         val actNw =
             connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
         result = when {
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)     -> true
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-            else                                                       -> false
+            actNw.hasTransport(TRANSPORT_WIFI)     -> true
+            actNw.hasTransport(TRANSPORT_CELLULAR) -> true
+            actNw.hasTransport(TRANSPORT_ETHERNET) -> true
+            else                                   -> false
         }
         return result
     }

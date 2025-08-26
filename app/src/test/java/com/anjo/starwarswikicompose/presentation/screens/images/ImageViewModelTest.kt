@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.anjo.starwarswikicompose.presentation.screens.images
 
 import android.net.http.HttpException
@@ -11,8 +13,15 @@ import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -21,12 +30,23 @@ class ImageViewModelTest {
 
     @RelaxedMockK
     private lateinit var useCases: UseCases
+    private val testDispatcher = StandardTestDispatcher()
 
     @InjectMockKs
     private lateinit var imageViewModel: ImageViewModel
 
+    @BeforeEach
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
     @Test
-    fun `given flickrResponse when fetchRecentPhotos then return response`() = runBlocking {
+    fun `given flickrResponse when fetchRecentPhotos then return response`() = runTest {
         //given
         val flickrPhotos = FlickrPhotos(0, 1, 0, 0, listOf())
         val expected = FlickrResponse(photos = flickrPhotos, stat = ok)
@@ -34,7 +54,7 @@ class ImageViewModelTest {
 
         //when
         imageViewModel.fetchRecentPhotos()
-        delay(50)
+        advanceUntilIdle()
         val actual = imageViewModel.fetchedPhotoInfos.value
 
         //then
@@ -42,7 +62,7 @@ class ImageViewModelTest {
     }
 
     @Test
-    fun `given flickrResponse when fetchPhotoInfo then return response`() = runBlocking {
+    fun `given flickrResponse when fetchPhotoInfo then return response`() = runTest {
         //given
         val sampleQuery = "sampleQuery"
         val flickrPhotos = FlickrPhotos(0, 1, 0, 0, listOf())
@@ -51,7 +71,7 @@ class ImageViewModelTest {
 
         //when
         imageViewModel.fetchPhotoInfo(sampleQuery)
-        delay(50)
+        advanceUntilIdle()
         val actual = imageViewModel.fetchedPhotoInfos.value
 
         //then
@@ -72,13 +92,13 @@ class ImageViewModelTest {
     }
 
     @Test
-    fun `given flickrResponse when fetchRecentPhotos and throw exc then return with error name`() = runBlocking {
+    fun `given flickrResponse when fetchRecentPhotos and throw exc then return with error name`() = runTest {
         //given
         coEvery { useCases.getRecentImagesUseCase() } throws HttpException(null, null)
 
         //when
         imageViewModel.fetchRecentPhotos()
-        delay(50)
+        advanceUntilIdle()
         val actual = imageViewModel.fetchedPhotoInfos.value
 
         //then
@@ -86,14 +106,14 @@ class ImageViewModelTest {
     }
 
     @Test
-    fun `given flickrResponse when fetchPhotoInfo and throw exc then return response with error name`() = runBlocking {
+    fun `given flickrResponse when fetchPhotoInfo and throw exc then return response with error name`() = runTest {
         //given
         val sampleQuery = "sampleQuery"
         coEvery { useCases.getSearchImagesUseCase(sampleQuery) } throws HttpException(null, null)
 
         //when
         imageViewModel.fetchPhotoInfo(sampleQuery)
-        delay(50)
+        advanceUntilIdle()
         val actual = imageViewModel.fetchedPhotoInfos.value
 
         //then

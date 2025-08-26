@@ -1,29 +1,35 @@
 package com.anjo.starwarswikicompose.services.apollofetcher
 
 import android.util.Log
-import com.anjo.starwarswikicompose.GetAllFilmsQuery
-import com.anjo.starwarswikicompose.GetAllPeoplesQuery
-import com.anjo.starwarswikicompose.GetAllPlanetsQuery
-import com.anjo.starwarswikicompose.GetAllSpeciesQuery
-import com.anjo.starwarswikicompose.GetAllStarshipsQuery
-import com.anjo.starwarswikicompose.GetAllVehiclesQuery
-import com.anjo.starwarswikicompose.GetFilmQuery
-import com.anjo.starwarswikicompose.GetPersonQuery
-import com.anjo.starwarswikicompose.GetPlanetQuery
-import com.anjo.starwarswikicompose.GetSpecieQuery
-import com.anjo.starwarswikicompose.GetStarshipQuery
-import com.anjo.starwarswikicompose.GetVehicleQuery
-import com.anjo.starwarswikicompose.domain.model.sw.Movie
-import com.anjo.starwarswikicompose.domain.model.sw.Person
-import com.anjo.starwarswikicompose.domain.model.sw.Planet
-import com.anjo.starwarswikicompose.domain.model.sw.Specie
-import com.anjo.starwarswikicompose.domain.model.sw.Starship
-import com.anjo.starwarswikicompose.domain.model.sw.Vehicle
-import com.anjo.starwarswikicompose.domain.model.sw.common.Connection
-import com.anjo.starwarswikicompose.domain.model.sw.common.UniversalChunk
-import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.ApolloResponse
-import com.apollographql.apollo3.api.Optional
+import com.anjo.starwarswikicompose.apollo.GetAllFilmsQuery
+import com.anjo.starwarswikicompose.apollo.GetAllPeoplesQuery
+import com.anjo.starwarswikicompose.apollo.GetAllPlanetsQuery
+import com.anjo.starwarswikicompose.apollo.GetAllSpeciesQuery
+import com.anjo.starwarswikicompose.apollo.GetAllStarshipsQuery
+import com.anjo.starwarswikicompose.apollo.GetAllVehiclesQuery
+import com.anjo.starwarswikicompose.apollo.GetFilmQuery
+import com.anjo.starwarswikicompose.apollo.GetPersonQuery
+import com.anjo.starwarswikicompose.apollo.GetPlanetQuery
+import com.anjo.starwarswikicompose.apollo.GetSpecieQuery
+import com.anjo.starwarswikicompose.apollo.GetStarshipQuery
+import com.anjo.starwarswikicompose.apollo.GetVehicleQuery
+import com.anjo.starwarswikicompose.domain.dto.ConnectionDto
+import com.anjo.starwarswikicompose.domain.dto.MovieDto
+import com.anjo.starwarswikicompose.domain.dto.PersonDto
+import com.anjo.starwarswikicompose.domain.dto.PlanetDto
+import com.anjo.starwarswikicompose.domain.dto.SpecieDto
+import com.anjo.starwarswikicompose.domain.dto.StarshipDto
+import com.anjo.starwarswikicompose.domain.dto.UniversalChunkDto
+import com.anjo.starwarswikicompose.domain.dto.VehicleDto
+import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PEOPLE
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.SPECIES
+import com.anjo.starwarswikicompose.domain.model.sw.Category.STARSHIPS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.VEHICLES
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.ApolloResponse.Builder
+import com.apollographql.apollo.api.Optional
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.every
@@ -32,7 +38,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockkStatic
 import io.mockk.verify
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.UUID
@@ -47,8 +53,28 @@ class DataFetcherImplTest {
     lateinit var dataFetcherImpl: DataFetcherImpl
 
     @Test
+    fun `given response as null when fetchFilms from apollo then return empty list`() = runTest {
+        //given
+        val dataApolloResponse = Builder(
+                operation = GetAllFilmsQuery(),
+                requestUuid = UUID.randomUUID())
+                .data(null)
+                .build()
+
+        val expected = listOf<UniversalChunkDto>()
+
+        coEvery { apolloClient.query(GetAllFilmsQuery()).execute() } returns dataApolloResponse
+
+        //when
+        val actual = dataFetcherImpl.fetchFilms()
+
+        //then
+        actual shouldBe expected
+    }
+
+    @Test
     fun `given response GetAllFilmsQuery object when fetch films then return list of universalChunk`(): Unit =
-        runBlocking {
+        runTest {
             //given
             val film1 = GetAllFilmsQuery.Film(
                     title = "Film1",
@@ -68,14 +94,14 @@ class DataFetcherImplTest {
                                     film2.id),
                             films = listOf(film1, film2, null)
                     ))
-            val dataApolloResponse = ApolloResponse.Builder(
+            val dataApolloResponse = Builder(
                     operation = GetAllFilmsQuery(),
-                    UUID.randomUUID(),
-                    data = allFilms
-            ).build()
+                    requestUuid = UUID.randomUUID())
+                    .data(allFilms)
+                    .build()
 
-            val expected = listOf(UniversalChunk(film1.id, film1.title ?: "", film1.episodeID.toString()),
-                    UniversalChunk(film2.id, film2.title ?: "", film2.episodeID.toString()))
+            val expected = listOf(UniversalChunkDto(film1.id, film1.title ?: "", film1.episodeID.toString(), FILMS),
+                    UniversalChunkDto(film2.id, film2.title ?: "", film2.episodeID.toString(), FILMS))
 
             coEvery { apolloClient.query(GetAllFilmsQuery()).execute() } returns dataApolloResponse
 
@@ -87,8 +113,28 @@ class DataFetcherImplTest {
         }
 
     @Test
-    fun `given response GetAllPeoplesQuery object when fetch films then return list of universalChunk`(): Unit =
-        runBlocking {
+    fun `given response as null when fetchPeople from apollo then return empty list`() = runTest {
+        //given
+        val dataApolloResponse = Builder(
+                operation = GetAllPeoplesQuery(),
+                requestUuid = UUID.randomUUID())
+                .data(null)
+                .build()
+
+        val expected = listOf<UniversalChunkDto>()
+
+        coEvery { apolloClient.query(GetAllPeoplesQuery()).execute() } returns dataApolloResponse
+
+        //when
+        val actual = dataFetcherImpl.fetchPeoples()
+
+        //then
+        actual shouldBe expected
+    }
+
+    @Test
+    fun `given response GetAllPeoplesQuery object when fetch people then return list of universalChunk`(): Unit =
+        runTest {
             //given
             val object1 = GetAllPeoplesQuery.Person(
                     name = "Object1",
@@ -109,14 +155,15 @@ class DataFetcherImplTest {
                                     object2.id),
                             people = listOf(object1, object2, null)
                     ))
-            val dataApolloResponse = ApolloResponse.Builder(
+            val dataApolloResponse = Builder(
                     operation = GetAllPeoplesQuery(),
-                    UUID.randomUUID(),
-                    data = allObjects
-            ).build()
+                    requestUuid = UUID.randomUUID())
+                    .data(allObjects)
+                    .build()
 
-            val expected = listOf(UniversalChunk(object1.id, object1.name ?: "", object1.birthYear.toString()),
-                    UniversalChunk(object2.id, object2.name ?: "", object2.birthYear.toString()))
+            val expected = listOf(
+                    UniversalChunkDto(object1.id, object1.name ?: "", object1.birthYear.toString(), PEOPLE),
+                    UniversalChunkDto(object2.id, object2.name ?: "", object2.birthYear.toString(), PEOPLE))
 
             coEvery { apolloClient.query(GetAllPeoplesQuery()).execute() } returns dataApolloResponse
 
@@ -128,8 +175,28 @@ class DataFetcherImplTest {
         }
 
     @Test
-    fun `given response GetAllPlanetsQuery object when fetch films then return list of universalChunk`(): Unit =
-        runBlocking {
+    fun `given response as null when fetchPlanets from apollo then return empty list`() = runTest {
+        //given
+        val dataApolloResponse = Builder(
+                operation = GetAllPlanetsQuery(),
+                requestUuid = UUID.randomUUID())
+                .data(null)
+                .build()
+
+        val expected = listOf<UniversalChunkDto>()
+
+        coEvery { apolloClient.query(GetAllPlanetsQuery()).execute() } returns dataApolloResponse
+
+        //when
+        val actual = dataFetcherImpl.fetchPlanets()
+
+        //then
+        actual shouldBe expected
+    }
+
+    @Test
+    fun `given response GetAllPlanetsQuery object when fetch planets then return list of universalChunk`(): Unit =
+        runTest {
             //given
             val object1 = GetAllPlanetsQuery.Planet(
                     name = "Object1",
@@ -150,14 +217,14 @@ class DataFetcherImplTest {
                                     object2.id),
                             planets = listOf(object1, object2, null)
                     ))
-            val dataApolloResponse = ApolloResponse.Builder(
+            val dataApolloResponse = Builder(
                     operation = GetAllPlanetsQuery(),
-                    UUID.randomUUID(),
-                    data = allObjects
-            ).build()
+                    requestUuid = UUID.randomUUID())
+                    .data(allObjects)
+                    .build()
 
-            val expected = listOf(UniversalChunk(object1.id, object1.name ?: "", "123 citizens"),
-                    UniversalChunk(object2.id, object2.name ?: "", "0 citizens"))
+            val expected = listOf(UniversalChunkDto(object1.id, object1.name ?: "", "123 citizens", PLANETS),
+                    UniversalChunkDto(object2.id, object2.name ?: "", "0 citizens", PLANETS))
 
             coEvery { apolloClient.query(GetAllPlanetsQuery()).execute() } returns dataApolloResponse
 
@@ -169,8 +236,28 @@ class DataFetcherImplTest {
         }
 
     @Test
-    fun `given response GetAllSpeciesQuery object when fetch films then return list of universalChunk`(): Unit =
-        runBlocking {
+    fun `given response as null when fetchSpecies from apollo then return empty list`() = runTest {
+        //given
+        val dataApolloResponse = Builder(
+                operation = GetAllSpeciesQuery(),
+                requestUuid = UUID.randomUUID())
+                .data(null)
+                .build()
+
+        val expected = listOf<UniversalChunkDto>()
+
+        coEvery { apolloClient.query(GetAllSpeciesQuery()).execute() } returns dataApolloResponse
+
+        //when
+        val actual = dataFetcherImpl.fetchSpecies()
+
+        //then
+        actual shouldBe expected
+    }
+
+    @Test
+    fun `given response GetAllSpeciesQuery object when fetch species then return list of universalChunk`(): Unit =
+        runTest {
             //given
             val object1 = GetAllSpeciesQuery.Species(
                     name = "Object1",
@@ -191,14 +278,14 @@ class DataFetcherImplTest {
                                     object2.id),
                             species = listOf(object1, object2, null)
                     ))
-            val dataApolloResponse = ApolloResponse.Builder(
+            val dataApolloResponse = Builder(
                     operation = GetAllSpeciesQuery(),
-                    UUID.randomUUID(),
-                    data = allObjects
-            ).build()
+                    requestUuid = UUID.randomUUID())
+                    .data(allObjects)
+                    .build()
 
-            val expected = listOf(UniversalChunk(object1.id, object1.name ?: "", object1.language ?: ""),
-                    UniversalChunk(object2.id, object2.name ?: "", object2.language ?: ""))
+            val expected = listOf(UniversalChunkDto(object1.id, object1.name ?: "", object1.language ?: "", SPECIES),
+                    UniversalChunkDto(object2.id, object2.name ?: "", object2.language ?: "", SPECIES))
 
             coEvery { apolloClient.query(GetAllSpeciesQuery()).execute() } returns dataApolloResponse
 
@@ -210,8 +297,28 @@ class DataFetcherImplTest {
         }
 
     @Test
-    fun `given response GetAllStarshipsQuery object when fetch films then return list of universalChunk`(): Unit =
-        runBlocking {
+    fun `given response as null when fetchStarships from apollo then return empty list`() = runTest {
+        //given
+        val dataApolloResponse = Builder(
+                operation = GetAllStarshipsQuery(),
+                requestUuid = UUID.randomUUID())
+                .data(null)
+                .build()
+
+        val expected = listOf<UniversalChunkDto>()
+
+        coEvery { apolloClient.query(GetAllStarshipsQuery()).execute() } returns dataApolloResponse
+
+        //when
+        val actual = dataFetcherImpl.fetchStarships()
+
+        //then
+        actual shouldBe expected
+    }
+
+    @Test
+    fun `given response GetAllStarshipsQuery object when fetch starships then return list of universalChunk`(): Unit =
+        runTest {
             //given
             val object1 = GetAllStarshipsQuery.Starship(
                     name = "Object1",
@@ -232,14 +339,15 @@ class DataFetcherImplTest {
                                     object2.id),
                             starships = listOf(object1, object2, null)
                     ))
-            val dataApolloResponse = ApolloResponse.Builder(
+            val dataApolloResponse = Builder(
                     operation = GetAllStarshipsQuery(),
-                    UUID.randomUUID(),
-                    data = allObjects
-            ).build()
+                    requestUuid = UUID.randomUUID())
+                    .data(allObjects)
+                    .build()
 
-            val expected = listOf(UniversalChunk(object1.id, object1.name ?: "", object1.model ?: ""),
-                    UniversalChunk(object2.id, object2.name ?: "", object2.model ?: ""))
+            val expected =
+                listOf(UniversalChunkDto(object1.id, object1.name ?: "", object1.model ?: "", category = STARSHIPS),
+                        UniversalChunkDto(object2.id, object2.name ?: "", object2.model ?: "", category = STARSHIPS))
 
             coEvery { apolloClient.query(GetAllStarshipsQuery()).execute() } returns dataApolloResponse
 
@@ -251,8 +359,28 @@ class DataFetcherImplTest {
         }
 
     @Test
-    fun `given response GetAllVehiclesQuery object when fetch films then return list of universalChunk`(): Unit =
-        runBlocking {
+    fun `given response as null when fetchVehicles from apollo then return empty list`() = runTest {
+        //given
+        val dataApolloResponse = Builder(
+                operation = GetAllVehiclesQuery(),
+                requestUuid = UUID.randomUUID())
+                .data(null)
+                .build()
+
+        val expected = listOf<UniversalChunkDto>()
+
+        coEvery { apolloClient.query(GetAllVehiclesQuery()).execute() } returns dataApolloResponse
+
+        //when
+        val actual = dataFetcherImpl.fetchVehicles()
+
+        //then
+        actual shouldBe expected
+    }
+
+    @Test
+    fun `given response GetAllVehiclesQuery object when fetch vehicles then return list of universalChunk`(): Unit =
+        runTest {
             //given
             val object1 = GetAllVehiclesQuery.Vehicle(
                     name = "Object1",
@@ -273,14 +401,15 @@ class DataFetcherImplTest {
                                     object2.id),
                             vehicles = listOf(object1, object2, null)
                     ))
-            val dataApolloResponse = ApolloResponse.Builder(
+            val dataApolloResponse = Builder(
                     operation = GetAllVehiclesQuery(),
-                    UUID.randomUUID(),
-                    data = allObjects
-            ).build()
+                    requestUuid = UUID.randomUUID())
+                    .data(allObjects)
+                    .build()
 
-            val expected = listOf(UniversalChunk(object1.id, object1.name ?: "", object1.model ?: ""),
-                    UniversalChunk(object2.id, object2.name ?: "", object2.model ?: ""))
+            val expected =
+                listOf(UniversalChunkDto(object1.id, object1.name ?: "", object1.model ?: "", category = VEHICLES),
+                        UniversalChunkDto(object2.id, object2.name ?: "", object2.model ?: "", category = VEHICLES))
 
             coEvery { apolloClient.query(GetAllVehiclesQuery()).execute() } returns dataApolloResponse
 
@@ -292,16 +421,21 @@ class DataFetcherImplTest {
         }
 
     @Test
-    fun `given response GetFilmQuery when fetchOneFilm then return Movie`(): Unit = runBlocking {
+    fun `given response GetFilmQuery when fetchOneFilm then return Movie`(): Unit = runTest {
         //given
         val id = "objectId"
-        val expected = Movie(id = id, title = "title", episodeId = "1", openingCrawl = "longText",
+        val expected = MovieDto(id = id, title = "title", episodeId = "1", openingCrawl = "longText",
                 releaseDate = "it was", director = "director", producers = listOf("producer1", "producer2"),
-                characterConnection = Connection(1, listOf(UniversalChunk(id = "charId", name = "charName"))),
-                planetConnection = Connection(1, listOf(UniversalChunk(id = "planetId", name = "planetName"))),
-                vehicleConnection = Connection(1, listOf(UniversalChunk(id = "vehicleId", name = "vehicleName"))),
-                starshipConnection = Connection(1, listOf(UniversalChunk(id = "starshipId", name = "StarshipName"))),
-                specieConnection = Connection(1, listOf(UniversalChunk(id = "connectId", name = "specieName"))))
+                characterConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "charId", name = "charName", category = PEOPLE))),
+                planetConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "planetId", name = "planetName", category = PLANETS))),
+                vehicleConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "vehicleId", name = "vehicleName", category = VEHICLES))),
+                starshipConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "starshipId", name = "StarshipName", category = STARSHIPS))),
+                specieConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "connectId", name = "specieName", category = SPECIES))))
         val data = GetFilmQuery.Data(GetFilmQuery.Film(
                 title = "title", episodeID = 1, openingCrawl = "longText", director = "director",
                 producers = listOf("producer1", "producer2", null),
@@ -317,10 +451,8 @@ class DataFetcherImplTest {
                 vehicleConnection = GetFilmQuery.VehicleConnection(1,
                         vehicles = listOf(GetFilmQuery.Vehicle("vehicleId", "vehicleName"), null)),
                 created = "was created", edited = null, id))
-        val dataApolloResponse = ApolloResponse.Builder(
-                operation = GetFilmQuery(),
-                UUID.randomUUID(),
-                data = data
+        val dataApolloResponse = Builder(operation = GetFilmQuery(),
+                requestUuid = UUID.randomUUID()).data(data = data
         ).build()
 
         coEvery {
@@ -335,15 +467,20 @@ class DataFetcherImplTest {
     }
 
     @Test
-    fun `given response GetPersonQuery when fetchOnePerson then return Person`(): Unit = runBlocking {
+    fun `given response GetPersonQuery when fetchOnePerson then return Person`(): Unit = runTest {
         //given
         val id = "objectId"
-        val expected = Person(id = id, name = "name", homeworld = UniversalChunk(id = "planetId", name = "planetName"),
-                specie = UniversalChunk(id = "connectId", name = "specieName"), birthYear = "it was",
+        val expected = PersonDto(id = id, name = "name",
+                homeworld = UniversalChunkDto(id = "planetId", name = "planetName", category = PLANETS),
+                specie = UniversalChunkDto(id = "connectId", name = "specieName", category = SPECIES),
+                birthYear = "it was",
                 height = "12", mass = "120.0", gender = "gender", hair = "hair", skin = "skin",
-                movieConnection = Connection(1, listOf(UniversalChunk(id = "planetId", name = "planetName"))),
-                vehicleConnection = Connection(1, listOf(UniversalChunk(id = "vehicleId", name = "vehicleName"))),
-                starshipConnection = Connection(1, listOf(UniversalChunk(id = "starshipId", name = "StarshipName"))))
+                movieConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "planetId", name = "planetName", category = FILMS))),
+                vehicleConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "vehicleId", name = "vehicleName", category = VEHICLES))),
+                starshipConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "starshipId", name = "StarshipName", category = STARSHIPS))))
         val data = GetPersonQuery.Data(GetPersonQuery.Person(
                 name = "name", birthYear = "it was", gender = "gender", hairColor = "hair", height = 12,
                 mass = 120.00, skinColor = "skin", homeworld = GetPersonQuery.Homeworld("planetName", "planetId"),
@@ -355,11 +492,11 @@ class DataFetcherImplTest {
                 vehicleConnection = GetPersonQuery.VehicleConnection(1,
                         vehicles = listOf(GetPersonQuery.Vehicle("vehicleName", "vehicleId"), null)),
                 created = "was created", edited = null, id = id))
-        val dataApolloResponse = ApolloResponse.Builder(
+        val dataApolloResponse = Builder(
                 operation = GetPersonQuery(),
-                UUID.randomUUID(),
-                data = data
-        ).build()
+                requestUuid = UUID.randomUUID())
+                .data(data)
+                .build()
 
         coEvery {
             apolloClient.query(GetPersonQuery(id = Optional.presentIfNotNull(id))).execute()
@@ -373,14 +510,16 @@ class DataFetcherImplTest {
     }
 
     @Test
-    fun `given response GetPlanetQuery when fetchOnePlanet then return Planet`(): Unit = runBlocking {
+    fun `given response GetPlanetQuery when fetchOnePlanet then return Planet`(): Unit = runTest {
         //given
         val id = "objectId"
-        val expected = Planet(id = id, name = "name", diameter = "12", gravity = "gravity",
+        val expected = PlanetDto(id = id, name = "name", diameter = "12", gravity = "gravity",
                 population = "120.0", rotationPeriod = "15", orbitalPeriod = "15", climates = listOf("clim", "ates"),
                 terrains = listOf("terrain"), surfaceWater = "100.0",
-                characterConnection = Connection(1, listOf(UniversalChunk(id = "charId", name = "charName"))),
-                movieConnection = Connection(1, listOf(UniversalChunk(id = "planetId", name = "planetName"))))
+                characterConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "charId", name = "charName", category = PEOPLE))),
+                movieConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "planetId", name = "planetName", category = FILMS))))
         val data = GetPlanetQuery.Data(GetPlanetQuery.Planet(
                 name = "name", diameter = 12, rotationPeriod = 15, orbitalPeriod = 15, gravity = "gravity",
                 population = 120.00, climates = listOf("clim", "ates", null), terrains = listOf("terrain", null),
@@ -389,11 +528,11 @@ class DataFetcherImplTest {
                 residentConnection = GetPlanetQuery.ResidentConnection(1,
                         residents = listOf(GetPlanetQuery.Resident("charId", "charName"), null)),
                 created = "was created", edited = null, id = id))
-        val dataApolloResponse = ApolloResponse.Builder(
+        val dataApolloResponse = Builder(
                 operation = GetPlanetQuery(),
-                UUID.randomUUID(),
-                data = data
-        ).build()
+                requestUuid = UUID.randomUUID())
+                .data(data)
+                .build()
 
         coEvery {
             apolloClient.query(GetPlanetQuery(id = Optional.presentIfNotNull(id))).execute()
@@ -407,15 +546,17 @@ class DataFetcherImplTest {
     }
 
     @Test
-    fun `given response GetSpecieQuery when fetchOneSpecie then return Specie`(): Unit = runBlocking {
+    fun `given response GetSpecieQuery when fetchOneSpecie then return Specie`(): Unit = runTest {
         //given
         val id = "objectId"
-        val expected = Specie(id = id, name = "name", classification = "class", designation = "design",
+        val expected = SpecieDto(id = id, name = "name", classification = "class", designation = "design",
                 averageHeight = "100.0", averageLifespan = "65", eyeColors = listOf("blue", "red"),
                 hairColors = listOf("blue", "red"), skinColors = listOf("blue", "red"), language = "language",
-                homeworld = UniversalChunk(id = "planetId", name = "planetName"),
-                characterConnection = Connection(1, listOf(UniversalChunk(id = "charId", name = "charName"))),
-                movieConnection = Connection(1, listOf(UniversalChunk(id = "planetId", name = "planetName"))))
+                homeworld = UniversalChunkDto(id = "planetId", name = "planetName", category = PLANETS),
+                characterConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "charId", name = "charName", category = PEOPLE))),
+                movieConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "planetId", name = "planetName", category = FILMS))))
         val data =
             GetSpecieQuery.Data(GetSpecieQuery.Species(name = "name", classification = "class", designation = "design",
                     averageHeight = 100.00, averageLifespan = 65, eyeColors = listOf("blue", "red", null),
@@ -427,11 +568,11 @@ class DataFetcherImplTest {
                     filmConnection = GetSpecieQuery.FilmConnection(1,
                             films = listOf(GetSpecieQuery.Film("planetId", "planetName"), null)),
                     created = "was created", edited = null, id = id))
-        val dataApolloResponse = ApolloResponse.Builder(
+        val dataApolloResponse = Builder(
                 operation = GetSpecieQuery(),
-                UUID.randomUUID(),
-                data = data
-        ).build()
+                requestUuid = UUID.randomUUID())
+                .data(data)
+                .build()
 
         coEvery {
             apolloClient.query(GetSpecieQuery(id = Optional.presentIfNotNull(id))).execute()
@@ -445,14 +586,16 @@ class DataFetcherImplTest {
     }
 
     @Test
-    fun `given response GetVehicleQuery when fetchOneVehicle then return Vehicle`(): Unit = runBlocking {
+    fun `given response GetVehicleQuery when fetchOneVehicle then return Vehicle`(): Unit = runTest {
         //given
         val id = "objectId"
-        val expected = Vehicle(id = id, name = "name", model = "design", vehicleClass = "class",
+        val expected = VehicleDto(id = id, name = "name", model = "design", vehicleClass = "class",
                 manufacturers = listOf("own", "creator"), cost = "120.0", crew = "yes", length = "80.0",
                 passengers = "exists", vMax = "10", cargoCapacity = "100.0", consumables = "consume",
-                characterConnection = Connection(1, listOf(UniversalChunk(id = "charId", name = "charName"))),
-                movieConnection = Connection(1, listOf(UniversalChunk(id = "filmId", name = "filmTitle"))))
+                characterConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "charId", name = "charName", category = PEOPLE))),
+                movieConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "filmId", name = "filmTitle", category = FILMS))))
         val data =
             GetVehicleQuery.Data(GetVehicleQuery.Vehicle(name = "name", model = "design", vehicleClass = "class",
                     manufacturers = listOf("own", "creator", null), costInCredits = 120.00, crew = "yes",
@@ -463,11 +606,11 @@ class DataFetcherImplTest {
                     filmConnection = GetVehicleQuery.FilmConnection(1,
                             films = listOf(GetVehicleQuery.Film("filmId", "filmTitle"))),
                     created = "was created", edited = null, id = id))
-        val dataApolloResponse = ApolloResponse.Builder(
+        val dataApolloResponse = Builder(
                 operation = GetVehicleQuery(),
-                UUID.randomUUID(),
-                data = data
-        ).build()
+                requestUuid = UUID.randomUUID())
+                .data(data)
+                .build()
 
         coEvery {
             apolloClient.query(GetVehicleQuery(id = Optional.presentIfNotNull(id))).execute()
@@ -481,15 +624,17 @@ class DataFetcherImplTest {
     }
 
     @Test
-    fun `given response GetStarshipQuery when fetchOneStarship then return Starship`(): Unit = runBlocking {
+    fun `given response GetStarshipQuery when fetchOneStarship then return Starship`(): Unit = runTest {
         //given
         val id = "objectId"
-        val expected = Starship(id = id, name = "name", model = "design", starshipClass = "class",
+        val expected = StarshipDto(id = id, name = "name", model = "design", starshipClass = "class",
                 manufacturers = listOf("own", "creator"), cost = "120.0", crew = "yes", length = "80.0",
                 passengers = "exists", vMax = "10", cargoCapacity = "100.0", consumables = "consume",
                 hyperdriveRating = "4.0", megalight = "20",
-                characterConnection = Connection(1, listOf(UniversalChunk(id = "charId", name = "charName"))),
-                movieConnection = Connection(1, listOf(UniversalChunk(id = "filmId", name = "filmTitle"))))
+                characterConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "charId", name = "charName", category = PEOPLE))),
+                movieConnection = ConnectionDto(1,
+                        listOf(UniversalChunkDto(id = "filmId", name = "filmTitle", category = FILMS))))
         val data =
             GetStarshipQuery.Data(GetStarshipQuery.Starship(name = "name", model = "design", starshipClass = "class",
                     manufacturers = listOf("own", "creator", null), costInCredits = 120.00, crew = "yes",
@@ -501,11 +646,11 @@ class DataFetcherImplTest {
                     filmConnection = GetStarshipQuery.FilmConnection(1,
                             films = listOf(GetStarshipQuery.Film("filmId", "filmTitle"))),
                     created = "was created", edited = null, id = id))
-        val dataApolloResponse = ApolloResponse.Builder(
+        val dataApolloResponse = Builder(
                 operation = GetStarshipQuery(),
-                UUID.randomUUID(),
-                data = data
-        ).build()
+                requestUuid = UUID.randomUUID())
+                .data(data)
+                .build()
 
         coEvery {
             apolloClient.query(GetStarshipQuery(id = Optional.presentIfNotNull(id))).execute()
@@ -519,7 +664,7 @@ class DataFetcherImplTest {
     }
 
     @Test
-    fun `given error when fetchFilms then verify log call and return emptylist()`(): Unit = runBlocking {
+    fun `given error when fetchFilms then verify log call and return empty list`(): Unit = runTest {
         //given
         mockkStatic(Log::class)
         every { Log.e(any(), any()) } returns 0

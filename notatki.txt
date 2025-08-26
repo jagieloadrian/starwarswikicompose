@@ -1,0 +1,13 @@
+2. Drugi updejt
+
+1.1.4 sprawdzenie wszystkich testów
+
+1.2. dopisać do nich testy
+
+
+2. dorzucić obsługę headera (x-limit) z flickra i obsługę błedu oraz za ile bedzie dostępne :)
+3. testy
+4. opisać flow manualne testów
+5. 60 % pokrycia testami
+
+

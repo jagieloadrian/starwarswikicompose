@@ -12,14 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -38,12 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.anjo.starwarswikicompose.R
+import com.anjo.starwarswikicompose.presentation.common.detail.getLocalHeight
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
-import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
-import com.anjo.starwarswikicompose.ui.theme.reverseMainBackgroundColors
 import com.anjo.starwarswikicompose.utils.Constants
-import com.anjo.starwarswikicompose.utils.getLocalHeight
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -68,8 +66,7 @@ fun CardNote(
     }
 
 
-    CardNoteDialog(height, init, userText) {
-        cardNoteViewModel.updateNote(userText.value)
+    CardNoteDialog(height, init, userText, { cardNoteViewModel.updateNote(userText.value) }) {
         onDismissAction()
     }
 }
@@ -79,6 +76,7 @@ fun CardNoteDialog(
         height: Dp,
         init: MutableState<Boolean>,
         userText: MutableState<String>,
+        saveAction: () -> Unit,
         onDismissAction: () -> Unit,
 ) {
     Dialog(onDismissRequest = onDismissAction) {
@@ -88,42 +86,50 @@ fun CardNoteDialog(
                 .padding(16.dp)
                 .testTag("NOTE_DIALOG"),
                 shape = RoundedCornerShape(16.dp)) {
-            Box(modifier = Modifier.fillMaxSize()
-                    .background(color = MaterialTheme.colors.mainBackgroundColors)
-                    .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))) {
-                Column(modifier = Modifier.fillMaxSize()
+            Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.primary)
+                    .clip(RoundedCornerShape(EXTRA_SMALL_PADDING)),
+                    contentAlignment = Alignment.Center) {
+                Column(modifier = Modifier
+                        .fillMaxSize()
                         .padding(10.dp)
                         .align(Alignment.Center)
-                        .background(color = MaterialTheme.colors.mainBackgroundColors,
+                        .background(color = MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(16.dp))
                         .alpha(0.8f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceBetween) {
                     if (init.value) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.secondary)
                     } else {
                         OutlinedTextField(value = userText.value,
                                 onValueChange = { userText.value = it },
-                                label = { Text(stringResource(R.string.label_notes)) },
-                                modifier = Modifier.fillMaxSize()
+                                label = {
+                                    Text(stringResource(R.string.label_notes),
+                                            color = MaterialTheme.colorScheme.secondary)
+                                },
+                                modifier = Modifier
+                                        .fillMaxSize()
                                         .weight(8f),
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                        textColor = Color.White,
-                                        focusedLabelColor = (MaterialTheme.colors
-                                                .reverseMainBackgroundColors),
-                                        unfocusedLabelColor = (MaterialTheme.colors
-                                                .reverseMainBackgroundColors),
-                                        focusedBorderColor = (MaterialTheme.colors
-                                                .reverseMainBackgroundColors),
-                                        unfocusedBorderColor = (MaterialTheme.colors
-                                                .reverseMainBackgroundColors),
-                                        cursorColor = MaterialTheme.colors.primary
+                                shape = MaterialTheme.shapes.small,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                        focusedTextColor = MaterialTheme.colorScheme.onSecondary,
+                                        unfocusedTextColor = MaterialTheme.colorScheme.onSecondary,
+                                        focusedLabelColor = MaterialTheme.colorScheme.onSecondary,
+                                        unfocusedLabelColor = MaterialTheme.colorScheme.onSecondary,
+                                        focusedContainerColor = MaterialTheme.colorScheme.primary,
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.primary,
+                                        cursorColor = MaterialTheme.colorScheme.onSecondary,
+                                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
                                 ))
                     }
-                    Spacer(modifier = Modifier.fillMaxWidth()
+                    Spacer(modifier = Modifier
+                            .fillMaxWidth()
                             .weight(0.2f))
                     Row(modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center) {
+                            horizontalArrangement = Arrangement.SpaceAround) {
                         TextButton(
                                 onClick = {
                                     onDismissAction()
@@ -134,9 +140,23 @@ fun CardNoteDialog(
                                 colors = ButtonDefaults.buttonColors(
                                         Color.White.copy(Constants.LESS_WHITE_BACKGROUND_COPY)),
                         ) {
-                            Text(text = stringResource(R.string.save_close),
+                            Text(text = stringResource(R.string.close_text),
                                     textAlign = TextAlign.Center,
-                                    style = MaterialTheme.typography.body1,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = Color.White)
+                        }
+
+                        TextButton(
+                                onClick = { saveAction(); onDismissAction() },
+                                modifier = Modifier
+                                        .alpha(0.9f),
+                                shape = RoundedCornerShape(SMALL_PADDING),
+                                colors = ButtonDefaults.buttonColors(
+                                        Color.White.copy(Constants.LESS_WHITE_BACKGROUND_COPY)),
+                        ) {
+                            Text(text = stringResource(R.string.save),
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodyLarge,
                                     color = Color.White)
                         }
                     }

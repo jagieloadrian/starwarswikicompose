@@ -21,13 +21,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NotificationModule {
 
-    @Singleton
     @Provides
     fun provideNotificationBuilder(
             @ApplicationContext context: Context,
@@ -40,7 +38,9 @@ object NotificationModule {
         }
 
         return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
-                .setSmallIcon(R.mipmap.sw_compose_icon_round)
+                .setColorized(true)
+                .setSmallIcon(R.drawable.ic_sw_notification)
+                .setColor(context.resources.getColor(R.color.sw_compose_icon_background, null))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentTitle(ASKING_FOR_USER)
                 .setContentText(DESCRIPTION_ASKING_FOR_USER)
@@ -51,7 +51,6 @@ object NotificationModule {
                 .addAction(0, GO_TO_APP, pendingIntent)
     }
 
-    @Singleton
     @Provides
     fun provideNotificationManager(
             @ApplicationContext context: Context,

@@ -10,7 +10,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -24,7 +24,7 @@ class ImageSliderServiceTest {
     lateinit var imageSliderService: ImageSliderService
 
     @Test
-    fun `given imageDao when getimages then return list of imageModel`() = runBlocking {
+    fun `given imageDao when getimages then return list of imageModel`() = runTest {
         //given
         val category = Category.FILMS
         val objectId = "objectId1"
@@ -40,7 +40,7 @@ class ImageSliderServiceTest {
     }
 
     @Test
-    fun `given imageSliderModel when invoke addImageToRoomUseCase then verify call`() = runBlocking {
+    fun `given imageSliderModel when invoke addImageToRoomUseCase then verify call`() = runTest {
         //given
         val input = ImageSliderModel(null, "objectId", "url.com/objectId", Category.FILMS)
 
@@ -54,7 +54,7 @@ class ImageSliderServiceTest {
     }
 
     @Test
-    fun `given imageSliderModel when invoke deleteImageFromRoomUseCase then verify call`() = runBlocking {
+    fun `given imageSliderModel when invoke deleteImageFromRoomUseCase then verify call`() = runTest {
         //given
         val input = ImageSliderModel(null, "objectId", "url.com/objectId", Category.FILMS)
 

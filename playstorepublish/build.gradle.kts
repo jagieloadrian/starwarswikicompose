@@ -1,6 +1,7 @@
 plugins {
     id("kotlin")
     id("application")
+    id("org.jetbrains.kotlin.jvm")
 }
 
 group = "com.anjo"
@@ -12,8 +13,8 @@ application {
 }
 
 dependencies {
-    implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
-    implementation("com.google.apis:google-api-services-androidpublisher:v3-rev20230921-2.0.0")
+    implementation(libs.google.auth.library.oauth2.http)
+    implementation(libs.google.api.services.androidpublisher)
 }
 
 tasks.test {
@@ -22,4 +23,8 @@ tasks.test {
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+}
+
+kotlin {
+    jvmToolchain(17)
 }

@@ -7,30 +7,29 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.anjo.starwarswikicompose.navigation.Screen
 import com.anjo.starwarswikicompose.navigation.SetupNavGraph
-import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
+import com.anjo.starwarswikicompose.services.usecases.stateusecase.StateUseCase
 import com.anjo.starwarswikicompose.ui.theme.StarWarsWikiComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var useCases: UseCases
+    lateinit var useCases: StateUseCase
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var navController: NavHostController
     private var completed = false
@@ -42,10 +41,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val current = LocalContext.current
             val lifecycleOwner = LocalLifecycleOwner.current
 
-            mainViewModel.createMusic(current)
+            mainViewModel.createMusic()
             BackgroundMusicLaunching(lifecycleOwner, mainViewModel)
             StarWarsWikiComposeTheme {
                 navController = rememberNavController()

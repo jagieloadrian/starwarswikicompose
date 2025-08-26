@@ -1,8 +1,9 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.anjo.starwarswikicompose.presentation.screens.images
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -26,44 +27,45 @@ import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhoto
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhotos
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrResponse
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrStatus
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.runBlocking
+import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
+import io.mockk.coEvery
+import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.stub
 
 @RunWith(AndroidJUnit4::class)
 class ImageContentScreenKtTest {
     @get:Rule
     val composeTestRule = createComposeRule()
-    private lateinit var imageViewModel: ImageViewModel
+    private val useCase = mockk<UseCases>()
+    private val dispatcher = StandardTestDispatcher()
+    private val imageViewModel = ImageViewModel(useCase, dispatcher)
 
 
     private val photo1 = FlickrPhoto("photo1", "owner1", "secret1", "server", 1, "title1", 1, 1, 1, "owner1")
     private val photo2 = FlickrPhoto("photo2", "owner2", "secret2", "server", 2, "title2", 1, 1, 1, "owner2")
     private val photo3 = FlickrPhoto("photo3", "owner3", "secret3", "server", 1, "title3", 1, 1, 1, "owner3")
     private val photos = FlickrPhotos(1, 1, 3, 3, listOf(photo1, photo2, photo3))
-    private val images = MutableStateFlow(FlickrResponse(photos, stat = FlickrStatus.ok, 200))
+    private val images = FlickrResponse(photos, stat = FlickrStatus.ok, 200)
 
 
     @Test
-    fun givenPhotoInformation_whenShowImages_thenAssertOps(): Unit = runBlocking {
+    fun givenPhotoInformation_whenShowImages_thenAssertOps(): Unit = runTest(dispatcher) {
         //given
-        val mutableText = mutableStateOf("")
-        imageViewModel = mock()
-
-        imageViewModel.stub {
-            onBlocking { fetchedPhotoInfos } doReturn images
-            onBlocking { searchQuery } doReturn mutableText
-        }
+        coEvery { useCase.getRecentImagesUseCase() } returns images
 
         composeTestRule.setContent {
             val snackbarHostState = remember { SnackbarHostState() }
             ImageGalleryVisualisation(PaddingValues(0.dp), imageViewModel, snackbarHostState)
         }
+
+        imageViewModel.getRecentPhotos()
+        advanceUntilIdle()
 
         //when and then
         val searchBar =

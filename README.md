@@ -20,12 +20,12 @@ Android application written with Jetpack Compose. It has a wiki about Star Wars 
 It has a wiki about Star Wars Movies (parts 1-7), image searcher and possibility to create locally gallery inside objects (like gallery of Luke Skywalker).
 
 Why I wrote this app?
-To practice wirting android applications and learn new solutions.
+To practice writing android applications and learn new solutions.
 
 
 ## Technologies Used
 - Kotlin - version 1.9
-- Android core -
+- Android core
 - Jetpack Compose with Material - version 1.5.3
 - ApolloGraphql3 - version 3.8.2
 - Retrofit2 - version 2.9.0
@@ -39,6 +39,7 @@ List the ready features here:
 - Check your favourite heroes, movies or planets
 - Search for images to add for specific object (maybe new face for Luke?)
 - Save this images in app to look after
+- Add our heroes and loved movies or series
 
 
 ## Screenshots
@@ -56,18 +57,17 @@ Install on android 9.0 or higher (also avd/emulator from android studio require 
 ## Project Status
 Project is: _in progress_
 
+First version released at May 2024
+
 ## Room for Improvement
 
-Room for improvement:
-- Sign and release first version
 
-To do:
-- Tests
+- Add edition existed objects on local machine
+- Add another api for images to proof before reach limit (switch to other api) 
 
 
 ## Acknowledgements
 - This project was inspired by swapi.dev
-
 
 
 ## Contact
