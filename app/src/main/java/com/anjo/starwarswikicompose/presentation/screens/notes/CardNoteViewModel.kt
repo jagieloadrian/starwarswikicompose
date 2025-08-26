@@ -5,21 +5,24 @@ import androidx.lifecycle.viewModelScope
 import com.anjo.starwarswikicompose.domain.model.NoteModel
 import com.anjo.starwarswikicompose.services.usecases.notesusecase.NotesUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 open class CardNoteViewModel @Inject constructor(
         private val notesUseCases: NotesUseCases,
+        private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
     private var _notes: MutableStateFlow<NoteModel> = MutableStateFlow(NoteModel())
     open val note: StateFlow<NoteModel> = _notes
 
     fun updateNote(newText: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             val model = NoteModel(
                     text = newText
             )
@@ -28,12 +31,16 @@ open class CardNoteViewModel @Inject constructor(
     }
 
     fun getNotes() {
-        viewModelScope.launch(Dispatchers.IO) {
-            notesUseCases.getNotesUseCase().collect {
-                if (it.isEmpty()) {
-                    _notes.value = NoteModel(text = "")
+        viewModelScope.launch(ioDispatcher) {
+            notesUseCases.getNotesUseCase().collect { notes ->
+                if (notes.isEmpty()) {
+                    _notes.update {
+                        NoteModel(text = "")
+                    }
                 } else {
-                    _notes.value = it.maxBy { noteModel -> noteModel.lastChanged }
+                    _notes.update {
+                        notes.maxBy { noteModel -> noteModel.lastChanged }
+                    }
                 }
             }
         }

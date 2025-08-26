@@ -17,12 +17,12 @@ import com.anjo.starwarswikicompose.testutils.TestConstants.ONBOARD_IMAGE_DESCRI
 import com.anjo.starwarswikicompose.testutils.WelcomeTestNavGraph
 import com.anjo.starwarswikicompose.testutils.assertCurrentRouteName
 import com.anjo.starwarswikicompose.utils.Constants.GO_TO_APP
-import com.anjo.starwarswikicompose.utils.Constants.WELCOME_BUTTON_TAG
 import com.anjo.starwarswikicompose.utils.OnboardingPage
+import com.anjo.starwarswikicompose.utils.TestTags.WELCOME_BUTTON_TAG
+import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.mock
 
 @RunWith(AndroidJUnit4::class)
 class WelcomeScreenKtTest {
@@ -30,12 +30,11 @@ class WelcomeScreenKtTest {
     @get:Rule
     val composeTestRule = createComposeRule()
     private lateinit var navHostController: NavHostController
-    private lateinit var welcomeViewModel: WelcomeViewModel
 
     @Test
     fun addNavHost_whenWelcomeScreen_thenScreenOpen() {
         //given
-        welcomeViewModel = mock(WelcomeViewModel::class.java)
+        val welcomeViewModel = mockk<WelcomeViewModel>()
 
         composeTestRule.setContent {
             navHostController = rememberNavController()

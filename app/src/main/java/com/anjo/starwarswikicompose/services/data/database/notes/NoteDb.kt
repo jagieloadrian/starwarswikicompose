@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.anjo.starwarswikicompose.domain.model.NoteModel
+import com.anjo.starwarswikicompose.services.data.database.converters.DateConverter
 
 @Database(
         entities = [NoteModel::class],

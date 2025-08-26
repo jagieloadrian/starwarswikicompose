@@ -7,7 +7,7 @@ import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -21,7 +21,7 @@ class AddNoteUseCaseTest {
     lateinit var addNoteUseCase: AddNoteUseCase
 
     @Test
-    fun `given note model when invoke addNoteUseCase then verify call`() = runBlocking {
+    fun `given note model when invoke addNoteUseCase then verify call`() = runTest {
         //given
         val noteModel = NoteModel(id = 1, "someText")
 

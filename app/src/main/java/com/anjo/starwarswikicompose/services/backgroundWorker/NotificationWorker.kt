@@ -25,7 +25,7 @@ class NotificationWorker @AssistedInject constructor(
         return Result.success()
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission") // checked in compose
     private fun sendNotification(id: Int) {
         notifyManager.notify(id, notifyBuilder.build())
     }

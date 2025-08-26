@@ -16,30 +16,27 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NoteRepositoryModule {
 
     @Provides
-    @Singleton
     fun provideNoteDb(
             @ApplicationContext
             context: Context,
     ) = Room.databaseBuilder(
             context,
             NoteDb::class.java,
-            NOTES_TABLE).build()
+            NOTES_TABLE)
+            .build()
 
     @Provides
-    @Singleton
     fun provideNotesDao(
             noteDb: NoteDb,
     ) = noteDb.notesDao
 
     @Provides
-    @Singleton
     fun provideNotesRepository(
             notesDao: NotesDao,
     ): NotesRepository {
@@ -47,7 +44,6 @@ object NoteRepositoryModule {
     }
 
     @Provides
-    @Singleton
     fun provideSliderUseCases(notesRepository: NotesRepository): NotesUseCases {
         return NotesUseCases(
                 addNoteUseCase = AddNoteUseCase(notesRepository),

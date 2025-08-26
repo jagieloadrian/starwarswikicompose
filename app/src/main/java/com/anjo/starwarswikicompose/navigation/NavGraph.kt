@@ -1,10 +1,8 @@
 package com.anjo.starwarswikicompose.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Left
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Right
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -16,14 +14,22 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.anjo.starwarswikicompose.domain.dto.UniversalChunkDto
+import com.anjo.starwarswikicompose.domain.model.sw.Category.ALL
+import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PEOPLE
+import com.anjo.starwarswikicompose.domain.model.sw.Category.PLANETS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.SPECIES
+import com.anjo.starwarswikicompose.domain.model.sw.Category.STARSHIPS
+import com.anjo.starwarswikicompose.domain.model.sw.Category.VEHICLES
 import com.anjo.starwarswikicompose.presentation.screens.home.HomeScreen
 import com.anjo.starwarswikicompose.presentation.screens.images.ImageScreen
-import com.anjo.starwarswikicompose.presentation.screens.movie.detail.MovieContentScreen
-import com.anjo.starwarswikicompose.presentation.screens.person.detail.PersonContentScreen
-import com.anjo.starwarswikicompose.presentation.screens.planet.detail.PlanetContentScreen
-import com.anjo.starwarswikicompose.presentation.screens.specie.detail.SpecieContentScreen
-import com.anjo.starwarswikicompose.presentation.screens.starship.detail.StarshipContentScreen
-import com.anjo.starwarswikicompose.presentation.screens.vehicle.detail.VehicleContentScreen
+import com.anjo.starwarswikicompose.presentation.screens.movie.MovieContentScreen
+import com.anjo.starwarswikicompose.presentation.screens.person.PersonContentScreen
+import com.anjo.starwarswikicompose.presentation.screens.planet.PlanetContentScreen
+import com.anjo.starwarswikicompose.presentation.screens.specie.SpecieContentScreen
+import com.anjo.starwarswikicompose.presentation.screens.starship.StarshipContentScreen
+import com.anjo.starwarswikicompose.presentation.screens.vehicle.VehicleContentScreen
 import com.anjo.starwarswikicompose.presentation.screens.webview.WebViewScreen
 import com.anjo.starwarswikicompose.presentation.screens.welcome.WelcomeScreen
 import com.anjo.starwarswikicompose.utils.Constants.DETAILS_MOVIE_ARGUMENT_KEY
@@ -44,7 +50,7 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String, mo
             WelcomeScreen(navController)
         }
         composable(route = Screen.Home.route,
-                enterTransition = SlideEnterAnimation(Right),
+                enterTransition = SlideEnterAnimation(Left),
                 exitTransition = SlideExitAnimation(Left),
                 popEnterTransition = SlideEnterAnimation(Right),
                 popExitTransition = SlideExitAnimation(Right)) {
@@ -56,10 +62,10 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String, mo
                             type = NavType.StringType
                         }
                 ),
-                enterTransition = SlideEnterAnimation(Up),
-                exitTransition = SlideExitAnimation(Down),
-                popEnterTransition = SlideEnterAnimation(Up),
-                popExitTransition = SlideExitAnimation(Down)
+                enterTransition = SlideEnterAnimation(Left),
+                exitTransition = SlideExitAnimation(Left),
+                popEnterTransition = SlideEnterAnimation(Right),
+                popExitTransition = SlideExitAnimation(Right)
         ) {
             PersonContentScreen(navController)
         }
@@ -69,10 +75,10 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String, mo
                             type = NavType.StringType
                         }
                 ),
-                enterTransition = SlideEnterAnimation(Up),
-                exitTransition = SlideExitAnimation(Down),
-                popEnterTransition = SlideEnterAnimation(Up),
-                popExitTransition = SlideExitAnimation(Down)
+                enterTransition = SlideEnterAnimation(Left),
+                exitTransition = SlideExitAnimation(Left),
+                popEnterTransition = SlideEnterAnimation(Right),
+                popExitTransition = SlideExitAnimation(Right)
         ) {
             MovieContentScreen(navController)
         }
@@ -137,6 +143,44 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String, mo
                 popEnterTransition = SlideEnterAnimation(Right),
                 popExitTransition = SlideExitAnimation(Right)) {
             WebViewScreen(navController)
+        }
+    }
+}
+
+fun navigateToProperlyCompose(navController: NavHostController, item: UniversalChunkDto) {
+    when (item.category) {
+        FILMS     -> {
+            navController.navigate(Screen.MovieDetail.passMovieId(item.id))
+            return
+        }
+
+        PEOPLE    -> {
+            navController.navigate(Screen.PersonDetail.passPersonId(item.id))
+            return
+        }
+
+        PLANETS   -> {
+            navController.navigate(Screen.PlanetDetail.passPlanetId(item.id))
+            return
+        }
+
+        SPECIES   -> {
+            navController.navigate(Screen.SpecieDetail.passSpecieId(item.id))
+            return
+        }
+
+        STARSHIPS -> {
+            navController.navigate(Screen.StarshipDetail.passStarshipId(item.id))
+            return
+        }
+
+        VEHICLES  -> {
+            navController.navigate(Screen.VehicleDetail.passVehicleId(item.id))
+            return
+        }
+
+        ALL       -> {
+            throw IllegalArgumentException()
         }
     }
 }

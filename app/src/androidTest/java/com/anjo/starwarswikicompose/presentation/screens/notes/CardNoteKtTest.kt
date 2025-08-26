@@ -11,8 +11,9 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.anjo.starwarswikicompose.domain.model.NoteModel
-import com.anjo.starwarswikicompose.utils.getLocalHeight
+import com.anjo.starwarswikicompose.presentation.common.detail.getLocalHeight
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,9 +33,11 @@ class CardNoteKtTest {
         val noteModel = NoteModel(1, "new default text")
         val initState = mutableStateOf(false)
         val userText = mutableStateOf(noteModel.text)
+        var dissmissActionResult = 0
 
         composeTestRule.setContent {
-            CardNoteDialog(((getLocalHeight() / 3) * 2).dp, initState, userText) { resultString = userText.value }
+            CardNoteDialog(((getLocalHeight() / 3) * 2).dp, initState, userText,
+                    saveAction = { resultString = userText.value }) { dissmissActionResult++ }
         }
 
         //when and then
@@ -46,12 +49,20 @@ class CardNoteKtTest {
         userTextField.performTextClearance()
         userTextField.performTextInput(newTextChange)
 
-        val button = composeTestRule.onNodeWithText("Save & Close")
-        button.assertIsDisplayed()
-        button.assertIsNotFocused()
+        val closeButton = composeTestRule.onNodeWithText("Close")
+        closeButton.assertIsDisplayed()
+        closeButton.assertIsNotFocused()
 
-        button.performClick()
+        val saveButton = composeTestRule.onNodeWithText("Save")
+        saveButton.assertIsDisplayed()
+        saveButton.assertIsNotFocused()
+
+        saveButton.performClick()
 
         resultString shouldBe newTextChange
+
+        closeButton.performClick()
+
+        dissmissActionResult shouldNotBe 0
     }
 }

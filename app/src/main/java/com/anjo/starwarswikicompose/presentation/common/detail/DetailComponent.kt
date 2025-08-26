@@ -8,103 +8,92 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState
 import com.anjo.starwarswikicompose.domain.model.sw.isError
 import com.anjo.starwarswikicompose.domain.model.sw.isLoading
 import com.anjo.starwarswikicompose.domain.model.sw.isSuccess
-import com.anjo.starwarswikicompose.presentation.common.AddImageFabWrap
-import com.anjo.starwarswikicompose.presentation.common.CustomBottomAppBar
-import com.anjo.starwarswikicompose.presentation.common.CustomTopAppBar
-import com.anjo.starwarswikicompose.presentation.common.ErrorScreenWrapper
-import com.anjo.starwarswikicompose.presentation.common.LoadingScreen
-import com.anjo.starwarswikicompose.utils.Constants.CUSTOM_ANIMATED_LABEL
-import com.anjo.starwarswikicompose.utils.Constants.ERROR_ANIMATED_LABEL
+import com.anjo.starwarswikicompose.presentation.common.DetailObjectFabMenu
+import com.anjo.starwarswikicompose.presentation.common.appbars.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.common.appbars.CustomTopAppBar
+import com.anjo.starwarswikicompose.presentation.common.errorempty.ErrorScreenWrapper
+import com.anjo.starwarswikicompose.presentation.common.loading.LoadingScreen
 import com.anjo.starwarswikicompose.utils.Constants.ERROR_DESCRIPTION
-import com.anjo.starwarswikicompose.utils.Constants.LOADING_ANIMATED_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.CUSTOM_ANIMATED_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.ERROR_ANIMATED_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.LOADING_ANIMATED_LABEL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailVisualisationComponent(
-        refreshImages: () -> Unit,
-        selectedName: String,
-        saveInDatabase: (String) -> Unit,
+        refreshObject: () -> Unit,
+        saveImageInDatabase: (String) -> Unit,
+        updateObjectFab: () -> Unit,
         navController: NavHostController,
         stateObject: DetailObjectState,
+        removeObjectHandler: Pair<Boolean, () -> Unit>,
         content: @Composable (ScrollState, CoroutineScope, SnackbarHostState, MutableState<Boolean>, Modifier) -> Unit,
 ) {
     val state = rememberScrollState()
-    var fabExtended by remember { mutableStateOf(true) }
     val imagesStateRefresh = remember { mutableStateOf(true) }
     val snackBarHostState = remember { SnackbarHostState() }
-    val clipManager = LocalClipboardManager.current
     val refreshScope = rememberCoroutineScope()
-    var isRefreshing by remember { mutableStateOf(false) }
-    val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
-        isRefreshing = true
+    val isRefreshing = remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullToRefreshState()
+    val onRefresh = {
+        isRefreshing.value = true
         refreshScope.launch {
-            refreshImages()
+            refreshObject()
             delay(1500)
-            isRefreshing = false
         }
-    })
-    val modifier = Modifier.pullRefresh(pullRefreshState)
+        isRefreshing.value = false
+    }
+    val modifier = Modifier.pullToRefresh(isRefreshing.value, pullRefreshState, onRefresh = onRefresh)
 
     LaunchedEffect(imagesStateRefresh.value) {
-        refreshImages()
+        refreshObject()
         delay(1000)
         imagesStateRefresh.value = false
-    }
-
-    LaunchedEffect(state) {
-        var prev = 0
-        snapshotFlow { state.value }.collect {
-            fabExtended = it <= prev
-            prev = it
-        }
     }
 
     Scaffold(
             topBar = { CustomTopAppBar(navController) },
             bottomBar = { CustomBottomAppBar(navController) },
             floatingActionButton = {
-                AddImageFabWrap(fabExtended, clipManager, navController, selectedName, {
-                    saveInDatabase(it)
-                    imagesStateRefresh.value = true
-                }, refreshScope, snackBarHostState, stateObject.isSuccess())
+                if (stateObject.isSuccess()) {
+                    DetailObjectFabMenu(navController, removeObjectHandler.first,
+                            saveImageInDatabase, removeObjectHandler.second, updateObjectFab)
+                }
             },
             snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { padding ->
-        Box(modifier = Modifier.fillMaxSize()
+        Box(modifier = Modifier
+                .fillMaxSize()
                 .padding(padding),
                 contentAlignment = Alignment.Center) {
-            if (!isRefreshing) {
+            if (!isRefreshing.value) {
                 DetailVisualisationState(stateObject, modifier)
                 { content(state, refreshScope, snackBarHostState, imagesStateRefresh, modifier) }
             }
-            PullRefreshIndicator(isRefreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+            Indicator(pullRefreshState, isRefreshing.value, Modifier.align(Alignment.Center))
         }
     }
 }

@@ -5,14 +5,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.util.Log
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import coil.ImageLoader
-import coil.request.ImageRequest
-import coil.request.SuccessResult
+import coil3.ImageLoader
+import coil3.request.ImageRequest
+import coil3.request.allowHardware
+import coil3.toBitmap
 import com.anjo.starwarswikicompose.utils.Constants.AUTHORITY_INTENT
 import com.anjo.starwarswikicompose.utils.Constants.CACHE_NAME
 import com.anjo.starwarswikicompose.utils.Constants.INTENT_SHARE_TITLE
@@ -23,6 +22,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 @Suppress("QueryPermissionsNeeded")
+//TODO handle query permission
 suspend fun sendIntent(photoUrl: String, context: Context) {
     val bitmap = downloadImageFromUrl(context, photoUrl) ?: return
     saveInInternalStorage(context, bitmap)
@@ -46,7 +46,7 @@ suspend fun sendIntent(photoUrl: String, context: Context) {
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
-        ContextCompat.startActivity(context, shareIntent, null)
+        context.startActivity(shareIntent)
     }
 }
 
@@ -59,8 +59,8 @@ private fun getUri(context: Context): Uri? {
 private fun saveInInternalStorage(context: Context, bitmap: Bitmap) {
     try {
         val cachePath = File(context.cacheDir, CACHE_NAME)
-        cachePath.mkdirs() // don't forget to make the directory
-        val stream = FileOutputStream("$cachePath/$TEMP_FILE_NAME") // overwrites this image every time
+        cachePath.mkdirs()
+        val stream = FileOutputStream("$cachePath/$TEMP_FILE_NAME")
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         stream.close()
     } catch (e: IOException) {
@@ -75,6 +75,5 @@ private suspend fun downloadImageFromUrl(context: Context, photoUrl: String): Bi
             .data(photoUrl)
             .allowHardware(false) // Disable hardware bitmaps.
             .build()
-    val result = (loader.execute(request) as SuccessResult).drawable
-    return (result as BitmapDrawable).bitmap
+    return loader.execute(request).image?.toBitmap()
 }

@@ -1,6 +1,5 @@
 package com.anjo.starwarswikicompose.presentation.common
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Box
@@ -12,46 +11,70 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.model.imageslider.ImageSliderModel
+import com.anjo.starwarswikicompose.presentation.common.button.CornerButton
+import com.anjo.starwarswikicompose.presentation.common.detail.getLocalWidth
+import com.anjo.starwarswikicompose.presentation.common.loading.LoadingBox
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.MEDIUM_PADDING
 import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
-import com.anjo.starwarswikicompose.ui.theme.mainBackgroundColors
-import com.anjo.starwarswikicompose.utils.getLocalWidth
+import com.anjo.starwarswikicompose.utils.Constants
+import com.anjo.starwarswikicompose.utils.Constants.MEDIUM_WHITE_BACKGROUND_COPY
+import com.anjo.starwarswikicompose.utils.Constants.PHOTO_NAME
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun GallerySliderPart(
+        imagesState: List<ImageSliderModel>,
+        refreshScope: CoroutineScope,
+        snackBarHostState: SnackbarHostState,
+        imagesStateRefresh: MutableState<Boolean>,
+        removeFromDatabase: (ImageSliderModel) -> Unit) {
+    ConnectionTitle(text = PHOTO_NAME, shouldShowTitle = imagesState.isNotEmpty())
+    GallerySlider(images = imagesState,
+            onCLickLeft = {
+                refreshScope.launch {
+                    snackBarHostState.showSnackbar(Constants.REFRESH_IMAGES)
+                }
+                imagesStateRefresh.value = true
+            },
+            onCLickRight = {
+                refreshScope.launch {
+                    snackBarHostState.showSnackbar(Constants.DELETE_AND_REFRESH_IMAGES)
+                }
+                removeFromDatabase(it)
+                imagesStateRefresh.value = true
+            })
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GallerySlider(
         images: List<ImageSliderModel>,
@@ -59,22 +82,7 @@ fun GallerySlider(
         onCLickRight: (ImageSliderModel) -> Unit,
 ) {
     val loadingBoxVisible = remember { mutableStateOf(false) }
-    var itemHeight by remember {
-        mutableStateOf(0.dp)
-    }
     val maxWidth = getLocalWidth().dp
-    val density = LocalDensity.current
-
-    val refreshScope = rememberCoroutineScope()
-    var isRefreshing by remember { mutableStateOf(false) }
-    val onRefresh: () -> Unit = {
-        isRefreshing = true
-        refreshScope.launch {
-            delay(1500)
-            isRefreshing = false
-        }
-    }
-    val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = onRefresh)
 
     LaunchedEffect(loadingBoxVisible.value) {
         delay(2.seconds)
@@ -85,25 +93,12 @@ fun GallerySlider(
         LoadingBox()
     }
 
-
     if (images.isNotEmpty()) {
-        Card(modifier = Modifier.padding(SMALL_PADDING)
-                .onSizeChanged {
-                    itemHeight = with(density) { it.height.toDp() }
-                },
+        Card(modifier = Modifier
+                .padding(SMALL_PADDING),
                 shape = RoundedCornerShape(MEDIUM_PADDING)) {
-            if (!isRefreshing) {
-                ImageCarousel(images) { index ->
-                    ImageBox(images, index, maxWidth, onRefresh, onCLickLeft, onCLickRight)
-                }
-            }
-            Box(modifier = Modifier,
-                    contentAlignment = Alignment.Center) {
-                PullRefreshIndicator(isRefreshing, pullRefreshState, modifier = Modifier
-                        .align(Alignment.Center),
-                        scale = true,
-                        backgroundColor = Color.Transparent,
-                        contentColor = MaterialTheme.colors.mainBackgroundColors)
+            ImageCarousel(images) { index ->
+                ImageBox(images, index, maxWidth, onCLickLeft, onCLickRight)
             }
         }
     } else {
@@ -114,43 +109,45 @@ fun GallerySlider(
 @Composable
 fun ImageBox(
         images: List<ImageSliderModel>,
-        index: Int, maxWidth: Dp, onRefresh: () -> Unit,
+        index: Int, maxWidth: Dp,
         onCLickLeft: () -> Unit,
         onCLickRight: (ImageSliderModel) -> Unit,
 ) {
     val currentImage = images[index]
     Box(modifier = Modifier
-            .fillMaxWidth()) {
+            .fillMaxWidth()
+    ) {
         AsyncImage(
                 model = currentImage.url,
                 placeholder = painterResource(R.drawable.image_icon),
                 error = painterResource(R.drawable.ic_network_error),
                 contentDescription = "${stringResource(R.string.flickr_image)} ${currentImage.objectId}",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.height(PICTURE_HEIGHT)
+                modifier = Modifier
+                        .height(PICTURE_HEIGHT)
+                        .background(Color.White.copy(MEDIUM_WHITE_BACKGROUND_COPY))
                         .width(maxWidth)
         )
-        Surface(modifier = Modifier.background(Color.Transparent)
+        Surface(modifier = Modifier
+                .background(Color.Transparent)
                 .align(Alignment.TopStart),
                 color = Color.Transparent) {
             CornerButton(imageVector = Icons.Filled.Refresh, contentDescription = "onClickLeft") {
-                onRefresh()
                 onCLickLeft()
             }
 
         }
-        Surface(modifier = Modifier.background(Color.Transparent)
+        Surface(modifier = Modifier
+                .background(Color.Transparent)
                 .align(Alignment.TopEnd),
                 color = Color.Transparent) {
             CornerButton(imageVector = Icons.Filled.Delete, contentDescription = "onCLickRight") {
                 onCLickRight(images[index])
-                onRefresh()
             }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageCarousel(
         items: List<ImageSliderModel>,
@@ -160,7 +157,9 @@ fun ImageCarousel(
     val pagerState = rememberPagerState { items.size }
     val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
 
-    Box(modifier = modifier.fillMaxWidth()) {
+    Box(modifier = modifier
+            .fillMaxWidth()
+            .background(Color.Transparent)) {
         HorizontalPager(state = pagerState, key = { index -> items[index].id!! }) { page ->
             itemContent(page)
         }

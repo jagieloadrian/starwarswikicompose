@@ -8,7 +8,7 @@ import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -22,7 +22,7 @@ class AddImageToRoomUseCaseTest {
     lateinit var addImageToRoomUseCase: AddImageToRoomUseCase
 
     @Test
-    fun `given imageSliderModel when invoke addImageToRoomUseCase then verify call`() = runBlocking {
+    fun `given imageSliderModel when invoke addImageToRoomUseCase then verify call`() = runTest {
         //given
         val input = ImageSliderModel(null, "objectId", "url.com/objectId", Category.FILMS)
 

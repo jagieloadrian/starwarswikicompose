@@ -4,8 +4,6 @@ import com.anjo.starwarswikicompose.services.usecases.operationusecase.images.Ge
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.images.GetSearchImagesUseCase
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.movie.GetAllFilmsUseCase
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.movie.GetMovieUseCase
-import com.anjo.starwarswikicompose.services.usecases.operationusecase.onboarding.ReadOnboardingUseCase
-import com.anjo.starwarswikicompose.services.usecases.operationusecase.onboarding.SaveOnboardingUseCase
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.person.GetAllPeopleUseCase
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.person.GetPersonUseCase
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.planet.GetAllPlanetsUseCase
@@ -18,8 +16,6 @@ import com.anjo.starwarswikicompose.services.usecases.operationusecase.vehicle.G
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.vehicle.GetVehicleUseCase
 
 data class UseCases(
-        val saveOnboardingUseCase: SaveOnboardingUseCase,
-        val readOnboardingUseCase: ReadOnboardingUseCase,
         val getAllFilmsUseCase: GetAllFilmsUseCase,
         val getMovieUseCase: GetMovieUseCase,
         val getAllPeopleUseCase: GetAllPeopleUseCase,

@@ -5,7 +5,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,14 +18,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -37,9 +38,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
@@ -49,19 +53,19 @@ import com.anjo.starwarswikicompose.domain.model.flickr.isError
 import com.anjo.starwarswikicompose.domain.model.flickr.isFail
 import com.anjo.starwarswikicompose.domain.model.flickr.isLoading
 import com.anjo.starwarswikicompose.domain.model.flickr.isOk
-import com.anjo.starwarswikicompose.presentation.common.CustomBottomAppBar
-import com.anjo.starwarswikicompose.presentation.common.CustomTopAppBar
-import com.anjo.starwarswikicompose.presentation.common.EmptyScreen
-import com.anjo.starwarswikicompose.presentation.common.ErrorScreen
-import com.anjo.starwarswikicompose.presentation.common.LoadingScreen
 import com.anjo.starwarswikicompose.presentation.common.SearchBar
+import com.anjo.starwarswikicompose.presentation.common.appbars.CustomBottomAppBar
+import com.anjo.starwarswikicompose.presentation.common.appbars.CustomTopAppBar
+import com.anjo.starwarswikicompose.presentation.common.errorempty.EmptyScreen
+import com.anjo.starwarswikicompose.presentation.common.errorempty.ErrorScreen
+import com.anjo.starwarswikicompose.presentation.common.loading.LoadingScreen
 import com.anjo.starwarswikicompose.ui.theme.LARGE_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.utils.Constants.COPIED_TO_CLIPBOARD
-import com.anjo.starwarswikicompose.utils.Constants.CUSTOM_ANIMATED_LABEL
-import com.anjo.starwarswikicompose.utils.Constants.ERROR_ANIMATED_LABEL
-import com.anjo.starwarswikicompose.utils.Constants.FAIL_ANIMATED_LABEL
-import com.anjo.starwarswikicompose.utils.Constants.LOADING_ANIMATED_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.CUSTOM_ANIMATED_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.ERROR_ANIMATED_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.FAIL_ANIMATED_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.LOADING_ANIMATED_LABEL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -95,12 +99,13 @@ fun ImageGalleryVisualisation(
     val photoResponse by imageViewModel.fetchedPhotoInfos.collectAsState()
     var startAnimation by remember { mutableStateOf(false) }
     val alphaAnim by animateFloatAsState(
-            targetValue = if (startAnimation) ContentAlpha.high else 0f,
+            targetValue = if (startAnimation) 1f else 0f,
             animationSpec = tween(
                     durationMillis = 2000
             ), label = ""
     )
     val lazyListState = rememberLazyListState()
+
     LaunchedEffect(key1 = true) {
         startAnimation = true
     }
@@ -111,7 +116,7 @@ fun ImageGalleryVisualisation(
     ImagesContentVisualisation(padding, alphaAnim, imageViewModel, photoResponse, snackBarHostState)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ImagesContentVisualisation(
         padding: PaddingValues,
@@ -125,27 +130,46 @@ private fun ImagesContentVisualisation(
     var enabled by remember { mutableStateOf(true) }
     val refreshScope = rememberCoroutineScope()
     val refreshing = remember { mutableStateOf(false) }
-    val state =
-        rememberPullRefreshState(refreshing.value, { refresh(refreshScope, refreshing, searchQuery, imageViewModel) })
+    val state = rememberPullToRefreshState()
+    val onRefresh = { refresh(refreshScope, refreshing, searchQuery, imageViewModel) }
+
+    val itemSize = 550.dp
+    val density = LocalDensity.current
+    val itemSizePx = with(density) { itemSize.toPx() }
 
     Box(modifier = Modifier
             .padding(padding)
-            .pullRefresh(state)
+            .pullToRefresh(refreshing.value, state, onRefresh = onRefresh)
             .fillMaxSize()
+            .paint(painter = painterResource(R.drawable.stars_image),
+                    contentScale = ContentScale.FillBounds)
             .alpha(alphaAnim)) {
         if (!refreshing.value) {
             Column(modifier = Modifier
                     .fillMaxSize()
-                    .paint(painter = painterResource(R.drawable.stars_image),
-                            contentScale = ContentScale.FillBounds)
+                    .background(Color.Transparent)
             ) {
                 SearchBar(text = searchQuery,
                         onTextChange = { imageViewModel.updateSearchQuery(query = it) },
                         onSearchClicked = { query ->
                             if (query.isEmpty()) {
                                 imageViewModel.fetchRecentPhotos()
+                                refreshScope.launch {
+                                    delay(500)
+                                    lazyListState.animateScrollBy(
+                                            value = -(itemSizePx * lazyListState.firstVisibleItemIndex),
+                                            animationSpec = tween(3000)
+                                    )
+                                }
                             } else {
                                 imageViewModel.fetchPhotoInfo(query)
+                                refreshScope.launch {
+                                    delay(500)
+                                    lazyListState.animateScrollBy(
+                                            value = -(itemSizePx * lazyListState.firstVisibleItemIndex),
+                                            animationSpec = tween(3000)
+                                    )
+                                }
                             }
                         },
                         onClosedClicked = {
@@ -162,7 +186,7 @@ private fun ImagesContentVisualisation(
                 PhotoContent(photoResponse, lazyListState, snackBarHostState, refreshScope)
             }
         }
-        PullRefreshIndicator(refreshing.value, state, Modifier.align(Alignment.TopCenter))
+        Indicator(state, refreshing.value, Modifier.align(Alignment.TopCenter))
     }
 }
 
@@ -174,7 +198,6 @@ fun PhotoContent(
         snackBarHostState: SnackbarHostState,
         refreshScope: CoroutineScope,
 ) {
-
     val status = photoResponse.stat
     val extractPhotos = photoResponse.photos?.photo
 

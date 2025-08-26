@@ -34,15 +34,7 @@ object Main {
     }
 
     private fun uploadApp(appId: String, appPath: String, credentialsPath: String) {
-        val credentials = ServiceAccountCredentials
-                .fromStream(FileInputStream(credentialsPath))
-                .createScoped(AndroidPublisherScopes.all())
-        val publisher = AndroidPublisher.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(),
-                GsonFactory(),
-                setHttpTimeout(HttpCredentialsAdapter(credentials))
-        ).setApplicationName("Google Play APP upload")
-                .build()
+        val publisher = getPublisherData(credentialsPath)
 
         val edit: AppEdit = publisher.edits().insert(appId, null).execute()
 
@@ -58,6 +50,19 @@ object Main {
 
         publisher.edits().commit(appId, edit.id).execute()
         println("Committed edit with a new apk")
+    }
+
+    private fun getPublisherData(
+            credentialsPath: String): AndroidPublisher {
+        val credentials = ServiceAccountCredentials
+                .fromStream(FileInputStream(credentialsPath))
+                .createScoped(AndroidPublisherScopes.all())
+        return AndroidPublisher.Builder(
+                GoogleNetHttpTransport.newTrustedTransport(),
+                GsonFactory(),
+                setHttpTimeout(HttpCredentialsAdapter(credentials))
+        ).setApplicationName("Google Play APP upload")
+                .build()
     }
 
     private fun setHttpTimeout(requestInitializer: HttpRequestInitializer) = HttpRequestInitializer { request ->

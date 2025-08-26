@@ -9,7 +9,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Singleton
 
 
 @Module
@@ -17,7 +16,6 @@ import javax.inject.Singleton
 object FlickrClientBuilder {
 
     @Provides
-    @Singleton
     fun retrofitClient(okHttpClient: OkHttpClient): Retrofit {
         val gson = GsonBuilder()
                 .setLenient()
@@ -30,7 +28,6 @@ object FlickrClientBuilder {
     }
 
     @Provides
-    @Singleton
     fun provideFlickrApi(retrofitClient: Retrofit): FlickrApi {
         return retrofitClient.create(FlickrApi::class.java)
     }

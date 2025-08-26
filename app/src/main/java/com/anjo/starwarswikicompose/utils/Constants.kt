@@ -3,7 +3,6 @@ package com.anjo.starwarswikicompose.utils
 import com.anjo.starwarswikicompose.BuildConfig
 
 object Constants {
-    const val WELCOME_BUTTON_TAG = "welcome_button_tag"
     const val ON_BOARDING_PAGE_COUNT = 3
     const val LAST_ON_BOARDING_PAGE = 2
     const val MAX_LINES_NUMBER = 2
@@ -14,6 +13,7 @@ object Constants {
     const val DETAILS_SPECIE_ARGUMENT_KEY = "specieId"
     const val DETAILS_STARSHIP_ARGUMENT_KEY = "starshipId"
     const val DETAILS_VEHICLE_ARGUMENT_KEY = "vehicleId"
+    const val SOURCE_TYPE_ARGUMENT_KEY = "source"
     const val ASSETS_PATH = "file:///android_asset"
     const val WOOKIEPEDIA_URL = "https://starwars.fandom.com/wiki/Main_Page"
     const val APOLLO_BASE_URL = "https://swapi-graphql.eskerda.vercel.app/"
@@ -27,12 +27,38 @@ object Constants {
     const val LESS_WHITE_BACKGROUND_COPY = 0.2f
     const val MEDIUM_WHITE_BACKGROUND_COPY = 0.8f
     const val PREFERENCES_NAME = "sw_wiki_preferences"
-    const val PREFERENCES_KEY = "on_boarding-completed"
-    const val IMAGE_SLIDER_TABLE = "image_slider_table"
-    const val NOTES_TABLE = "notes_table"
+    const val PREFERENCES_KEY = "on_boarding_completed"
+    const val NOTIFICATIONS_KEY = "notifications_enabled"
     const val ERROR_UNAVAILABLE_INTERNET = "Internet Unavailable"
+    const val ERROR_UNAVAILABLE_EXT_SERVER = "External Server Unavailable"
 
-    const val SAVE_IN_PREFIX = "Save in "
+    const val HEROES_NAME = "Heroes"
+    const val PLANETS_NAME = "Planets"
+    const val STARSHIPS_NAME = "Starships"
+    const val VEHICLES_NAME = "Vehicles"
+    const val SPECIES_NAME = "Species"
+    const val MOVIES_NAME = "Movies"
+    const val PHOTO_NAME = "Photos"
+
+    const val ADD_NEW_HERO = "Add new hero"
+    const val ADD_NEW_MOVIE = "Add new movie"
+    const val ADD_NEW_PLANET = "Add new planet"
+    const val ADD_NEW_STARSHIP = "Add new starship"
+    const val ADD_NEW_VEHICLE = "Add new vehicle"
+    const val ADD_NEW_SPECIE = "Add new specie"
+
+    const val IMAGE_SLIDER_TABLE = "image_slider_table"
+    const val SW_MODEL_DB = "sw_model_db"
+    const val NOTES_TABLE = "notes_table"
+    const val MOVIE_TABLE = "movie_table"
+    const val PERSON_TABLE = "person_table"
+    const val SPECIE_TABLE = "specie_table"
+    const val STARSHIP_TABLE = "starship_table"
+    const val VEHICLE_TABLE = "vehicle_table"
+    const val PLANET_TABLE = "planet_table"
+    const val UNIVERSAL_CHUNK_TABLE = "universal_chunk_table"
+    const val MODEL_CHUNK_CROSS_REF_TABLE = "model_chunk_cross_ref_table"
+
     const val IMAGE_NOT_FOUND = "Image not found, go to searcher!"
     const val REFRESH_IMAGES = "Refresh images"
     const val DELETE_AND_REFRESH_IMAGES = "Delete image and refresh images"
@@ -41,11 +67,6 @@ object Constants {
     const val DESCRIPTION_ASKING_FOR_USER = "We missed you... Come look for new things \uD83D\uDE80"
     const val ERROR_DESCRIPTION = "Ooops! Something went wrong!"
 
-    const val FIRST_RATIONALE =
-        "The notification reminds you about the news in Star Wars world.\nPlease grant the permission."
-    const val SECOND_RATIONALE = "Notification are not available.\\nDo you want turn on notification?"
-    const val REQUEST_PERM = "Request permission"
-    const val CANCEL = "Cancel"
     const val UNKNOWN = "unknown"
     const val NA = "n/a"
     const val EMOJI = "\uD83D\uDE4A"
@@ -59,16 +80,10 @@ object Constants {
     const val NOTIFICATION_NAME = "Main Channel"
     const val NOTIFICATION_CHANNEL = "main_channel_Id"
     const val NOTIFICATION_WORK_TAG = "main_notification_work"
-
-    const val PROGRESS_INDICATOR_TAG = "ProgressIndicator"
-    const val SHIMMER_EFFECT_TAG = "shimmer_effect_tag"
-    const val FAB_BUTTON_TAG = "fab_button_tag"
-    const val RELATED_BUTTON_TAG = "related_button_tag"
     const val APOLLO_DB = "apollo.db"
+    const val CLIPBOARD_URI_KEY = "image_url_clipboard"
 
-    const val CUSTOM_ANIMATED_LABEL = "CustomContentAnimated"
-    const val LOADING_ANIMATED_LABEL = "LoadingContentAnimated"
-    const val ERROR_ANIMATED_LABEL = "ErrorContentAnimated"
-    const val FAIL_ANIMATED_LABEL = "FailContentAnimated"
-    const val SEARCH_BAR_LABEL = "searchBarLabel"
+    const val ANIMATED_BORDER_DURATION = 5_000
+
+    val RELEASE_DATE_PATTERN = Regex("[0-9]{4}-[0-9]{2}-[0-9]{2}")
 }

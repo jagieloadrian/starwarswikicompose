@@ -2,7 +2,7 @@ package com.anjo.starwarswikicompose.services.usecases.notesusecase
 
 import com.anjo.starwarswikicompose.domain.model.NoteModel
 import com.anjo.starwarswikicompose.services.data.repository.notes.NotesRepository
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 class DeleteNoteUseCase @Inject constructor(
         private val notesRepository: NotesRepository,

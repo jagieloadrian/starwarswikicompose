@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.anjo.starwarswikicompose.presentation.screens.notes
 
 import com.anjo.starwarswikicompose.domain.model.NoteModel
@@ -8,9 +10,16 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.slot
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.temporal.ChronoUnit
@@ -20,9 +29,20 @@ class CardNoteViewModelTest {
 
     @RelaxedMockK
     private lateinit var useCases: NotesUseCases
+    private val testDispatcher = StandardTestDispatcher()
 
     @InjectMockKs
     private lateinit var cardNoteViewModel: CardNoteViewModel
+
+    @BeforeEach
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     @Test
     fun `given cardNoteViewModel when getNotes then return empty object`() {
@@ -39,7 +59,7 @@ class CardNoteViewModelTest {
     }
 
     @Test
-    fun `given useCase when getNotes then return expected object`() = runBlocking {
+    fun `given useCase when getNotes then return expected object`() = runTest {
         //given
         val expected = NoteModel(id = 1, text = "ExampleTest")
 
@@ -47,7 +67,8 @@ class CardNoteViewModelTest {
 
         //when
         cardNoteViewModel.getNotes()
-        delay(50)
+        advanceUntilIdle()
+
         val actual = cardNoteViewModel.note.value
 
         //then
@@ -57,13 +78,12 @@ class CardNoteViewModelTest {
     }
 
     @Test
-    fun `given useCase with empty list when getNotes then return object with default text`() = runBlocking {
+    fun `given useCase with empty list when getNotes then return object with default text`() = runTest {
         //given
         coEvery { useCases.getNotesUseCase() } returns flow { emit(listOf()) }
 
         //when
         cardNoteViewModel.getNotes()
-        delay(50)
         val actual = cardNoteViewModel.note.value
 
         //then
@@ -71,7 +91,7 @@ class CardNoteViewModelTest {
     }
 
     @Test
-    fun `given useCase and Text when updateNote then return object with new text`() = runBlocking {
+    fun `given useCase and Text when updateNote then return object with new text`() = runTest {
         //given
         val updateText = "New Updated Text"
         val slot = slot<NoteModel>()
@@ -80,7 +100,7 @@ class CardNoteViewModelTest {
 
         //when
         cardNoteViewModel.updateNote(updateText)
-        delay(50)
+        advanceUntilIdle()
 
         //then
         slot.captured.text shouldBe updateText
