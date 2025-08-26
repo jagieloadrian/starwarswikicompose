@@ -42,7 +42,7 @@ android {
         applicationId = "com.anjo.starwarswikicompose"
         minSdk = 30
         targetSdk = 35
-        versionCode = 8
+        versionCode = 9
         versionName = "1.1"
         buildFeatures.buildConfig = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
