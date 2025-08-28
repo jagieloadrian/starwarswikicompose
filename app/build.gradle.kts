@@ -2,7 +2,7 @@
 
 import com.apollographql.apollo.annotations.ApolloExperimental
 import java.io.FileInputStream
-import java.util.Properties
+import java.util.*
 
 plugins {
     alias(libs.plugins.android.application)
@@ -34,15 +34,15 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.anjo.starwarswikicompose"
-    compileSdk = 35
+    compileSdk = 36
     useLibrary("android.test.mock")
     buildFeatures.buildConfig = true
 
     defaultConfig {
         applicationId = "com.anjo.starwarswikicompose"
         minSdk = 30
-        targetSdk = 35
-        versionCode = 9
+        targetSdk = 36
+        versionCode = 10
         versionName = "1.1"
         buildFeatures.buildConfig = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -131,7 +131,6 @@ dependencies {
     implementation(libs.kotlin.stdlib)
 
     // System UI Controller - Accompanist
-    implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.paging.compose)
     debugImplementation(libs.androidx.ui.tooling)
 

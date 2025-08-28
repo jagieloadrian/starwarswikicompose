@@ -1,11 +1,10 @@
 [versions]
 #AndroidApp
 accompanistPermissions = "0.33.2-alpha"
-accompanistSystemuicontroller = "0.32.0"
 agp = "8.10.1"
 apollo = "4.3.2"
 coil = "3.2.0"
-composeBom = "2025.07.00"
+composeBom = "2025.08.01"
 converterGson = "2.11.0"
 coreSplashscreen = "1.2.0-rc01"
 datastorePreferences = "1.1.7"
@@ -14,11 +13,11 @@ hiltOtherCompiler = "1.2.0"
 junit5 = "5.12.2"
 kotestAssertionsCoreVersion = "5.9.1"
 kotlin = "2.2.0"
-coreKtx = "1.16.0"
+coreKtx = "1.17.0"
 kotlinxSerializationJson = "1.9.0"
-lifecycleRuntimeKtx = "2.9.2"
+lifecycleRuntimeKtx = "2.9.3"
 activityCompose = "1.10.1"
-material3Android = "1.5.0-alpha01"
+material3Android = "1.5.0-alpha03"
 materialIcons="1.7.8"
 mockk = "1.14.2"
 navigationTesting = "2.9.3"
@@ -27,7 +26,7 @@ retrofit = "2.11.0"
 retrofit2KotlinxSerializationConverter = "0.8.0"
 room = "2.7.2"
 runner = "1.7.0"
-kotlinStdlib = "2.2.0"
+kotlinStdlib = "2.2.10"
 workRuntimeKtx = "2.10.3"
 jacoco = "0.8.13"
 ksp = "2.2.0-2.0.2"
@@ -55,7 +54,6 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3",
 androidx-material-icons = {group = "androidx.compose.material", name = "material-icons-core", version.ref = "materialIcons" }
 
 #System UI Controller
-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 
 ## TESTS

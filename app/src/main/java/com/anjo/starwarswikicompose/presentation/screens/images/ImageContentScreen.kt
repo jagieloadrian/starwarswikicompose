@@ -12,8 +12,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -82,7 +85,8 @@ fun ImageScreen(
     }
     val snackBarHostState = remember { SnackbarHostState() }
     Scaffold(
-            topBar = { CustomTopAppBar(navController) },
+        modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+            topBar = { CustomTopAppBar(navHostController = navController) },
             bottomBar = { CustomBottomAppBar(navController) },
             snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { padding ->

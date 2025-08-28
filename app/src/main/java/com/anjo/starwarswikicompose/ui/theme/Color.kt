@@ -6,9 +6,6 @@ import androidx.compose.ui.graphics.luminance
 
 val Purple700 = Color(0xFF3700B3)
 
-val LightGray = Color(0xFFD8D8D8)
-val DarkGray = Color(0xFF2A2A2A)
-
 val GoldColor = Color(0xFFD5B322)
 val GoldOrangeColor = Color(0xFFFF5722)
 
