@@ -8,8 +8,11 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
@@ -50,20 +53,26 @@ fun WebViewScreen(navController: NavHostController) {
         isRefreshing = false
     }
 
-    Scaffold(
-            topBar = { CustomTopAppBar(navController) },
-            bottomBar = { CustomBottomAppBar(navController) }
+    Scaffold(modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+        topBar = { CustomTopAppBar(navHostController = navController) },
+        bottomBar = { CustomBottomAppBar(navController) }
     ) { padding ->
-        Box(modifier = Modifier
+        Box(
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-                contentAlignment = Alignment.Center) {
+            contentAlignment = Alignment.Center
+        ) {
             if (!isRefreshing) {
-                WebView(modifier = Modifier
-                        .pullToRefresh(isRefreshing = isRefreshing, state = pullRefreshState, onRefresh = onRefresh))
+                WebView(
+                    modifier = Modifier
+                        .pullToRefresh(isRefreshing = isRefreshing, state = pullRefreshState, onRefresh = onRefresh)
+                )
             }
-            Indicator(isRefreshing = isRefreshing, state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter))
+            Indicator(
+                isRefreshing = isRefreshing, state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
@@ -71,8 +80,8 @@ fun WebViewScreen(navController: NavHostController) {
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun WebView(
-        modifier: Modifier = Modifier,
-        url: String = WOOKIEPEDIA_URL,
+    modifier: Modifier = Modifier,
+    url: String = WOOKIEPEDIA_URL,
 ) {
     var backEnabled by remember { mutableStateOf(false) }
     var webView: WebView? = null
@@ -80,26 +89,26 @@ fun WebView(
 
     if (hasInternetConnection(localContext)) {
         AndroidView(
-                modifier = modifier,
-                factory = { context ->
-                    WebView(context).apply {
-                        layoutParams = ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                        webViewClient = object : WebViewClient() {
-                            override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
-                                backEnabled = view.canGoBack()
-                            }
+            modifier = modifier,
+            factory = { context ->
+                WebView(context).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    webViewClient = object : WebViewClient() {
+                        override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
+                            backEnabled = view.canGoBack()
                         }
-                        settings.javaScriptEnabled = true
-
-                        loadUrl(url)
-                        webView = this
                     }
-                }, update = {
-            webView = it
-        })
+                    settings.javaScriptEnabled = true
+
+                    loadUrl(url)
+                    webView = this
+                }
+            }, update = {
+                webView = it
+            })
         BackHandler(enabled = backEnabled) {
             webView?.goBack()
         }

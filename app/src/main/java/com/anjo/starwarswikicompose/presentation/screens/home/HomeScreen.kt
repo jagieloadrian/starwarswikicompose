@@ -7,14 +7,18 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -39,7 +43,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -77,21 +80,15 @@ import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
 import com.anjo.starwarswikicompose.utils.TestTags.CHUNK_LIST
 import com.anjo.starwarswikicompose.utils.TestTags.SEARCH_CHUNK_ICON
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(navController: NavHostController) {
-    val systemUiController = rememberSystemUiController()
-    val systemBarColor = MaterialTheme.colorScheme.primary
-
-    SideEffect {
-        systemUiController.setStatusBarColor(
-                color = systemBarColor
-        )
-    }
     Scaffold(
-            topBar = { CustomTopAppBar(navController) },
-            bottomBar = { CustomBottomAppBar(navController) }
+        modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+        topBar = { CustomTopAppBar(navHostController = navController) },
+        bottomBar = { CustomBottomAppBar(navController) },
+        containerColor = MaterialTheme.colorScheme.primary
     ) { padding ->
         HomeContentScreen(padding, navController)
     }
@@ -100,9 +97,9 @@ fun HomeScreen(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContentScreen(
-        paddingValues: PaddingValues,
-        navController: NavHostController,
-        homeViewModel: HomeScreenViewModel = hiltViewModel(),
+    paddingValues: PaddingValues,
+    navController: NavHostController,
+    homeViewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
     var textState by remember { mutableStateOf("") }
     val lazyListState = rememberLazyListState()
@@ -116,22 +113,23 @@ fun HomeContentScreen(
     }
 
     Scaffold(
-            modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .background(Color.Transparent),
-            floatingActionButton = {
-                FloatingActionButton(onClick = {
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .background(Color.Transparent),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
                     showAddObjectBottomSheet = true
                 }, containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        modifier = Modifier.padding(SMALL_PADDING),
-                        shape = RoundedCornerShape(LARGE_PADDING)
-                ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "add")
-                }
-            },
-            floatingActionButtonPosition = FabPosition.Center,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+                modifier = Modifier.padding(SMALL_PADDING),
+                shape = RoundedCornerShape(LARGE_PADDING)
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "add")
+            }
+        },
+        floatingActionButtonPosition = FabPosition.Center,
     ) { padding ->
         if (showAddObjectBottomSheet) {
             AddObjectScreen(modifier = Modifier.padding(padding), category = category) { shouldRefresh, localCategory ->
@@ -142,53 +140,66 @@ fun HomeContentScreen(
                 showAddObjectBottomSheet = false
             }
         }
-        Column(modifier = Modifier
+        Column(
+            modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .paint(painter = painterResource(R.drawable.stars_image),
-                        contentScale = ContentScale.FillBounds)) {
-            Row(modifier = Modifier
+                .paint(
+                    painter = painterResource(R.drawable.stars_image),
+                    contentScale = ContentScale.FillBounds
+                )
+        ) {
+            Row(
+                modifier = Modifier
                     .fillMaxWidth()
                     .height(TOP_BAR_HEIGHT)
                     .background(MaterialTheme.colorScheme.primary),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically) {
-                CategoryDropDown(modifier = Modifier
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CategoryDropDown(
+                    modifier = Modifier
                         .weight(3f)
-                        .fillMaxHeight(), selectedCategory = category) { cat ->
+                        .fillMaxHeight(), selectedCategory = category
+                ) { cat ->
                     category = cat
                     homeViewModel.getChunks(cat)
                 }
                 IconButton(modifier = Modifier.weight(1f), onClick = {
                     shouldOpenSearchBar = !shouldOpenSearchBar
                 }) {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondary)
+                    Icon(
+                        imageVector = Icons.Default.Search, contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondary
+                    )
                 }
             }
             if (chunksState.isLoading) {
                 ShimmerEffect()
             } else {
                 if (shouldOpenSearchBar) {
-                    SearchBarForChunks(text = textState,
-                            onTextChange = { query ->
-                                textState = query
-                            },
-                            onClosedClicked = { shouldOpenSearchBar = false },
-                            lazyListState = lazyListState,
-                            modifier = Modifier
-                                    .clickable {
-                                        if (!shouldOpenSearchBar) {
-                                            shouldOpenSearchBar = true
-                                        }
-                                    }
-                                    .background(Color.Transparent)
-                                    .testTag(SEARCH_CHUNK_ICON),
-                            placeholder = ""
+                    SearchBarForChunks(
+                        text = textState,
+                        onTextChange = { query ->
+                            textState = query
+                        },
+                        onClosedClicked = { shouldOpenSearchBar = false },
+                        lazyListState = lazyListState,
+                        modifier = Modifier
+                            .clickable {
+                                if (!shouldOpenSearchBar) {
+                                    shouldOpenSearchBar = true
+                                }
+                            }
+                            .background(Color.Transparent)
+                            .testTag(SEARCH_CHUNK_ICON),
+                        placeholder = ""
                     )
                 }
-                CommonList(lazyListState, textState,
-                        chunksState, navController)
+                CommonList(
+                    lazyListState, textState,
+                    chunksState, navController
+                )
             }
         }
     }
@@ -196,16 +207,20 @@ fun HomeContentScreen(
 
 
 @Composable
-private fun CommonList(lazyListState: LazyListState,
-                       textState: String,
-                       chunksState: HomeScreenViewModel.ChunkState,
-                       navController: NavHostController) {
+private fun CommonList(
+    lazyListState: LazyListState,
+    textState: String,
+    chunksState: HomeScreenViewModel.ChunkState,
+    navController: NavHostController
+) {
     var chunks by remember { mutableStateOf(chunksState.chunks) }
 
-    LazyColumn(modifier = Modifier.testTag(CHUNK_LIST),
-            contentPadding = PaddingValues(all = SMALL_PADDING),
-            state = lazyListState,
-            verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)) {
+    LazyColumn(
+        modifier = Modifier.testTag(CHUNK_LIST),
+        contentPadding = PaddingValues(all = SMALL_PADDING),
+        state = lazyListState,
+        verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
+    ) {
         chunks = if (textState.isBlank()) {
             chunksState.chunks
         } else {
@@ -220,47 +235,53 @@ private fun CommonList(lazyListState: LazyListState,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryDropDown(
-        modifier: Modifier = Modifier,
-        selectedCategory: Category,
-        chooseCategory: (Category) -> Unit) {
+    modifier: Modifier = Modifier,
+    selectedCategory: Category,
+    chooseCategory: (Category) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
-            modifier = modifier
-                    .background(MaterialTheme.colorScheme.primary)
-                    .testTag("Dropdown Menu")
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.primary)
+            .testTag("Dropdown Menu")
     ) {
-        CategoryTextField(selectedCategory, expanded,
-                Modifier.menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable))
+        CategoryTextField(
+            selectedCategory, expanded,
+            Modifier.menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+        )
         ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                containerColor = MaterialTheme.colorScheme.primary,
-                shape = MaterialTheme.shapes.small,
-                border = BorderStroke(SMALL_BORDER, MaterialTheme.colorScheme.secondary),
-                shadowElevation = SMALL_PADDING,
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            containerColor = MaterialTheme.colorScheme.primary,
+            shape = MaterialTheme.shapes.small,
+            border = BorderStroke(SMALL_BORDER, MaterialTheme.colorScheme.secondary),
+            shadowElevation = SMALL_PADDING,
         ) {
             Category.entries.forEach { cat ->
-                DropdownMenuItem(onClick = {
-                    chooseCategory(cat)
-                    expanded = false
-                },
-                        leadingIcon = {
-                            Icon(
-                                    painter = choosePainter(cat),
-                                    modifier = Modifier.size(HOME_ICON_HEIGHT),
-                                    tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = null,
-                            )
-                        },
-                        text = {
-                            Text(text = cat.categoryName,
-                                    modifier = Modifier.padding(SMALL_PADDING),
-                                    textAlign = TextAlign.Center,
-                                    fontFamily = SOLOFontName,
-                                    color = MaterialTheme.colorScheme.onSecondary)
-                        }
+                DropdownMenuItem(
+                    onClick = {
+                        chooseCategory(cat)
+                        expanded = false
+                    },
+                    leadingIcon = {
+                        Icon(
+                            painter = choosePainter(cat),
+                            modifier = Modifier.size(HOME_ICON_HEIGHT),
+                            tint = MaterialTheme.colorScheme.onSecondary,
+                            contentDescription = null,
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = cat.categoryName,
+                            modifier = Modifier.padding(SMALL_PADDING),
+                            textAlign = TextAlign.Center,
+                            fontFamily = SOLOFontName,
+                            color = MaterialTheme.colorScheme.onSecondary
+                        )
+                    }
                 )
             }
         }
@@ -269,46 +290,52 @@ fun CategoryDropDown(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun CategoryTextField(selectedCategory: Category,
-                              expanded: Boolean,
-                              modifier: Modifier = Modifier) {
+private fun CategoryTextField(
+    selectedCategory: Category,
+    expanded: Boolean,
+    modifier: Modifier = Modifier
+) {
     BasicTextField(
-            modifier = modifier,
-            value = selectedCategory.name,
-            onValueChange = { },
-            readOnly = true,
-            textStyle = TextStyle(textAlign = TextAlign.Center,
-                    fontFamily = SOLOFontName,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.onSecondary
-            ),
-            decorationBox = { innerTextField ->
-                TextFieldDefaults.DecorationBox(
-                        value = selectedCategory.name,
-                        innerTextField = {
-                            Box(modifier = Modifier.fillMaxHeight(),
-                                    contentAlignment = Alignment.Center) {
-                                innerTextField()
-                            }
-                        },
-                        contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
-                                top = 0.dp,
-                                bottom = 0.dp
-                        ),
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(
-                                focusedContainerColor = MaterialTheme.colorScheme.primary,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.primary,
-                                focusedTextColor = MaterialTheme.colorScheme.onSecondary,
-                                unfocusedTextColor = MaterialTheme.colorScheme.onSecondary,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent),
-                        enabled = true,
-                        singleLine = true,
-                        visualTransformation = VisualTransformation.None,
-                        interactionSource = remember { MutableInteractionSource() })
-            }
+        modifier = modifier,
+        value = selectedCategory.name,
+        onValueChange = { },
+        readOnly = true,
+        textStyle = TextStyle(
+            textAlign = TextAlign.Center,
+            fontFamily = SOLOFontName,
+            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.onSecondary
+        ),
+        decorationBox = { innerTextField ->
+            TextFieldDefaults.DecorationBox(
+                value = selectedCategory.name,
+                innerTextField = {
+                    Box(
+                        modifier = Modifier.fillMaxHeight(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        innerTextField()
+                    }
+                },
+                contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
+                    top = 0.dp,
+                    bottom = 0.dp
+                ),
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(
+                    focusedContainerColor = MaterialTheme.colorScheme.primary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.onSecondary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSecondary,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                enabled = true,
+                singleLine = true,
+                visualTransformation = VisualTransformation.None,
+                interactionSource = remember { MutableInteractionSource() })
+        }
     )
 }
 

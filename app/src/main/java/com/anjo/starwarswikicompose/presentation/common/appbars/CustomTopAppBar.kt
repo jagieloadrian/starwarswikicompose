@@ -71,8 +71,9 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTopAppBar(
-        navHostController: NavHostController,
-        mainViewModel: MainViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+    navHostController: NavHostController,
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     var soundOn by remember { mutableStateOf(MusicPlayerStatic.shouldPlayMusic()) }
     val notification by mainViewModel.isNotificationsEnabled.collectAsState()
@@ -99,164 +100,177 @@ fun CustomTopAppBar(
         PermissionLogic(notification, mainViewModel)
     }
 
-    TopAppBar(modifier = Modifier
+    TopAppBar(
+        modifier = modifier
             .fillMaxWidth()
             .height(TOP_BAR_HEIGHT),
-            colors = TopAppBarColors(containerColor = MaterialTheme.colorScheme.primary,
-                    scrolledContainerColor = MaterialTheme.colorScheme.primary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSecondary,
-                    titleContentColor = MaterialTheme.colorScheme.onSecondary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onSecondary,
-                    subtitleContentColor = MaterialTheme.colorScheme.primary),
-            title = {
-                Box(modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center) {
-                    Text(
-                            text = stringResource(R.string.app_name_top_bar),
-                            fontFamily = SOLOFontName,
-                            modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(HOME_ICON_HEIGHT)
-                                    .basicMarquee(iterations = Int.MAX_VALUE),
-                            textAlign = TextAlign.Left,
-                            style = MaterialTheme.typography.headlineLarge,
-                            color = MaterialTheme.colorScheme.onSecondary,
-                    )
+        colors = TopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            scrolledContainerColor = MaterialTheme.colorScheme.primary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onSecondary,
+            titleContentColor = MaterialTheme.colorScheme.onSecondary,
+            actionIconContentColor = MaterialTheme.colorScheme.onSecondary,
+            subtitleContentColor = MaterialTheme.colorScheme.primary
+        ),
+        title = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.app_name_top_bar),
+                    fontFamily = SOLOFontName,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(HOME_ICON_HEIGHT)
+                        .basicMarquee(iterations = Int.MAX_VALUE),
+                    textAlign = TextAlign.Left,
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                )
+            }
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    navHostController.navigate(Screen.Home.route)
                 }
-            },
-            navigationIcon = {
-                IconButton(
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = stringResource(R.string.home_icon),
+                    modifier = Modifier.height(TOP_BAR_HEIGHT),
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = {
+                expanded = true
+            }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = stringResource(R.string.options),
+                    modifier = Modifier.height(TOP_BAR_HEIGHT),
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+            DropdownMenu(
+                modifier = Modifier
+                    .width(halfWidth)
+                    .background(MaterialTheme.colorScheme.primary),
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                },
+                shape = MaterialTheme.shapes.small,
+                border = BorderStroke(SMALL_BORDER, MaterialTheme.colorScheme.secondary),
+                offset = DpOffset(x = halfWidth, y = (-64).dp),
+                properties = PopupProperties()
+            ) {
+                listItems.forEach { menuItemData ->
+                    DropdownMenuItem(
                         onClick = {
-                            navHostController.navigate(Screen.Home.route)
-                        }
-                ) {
-                    Icon(imageVector = Icons.Default.Home,
-                            contentDescription = stringResource(R.string.home_icon),
-                            modifier = Modifier.height(TOP_BAR_HEIGHT),
-                            tint = MaterialTheme.colorScheme.onSecondary)
-                }
-            },
-            actions = {
-                IconButton(onClick = {
-                    expanded = true
-                }) {
-                    Icon(imageVector = Icons.Default.MoreVert,
-                            contentDescription = stringResource(R.string.options),
-                            modifier = Modifier.height(TOP_BAR_HEIGHT),
-                            tint = MaterialTheme.colorScheme.onSecondary)
-                }
-                DropdownMenu(
-                        modifier = Modifier
-                                .width(halfWidth)
-                                .background(MaterialTheme.colorScheme.primary),
-                        expanded = expanded,
-                        onDismissRequest = {
+                            when (menuItemData) {
+                                Notes -> {
+                                    openNotes = true
+                                }
+
+                                Feedback -> {
+                                    feedbackDialog = true
+                                }
+
+                                Info -> {
+                                    openDialog = true
+                                }
+
+                                else -> {}
+                            }
                             expanded = false
                         },
-                        shape = MaterialTheme.shapes.small,
-                        border = BorderStroke(SMALL_BORDER, MaterialTheme.colorScheme.secondary),
-                        offset = DpOffset(x = halfWidth, y = (-64).dp),
-                        properties = PopupProperties()
-                ) {
-                    listItems.forEach { menuItemData ->
-                        DropdownMenuItem(
-                                onClick = {
-                                    when (menuItemData) {
-                                        Notes    -> {
-                                            openNotes = true
-                                        }
-
-                                        Feedback -> {
-                                            feedbackDialog = true
-                                        }
-
-                                        Info     -> {
-                                            openDialog = true
-                                        }
-
-                                        else     -> {}
-                                    }
-                                    expanded = false
-                                },
-                                enabled = true,
-                                text = {
-                                    Text(
-                                            text = menuItemData.text,
-                                            fontWeight = FontWeight.Medium,
-                                            fontSize = 16.sp,
-                                            color = MaterialTheme.colorScheme.onSecondary,
-                                            modifier = Modifier.weight(6f)
-                                    )
-                                },
-                                leadingIcon = {
-                                    Icon(painter = menuItemData.icon,
-                                            contentDescription = menuItemData.text,
-                                            tint = MaterialTheme.colorScheme.onSecondary,
-                                            modifier = Modifier.weight(2f))
-                                },
-                                trailingIcon = {
-                                    when (menuItemData) {
-                                        Sound        -> {
-                                            MenuSwitchIcon(soundOn, Modifier.weight(2f)) {
-                                                soundOn = it
-                                                changeMusic(soundOn, mainViewModel)
-                                            }
-                                        }
-
-                                        Notification -> {
-                                            MenuSwitchIcon(notification, Modifier.weight(2f)) {
-                                                mainViewModel.toggleNotifications(it)
-                                            }
-                                        }
-
-                                        else         -> {}
+                        enabled = true,
+                        text = {
+                            Text(
+                                text = menuItemData.text,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onSecondary,
+                                modifier = Modifier.weight(6f)
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                painter = menuItemData.icon,
+                                contentDescription = menuItemData.text,
+                                tint = MaterialTheme.colorScheme.onSecondary,
+                                modifier = Modifier.weight(2f)
+                            )
+                        },
+                        trailingIcon = {
+                            when (menuItemData) {
+                                Sound -> {
+                                    MenuSwitchIcon(soundOn, Modifier.weight(2f)) {
+                                        soundOn = it
+                                        changeMusic(soundOn, mainViewModel)
                                     }
                                 }
-                        )
-                    }
+
+                                Notification -> {
+                                    MenuSwitchIcon(notification, Modifier.weight(2f)) {
+                                        mainViewModel.toggleNotifications(it)
+                                    }
+                                }
+
+                                else -> {}
+                            }
+                        }
+                    )
                 }
-            })
+            }
+        })
 }
 
 @Composable
 fun MenuSwitchIcon(
-        checked: Boolean,
-        modifier: Modifier,
-        onCheckedChange: (Boolean) -> Unit
+    checked: Boolean,
+    modifier: Modifier,
+    onCheckedChange: (Boolean) -> Unit
 ) {
-    Switch(checked = checked, onCheckedChange = { onCheckedChange(it) },
-            modifier = modifier,
-            colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color.White,
-                    uncheckedThumbColor = Color.White.copy(alpha = 0.6f),
-                    checkedTrackColor = MaterialTheme.colorScheme.secondary,
-                    uncheckedTrackColor = MaterialTheme.colorScheme.secondary
-            ))
+    Switch(
+        checked = checked, onCheckedChange = { onCheckedChange(it) },
+        modifier = modifier,
+        colors = SwitchDefaults.colors(
+            checkedThumbColor = Color.White,
+            uncheckedThumbColor = Color.White.copy(alpha = 0.6f),
+            checkedTrackColor = MaterialTheme.colorScheme.secondary,
+            uncheckedTrackColor = MaterialTheme.colorScheme.secondary
+        )
+    )
 }
 
 @SuppressLint("InlinedApi")
 @Composable
 private fun PermissionLogic(
-        notification: Boolean,
-        mainViewModel: MainViewModel,
+    notification: Boolean,
+    mainViewModel: MainViewModel,
 ) {
     val context = LocalContext.current
     var shouldRunPermission by remember { mutableStateOf(false) }
     var permissionGranted by remember {
         mutableStateOf(
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
-                } else {
-                    true
-                }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            } else {
+                true
+            }
         )
     }
 
     val requestPermissionLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted ->
-                permissionGranted = isGranted
-            }
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            permissionGranted = isGranted
+        }
     )
 
     LaunchedEffect(shouldRunPermission) {

@@ -1,5 +1,11 @@
 package com.anjo.starwarswikicompose.presentation.common.appbars
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -13,8 +19,10 @@ import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onSiblings
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.printToLog
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.anjo.starwarswikicompose.MainViewModel
@@ -46,10 +54,16 @@ class CustomTopAppBarKtTest {
 
         composeTestRule.setContent {
             val navController = rememberNavController()
-            CustomTopAppBar(navController, mainViewModel = mainViewModel)
+            Scaffold(modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing)) { contentPadding ->
+                CustomTopAppBar(navHostController = navController, mainViewModel = mainViewModel,
+                    modifier = Modifier.padding(contentPadding))
+            }
         }
 
         val semanticSwitch = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Switch)
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onRoot(true).printToLog("TOPAPPBAR")
 
         //when then
         val homeIcon = composeTestRule.onNodeWithContentDescription("home icon")
