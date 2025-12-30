@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
@@ -43,6 +44,7 @@ import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.ui.theme.MEDIUM_PADDING
 import com.anjo.starwarswikicompose.utils.Constants.IMAGE_NOT_FOUND
+import com.anjo.starwarswikicompose.utils.TestTags.FAB_MENU_TAG
 import com.anjo.starwarswikicompose.utils.addImageFunction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -73,7 +75,8 @@ fun DetailObjectFabMenu(
                                     .animateFloatingActionButton(
                                             visible = true,
                                             alignment = Alignment.BottomEnd,
-                                    ),
+                                    )
+                                .testTag(FAB_MENU_TAG),
                         checked = fabExtended,
                         onCheckedChange = { fabExtended = !fabExtended },
                         containerColor = { progress -> lerp(primaryColor, secondaryColor, progress) },

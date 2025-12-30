@@ -13,9 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_SPACING
 import com.anjo.starwarswikicompose.ui.theme.PAGING_INDICATOR_WIDTH
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
+import com.anjo.starwarswikicompose.utils.TestTags.INDICATOR_DOTS_TAG
 
 @Composable
 fun DotsIndicator(
@@ -26,7 +28,8 @@ fun DotsIndicator(
         unSelectedColor: Color = Color.LightGray,
 ) {
     LazyRow(
-            modifier = modifier.height(TOP_BAR_HEIGHT),
+            modifier = modifier.height(TOP_BAR_HEIGHT)
+                .testTag(INDICATOR_DOTS_TAG),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
     ) {

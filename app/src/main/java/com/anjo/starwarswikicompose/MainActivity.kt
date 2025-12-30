@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -28,6 +29,10 @@ import com.anjo.starwarswikicompose.navigation.Screen
 import com.anjo.starwarswikicompose.navigation.SetupNavGraph
 import com.anjo.starwarswikicompose.services.usecases.stateusecase.StateUseCase
 import com.anjo.starwarswikicompose.ui.theme.StarWarsWikiComposeTheme
+import com.anjo.starwarswikicompose.utils.TestTags.MAIN_NAV_GRAPH
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
+import com.google.android.gms.ads.RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -50,6 +55,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        // Initialize the Google Mobile Ads SDK on a background thread.
+        mobileAdsConfig()
         setContent {
             val lifecycleOwner = LocalLifecycleOwner.current
             mainViewModel.createMusic()
@@ -62,7 +69,8 @@ class MainActivity : ComponentActivity() {
                 SetupNavGraph(
                     navController = navController,
                     startDestination = if (completed) Screen.Home.route else Screen.Welcome.route,
-                    modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+                    modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing)
+                        .testTag(MAIN_NAV_GRAPH),
                 )
             }
         }
@@ -71,6 +79,16 @@ class MainActivity : ComponentActivity() {
                 completed = it
             }
         }
+    }
+
+    private fun mobileAdsConfig() {
+        MobileAds.setRequestConfiguration(
+            RequestConfiguration.Builder()
+                .setTagForUnderAgeOfConsent(TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE)
+                .setPublisherPrivacyPersonalizationState(RequestConfiguration.PublisherPrivacyPersonalizationState.DISABLED)
+                .build()
+        )
+        MobileAds.initialize(this@MainActivity) {}
     }
 }
 

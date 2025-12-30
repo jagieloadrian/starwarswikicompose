@@ -86,4 +86,8 @@ object Constants {
     const val ANIMATED_BORDER_DURATION = 5_000
 
     val RELEASE_DATE_PATTERN = Regex("[0-9]{4}-[0-9]{2}-[0-9]{2}")
+
+    const val BANNER_UNIT_ID = "ca-app-pub-8240070907205767/7299343777"
+
+    const val BANNER_NOT_FOUND_TEXT =  "$EMOJI Ups, couldn't load banner ad $EMOJI"
 }

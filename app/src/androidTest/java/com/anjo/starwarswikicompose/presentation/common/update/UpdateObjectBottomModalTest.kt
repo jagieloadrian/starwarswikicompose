@@ -9,7 +9,7 @@ import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChild
-import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
@@ -47,11 +47,13 @@ class UpdateObjectBottomModalTest {
         modal.assert(SemanticsMatcher.expectValue(SemanticsProperties.IsContainer, true))
         modal.assert(SemanticsMatcher.expectValue(SemanticsProperties.PaneTitle, "Bottom Sheet"))
 
-        val dragPart = modal.onChildren()[0].onChild()
+        val dragPart = modal.onChildAt(0).onChildAt(0)
         dragPart.assertExists()
         dragPart.assertIsNotFocused()
+        dragPart.onChild().assert(SemanticsMatcher.expectValue(SemanticsProperties.IsContainer, true))
 
-        val text = modal.onChildren()[1]
+
+        val text = modal.onChildAt(0).onChildAt(1)
 
         text.assertExists()
         text.assertTextEquals("TEST")

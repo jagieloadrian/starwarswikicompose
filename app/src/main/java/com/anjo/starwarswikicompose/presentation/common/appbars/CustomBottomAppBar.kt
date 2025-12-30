@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -26,13 +27,15 @@ import com.anjo.starwarswikicompose.ui.theme.HOME_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
+import com.anjo.starwarswikicompose.utils.TestTags.BOTTOM_APP_BAR
 
 @Composable
 fun CustomBottomAppBar(navHostController: NavHostController) {
     BottomAppBar(
             modifier = Modifier
                     .fillMaxWidth()
-                    .height(TOP_BAR_HEIGHT),
+                    .height(TOP_BAR_HEIGHT)
+                .testTag(BOTTOM_APP_BAR),
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
     ) {

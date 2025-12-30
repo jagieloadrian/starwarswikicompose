@@ -1,5 +1,6 @@
 package com.anjo.starwarswikicompose.testutils
 
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -75,7 +76,7 @@ fun assertListField(listField: SemanticsNodeInteraction, textInput: List<String>
         addButton.performClick()
     }
 
-    addedElements.onChildren().assertCountEquals(textInput.size * 2)
+    addedElements.onChildren().assertCountEquals(textInput.size)
 }
 
 fun assertChunksField(composeRule: ComposeContentTestRule, chunkField: SemanticsNodeInteraction,
@@ -105,7 +106,7 @@ fun assertChunksField(composeRule: ComposeContentTestRule, chunkField: Semantics
         addButton.performClick()
     }
     composeRule.waitForIdle()
-    addedElements.onChildren().assertCountEquals(textInput.size * 2)
+    addedElements.onChildren().assertCountEquals(textInput.size)
 }
 
 fun assertChunkField(composeRule: ComposeContentTestRule, chunkField: SemanticsNodeInteraction,
@@ -142,8 +143,11 @@ fun assertRelatedBoxes(composeRule: ComposeContentTestRule, connectionDto: Conne
 
         image.onSibling().assertIsDisplayed()
 
-        image.onParent().assertHasClickAction()
-        image.onParent().assertIsNotFocused()
+        val imageParent = image.onParent()
+        imageParent.assert(SemanticsMatcher.expectValue(SemanticsProperties.Shape, RectangleShape))
+
+        imageParent.onParent().assertHasClickAction()
+        imageParent.onParent().assertIsNotFocused()
     }
 }
 
@@ -158,12 +162,18 @@ fun assertIncludedImage(composeTestRule: ComposeContentTestRule) {
     val onClickLeft = composeTestRule.onNodeWithContentDescription("onClickLeft", useUnmergedTree = true)
     onClickLeft.assertIsDisplayed()
     onClickLeft.assertIsEnabled()
-    onClickLeft.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
-    onClickLeft.onParent().assertIsNotFocused()
+    val onClickLeftParent = onClickLeft.onParent()
+
+    onClickLeftParent.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Shape, RectangleShape))
+    onClickLeftParent.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
+    onClickLeftParent.onParent().assertIsNotFocused()
 
     val onClickRight = composeTestRule.onNodeWithContentDescription("onCLickRight", useUnmergedTree = true)
     onClickRight.assertIsDisplayed()
     onClickRight.assertIsEnabled()
-    onClickRight.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
-    onClickRight.onParent().assertIsNotFocused()
+
+    val onClickRightParent = onClickRight.onParent()
+    onClickRightParent.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Shape, RectangleShape))
+    onClickRightParent.onParent().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
+    onClickRightParent.onParent().assertIsNotFocused()
 }

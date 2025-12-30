@@ -2,6 +2,7 @@ package com.anjo.starwarswikicompose.services.imagefetcher
 
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_BASE_URL
 import com.google.gson.GsonBuilder
+import com.google.gson.Strictness
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +19,7 @@ object FlickrClientBuilder {
     @Provides
     fun retrofitClient(okHttpClient: OkHttpClient): Retrofit {
         val gson = GsonBuilder()
-                .setLenient()
+                .setStrictness(Strictness.LENIENT)
                 .create()
         return Retrofit.Builder()
                 .baseUrl(FLICKR_BASE_URL)

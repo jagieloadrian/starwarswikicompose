@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,6 +34,7 @@ import com.anjo.starwarswikicompose.presentation.common.detail.getLocalHeight
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.utils.Constants
+import com.anjo.starwarswikicompose.utils.TestTags.INFORMATION_DIALOG_TAG
 import java.time.LocalDate
 
 @Composable
@@ -49,7 +51,8 @@ fun InfoDialog(onDismissAction: () -> Unit) {
         Card(modifier = Modifier
                 .fillMaxWidth()
                 .height(height)
-                .padding(16.dp),
+                .padding(16.dp)
+            .testTag(INFORMATION_DIALOG_TAG),
                 shape = RoundedCornerShape(16.dp)) {
             Box(modifier = Modifier
                     .fillMaxSize()
