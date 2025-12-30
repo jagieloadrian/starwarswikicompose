@@ -60,13 +60,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.dto.UniversalChunkDto
 import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
 import com.anjo.starwarswikicompose.presentation.common.SearchBarForChunks
+import com.anjo.starwarswikicompose.presentation.common.ads.BannerAdMobile
 import com.anjo.starwarswikicompose.presentation.common.appbars.CustomBottomAppBar
 import com.anjo.starwarswikicompose.presentation.common.appbars.CustomTopAppBar
 import com.anjo.starwarswikicompose.presentation.common.detail.choosePainter
@@ -105,6 +106,7 @@ fun HomeContentScreen(
     val lazyListState = rememberLazyListState()
     var category by remember { mutableStateOf(FILMS) }
     var shouldOpenSearchBar by remember { mutableStateOf(false) }
+    var shouldCloseAdBaner by remember { mutableStateOf(false) }
     var showAddObjectBottomSheet by remember { mutableStateOf(false) }
     val chunksState by homeViewModel.fetchedChunks.collectAsState()
 
@@ -130,76 +132,85 @@ fun HomeContentScreen(
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
+        bottomBar = { if(!shouldCloseAdBaner) BannerAdMobile(modifier = Modifier) { shouldCloseAdBaner = !shouldCloseAdBaner }  }
     ) { padding ->
-        if (showAddObjectBottomSheet) {
-            AddObjectScreen(modifier = Modifier.padding(padding), category = category) { shouldRefresh, localCategory ->
-                if (shouldRefresh) {
-                    category = localCategory
-                    homeViewModel.getChunks(localCategory)
-                }
-                showAddObjectBottomSheet = false
-            }
-        }
         Column(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .paint(
-                    painter = painterResource(R.drawable.stars_image),
-                    contentScale = ContentScale.FillBounds
-                )
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(TOP_BAR_HEIGHT)
-                    .background(MaterialTheme.colorScheme.primary),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CategoryDropDown(
-                    modifier = Modifier
-                        .weight(3f)
-                        .fillMaxHeight(), selectedCategory = category
-                ) { cat ->
-                    category = cat
-                    homeViewModel.getChunks(cat)
-                }
-                IconButton(modifier = Modifier.weight(1f), onClick = {
-                    shouldOpenSearchBar = !shouldOpenSearchBar
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Search, contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondary
-                    )
+            if (showAddObjectBottomSheet) {
+                AddObjectScreen(
+                    modifier = Modifier.padding(padding),
+                    category = category
+                ) { shouldRefresh, localCategory ->
+                    if (shouldRefresh) {
+                        category = localCategory
+                        homeViewModel.getChunks(localCategory)
+                    }
+                    showAddObjectBottomSheet = false
                 }
             }
-            if (chunksState.isLoading) {
-                ShimmerEffect()
-            } else {
-                if (shouldOpenSearchBar) {
-                    SearchBarForChunks(
-                        text = textState,
-                        onTextChange = { query ->
-                            textState = query
-                        },
-                        onClosedClicked = { shouldOpenSearchBar = false },
-                        lazyListState = lazyListState,
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .paint(
+                        painter = painterResource(R.drawable.stars_image),
+                        contentScale = ContentScale.FillBounds
+                    )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(TOP_BAR_HEIGHT)
+                        .background(MaterialTheme.colorScheme.primary),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CategoryDropDown(
                         modifier = Modifier
-                            .clickable {
-                                if (!shouldOpenSearchBar) {
-                                    shouldOpenSearchBar = true
+                            .weight(3f)
+                            .fillMaxHeight(), selectedCategory = category
+                    ) { cat ->
+                        category = cat
+                        homeViewModel.getChunks(cat)
+                    }
+                    IconButton(modifier = Modifier.weight(1f), onClick = {
+                        shouldOpenSearchBar = !shouldOpenSearchBar
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Search, contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSecondary
+                        )
+                    }
+                }
+                if (chunksState.isLoading) {
+                    ShimmerEffect()
+                } else {
+                    if (shouldOpenSearchBar) {
+                        SearchBarForChunks(
+                            text = textState,
+                            onTextChange = { query ->
+                                textState = query
+                            },
+                            onClosedClicked = { shouldOpenSearchBar = false },
+                            lazyListState = lazyListState,
+                            modifier = Modifier
+                                .clickable {
+                                    if (!shouldOpenSearchBar) {
+                                        shouldOpenSearchBar = true
+                                    }
                                 }
-                            }
-                            .background(Color.Transparent)
-                            .testTag(SEARCH_CHUNK_ICON),
-                        placeholder = ""
+                                .background(Color.Transparent)
+                                .testTag(SEARCH_CHUNK_ICON),
+                            placeholder = ""
+                        )
+                    }
+                    CommonList(
+                        lazyListState, textState,
+                        chunksState, navController
                     )
                 }
-                CommonList(
-                    lazyListState, textState,
-                    chunksState, navController
-                )
             }
         }
     }

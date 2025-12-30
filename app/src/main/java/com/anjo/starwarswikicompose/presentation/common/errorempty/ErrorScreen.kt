@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
+import com.anjo.starwarswikicompose.utils.TestTags.ERROR_CONTENT_TAG
 
 @Composable
 fun ErrorScreenWrapper(text: String, modifier: Modifier) {
@@ -73,7 +75,8 @@ fun ErrorContent(
     Column(
             modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState())
+                .testTag(ERROR_CONTENT_TAG),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
     ) {

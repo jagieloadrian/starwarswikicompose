@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.domain.model.sw.DetailObjectState
 import com.anjo.starwarswikicompose.domain.model.sw.isError
@@ -38,6 +39,7 @@ import com.anjo.starwarswikicompose.presentation.common.errorempty.ErrorScreenWr
 import com.anjo.starwarswikicompose.presentation.common.loading.LoadingScreen
 import com.anjo.starwarswikicompose.utils.Constants.ERROR_DESCRIPTION
 import com.anjo.starwarswikicompose.utils.TestTags.CUSTOM_ANIMATED_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.DETAIL_VISUAL_COMPONENT_TAG
 import com.anjo.starwarswikicompose.utils.TestTags.ERROR_ANIMATED_LABEL
 import com.anjo.starwarswikicompose.utils.TestTags.LOADING_ANIMATED_LABEL
 import kotlinx.coroutines.CoroutineScope
@@ -78,7 +80,8 @@ fun DetailVisualisationComponent(
     }
 
     Scaffold(
-        modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+        modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing)
+            .testTag(DETAIL_VISUAL_COMPONENT_TAG),
             topBar = { CustomTopAppBar(navHostController = navController) },
             bottomBar = { CustomBottomAppBar(navController) },
             floatingActionButton = {

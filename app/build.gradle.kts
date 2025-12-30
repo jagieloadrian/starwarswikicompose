@@ -40,10 +40,10 @@ android {
 
     defaultConfig {
         applicationId = "com.anjo.starwarswikicompose"
-        minSdk = 30
+        minSdk = 32
         targetSdk = 36
-        versionCode = 10
-        versionName = "1.1"
+        versionCode = 11
+        versionName = "1.2"
         buildFeatures.buildConfig = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -147,6 +147,8 @@ dependencies {
     //androidTestLibraries
     debugImplementation(libs.androidx.ui.test.manifest)
     androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.core.ktx.test)
+    androidTestImplementation(libs.androidx.monitor)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
@@ -198,6 +200,9 @@ dependencies {
 
     //Permissions
     implementation(libs.accompanist.permissions)
+
+    //Play Ads
+    implementation(libs.google.play.ads)
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {

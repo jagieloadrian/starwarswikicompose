@@ -92,7 +92,7 @@ fun getBitmapFromAsset(context: Context, chunkDto: UniversalChunkDto?): Bitmap? 
         try {
             val input = if (isFromLocal) getInputStreamFromFile(uriPath) else getInputStreamFromAsset(context, uriPath)
             val bitmap = BitmapFactory.decodeStream(input)
-            input?.close()
+            input.close()
             bitmap
         } catch (e: Exception) {
             Log.e(ADD_IMAGE_OBJECT_TAG, "getBitmapFromAsset: null", e)
@@ -101,10 +101,10 @@ fun getBitmapFromAsset(context: Context, chunkDto: UniversalChunkDto?): Bitmap? 
     }
 }
 
-private fun getInputStreamFromAsset(context: Context, uriPath: String): InputStream? {
+private fun getInputStreamFromAsset(context: Context, uriPath: String): InputStream {
     return context.assets.open(uriPath.split("/").takeLast(2).joinToString("/"))
 }
 
-private fun getInputStreamFromFile(uriPath: String): InputStream? {
+private fun getInputStreamFromFile(uriPath: String): InputStream {
     return File(uriPath).inputStream()
 }

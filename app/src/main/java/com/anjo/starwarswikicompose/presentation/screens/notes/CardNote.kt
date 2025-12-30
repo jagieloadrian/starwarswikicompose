@@ -36,7 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.presentation.common.detail.getLocalHeight
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING

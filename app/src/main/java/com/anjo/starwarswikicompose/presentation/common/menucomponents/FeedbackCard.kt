@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,7 @@ import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.Constants.FEEDBACK_RECEIVER
+import com.anjo.starwarswikicompose.utils.TestTags.FEEDBACK_CARD_TAG
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
@@ -62,7 +64,8 @@ fun FeedbackCard(
         Card(modifier = Modifier
                 .fillMaxWidth()
                 .height(height)
-                .padding(16.dp),
+                .padding(16.dp)
+            .testTag(FEEDBACK_CARD_TAG),
                 shape = RoundedCornerShape(16.dp)) {
             Box(modifier = Modifier
                     .fillMaxSize()

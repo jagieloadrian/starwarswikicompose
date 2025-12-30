@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +33,7 @@ import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.domain.model.sw.Category
 import com.anjo.starwarswikicompose.ui.theme.NETWORK_ERROR_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
+import com.anjo.starwarswikicompose.utils.TestTags.EMPTY_CONTENT_TAG
 
 @Composable
 fun EmptyScreen(
@@ -73,7 +75,8 @@ private fun EmptyContent(
     Column(
             modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState())
+                .testTag(EMPTY_CONTENT_TAG),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
     ) {

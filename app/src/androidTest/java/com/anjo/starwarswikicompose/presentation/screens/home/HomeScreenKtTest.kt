@@ -7,8 +7,11 @@ import androidx.compose.ui.semantics.SemanticsProperties.Role
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsNotFocused
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -17,6 +20,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.anjo.starwarswikicompose.domain.dto.UniversalChunkDto
 import com.anjo.starwarswikicompose.domain.model.sw.Category.FILMS
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
+import com.anjo.starwarswikicompose.utils.Constants.BANNER_NOT_FOUND_TEXT
+import com.anjo.starwarswikicompose.utils.TestTags.BANNER_BOX_TAG
 import com.anjo.starwarswikicompose.utils.TestTags.CHUNK_LIST
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
@@ -79,9 +84,18 @@ class HomeScreenKtTest {
             component.assertExists()
             component.assertHasClickAction()
         }
+        val banner = composeTestRule.onNodeWithTag(BANNER_BOX_TAG, true)
+
+        banner.assertExists()
+        banner.assertIsNotFocused()
+        banner.assertHasClickAction()
+
+        banner.onChild().assertTextContains(BANNER_NOT_FOUND_TEXT)
+        banner.performClick()
+
+        banner.assertDoesNotExist()
 
         val firstComponent = composeTestRule.onNodeWithText(films.first().name)
-
         firstComponent.performClick()
 
         verify { mockNavController.navigate("details_movie/objectId1") }

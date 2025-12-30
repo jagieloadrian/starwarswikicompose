@@ -13,11 +13,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.anjo.starwarswikicompose.presentation.common.animatedBorder
 import com.anjo.starwarswikicompose.ui.theme.SHIMMER_COLORS
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.utils.Constants.ANIMATED_BORDER_DURATION
+import com.anjo.starwarswikicompose.utils.TestTags.CORNER_BUTTON_TAG
 
 @Composable
 fun CornerButton(
@@ -53,7 +55,8 @@ fun CornerButtonFrame(
 ) {
     IconButton(onClick = onClick, modifier = Modifier
             .background(Color.Transparent)
-            .padding(15.dp)) {
+            .padding(15.dp)
+        .testTag(CORNER_BUTTON_TAG)) {
         Box(contentAlignment = Alignment.Center,
                 modifier = Modifier
                         .background(Color.DarkGray, shape = CircleShape)

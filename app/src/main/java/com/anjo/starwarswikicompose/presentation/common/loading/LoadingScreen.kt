@@ -18,12 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.presentation.common.animatedBorder
 import com.anjo.starwarswikicompose.ui.theme.SHIMMER_COLORS
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING_FOR_INFOBOX
 import com.anjo.starwarswikicompose.ui.theme.VEHICLE_PICTURE_HEIGHT
+import com.anjo.starwarswikicompose.utils.TestTags.LOADING_SCREEN_TAG
 import com.anjo.starwarswikicompose.utils.TestTags.STORMTROOPER_DRAW
 
 @Composable
@@ -41,7 +43,8 @@ fun LoadingScreen() {
     Box(modifier = Modifier
             .fillMaxSize()
             .paint(painter = painterResource(R.drawable.stars_image),
-                    contentScale = ContentScale.FillBounds),
+                    contentScale = ContentScale.FillBounds)
+        .testTag(LOADING_SCREEN_TAG),
             contentAlignment = Alignment.Center) {
         Box(modifier = Modifier
                 .animatedBorder(borderColors = SHIMMER_COLORS,

@@ -60,7 +60,13 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING_FOR_INFOBOX
 import com.anjo.starwarswikicompose.utils.Constants.EMOJI
 import com.anjo.starwarswikicompose.utils.Constants.UNKNOWN
+import com.anjo.starwarswikicompose.utils.TestTags.DOUBLE_BOX_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.INFO_BOX_CLICKABLE_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.INFO_BOX_COLUMN_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.INFO_BOX_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.RELATED_BOX_TAG
 import com.anjo.starwarswikicompose.utils.TestTags.RELATED_BUTTON_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.TRIPLE_BOX_TAG
 import com.anjo.starwarswikicompose.utils.getDescriptionName
 import com.anjo.starwarswikicompose.utils.isFromLocalStorage
 
@@ -107,7 +113,8 @@ fun InfoBox(
     Box(modifier = Modifier
             .width(width)
             .padding(EXTRA_SMALL_PADDING)
-            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))) {
+            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))
+        .testTag(INFO_BOX_TAG)) {
         Box(modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
@@ -158,7 +165,8 @@ fun InfoBox(
     Box(modifier = Modifier
             .width(width)
             .padding(EXTRA_SMALL_PADDING)
-            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))) {
+            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))
+        .testTag(INFO_BOX_CLICKABLE_TAG)) {
         Box(modifier = Modifier
                 .fillMaxWidth()
                 .clickable(enabled = shouldBeClickable) {
@@ -215,7 +223,8 @@ fun InfoBoxColumn(
     Box(modifier = Modifier
             .width(width)
             .padding(EXTRA_SMALL_PADDING)
-            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))) {
+            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))
+        .testTag(INFO_BOX_COLUMN_TAG)) {
         Box(modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
@@ -267,7 +276,8 @@ private fun RelatedBox(
 ) {
     Box(modifier = Modifier
             .padding(EXTRA_SMALL_PADDING)
-            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))) {
+            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))
+        .testTag(RELATED_BOX_TAG)) {
         Box(modifier = modifier
                 .width(width)
                 .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
@@ -317,7 +327,8 @@ fun DoubleInfoBox(
 ) {
     Row(modifier = Modifier
             .height(INFO_BOX_HEIGHT)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+        .testTag(DOUBLE_BOX_TAG),
             horizontalArrangement = Arrangement.SpaceEvenly) {
         InfoBox(
                 firstCornerName,
@@ -347,7 +358,8 @@ fun TripleInfoBox(
 ) {
     Row(modifier = Modifier
             .height(INFO_BOX_HEIGHT)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+        .testTag(TRIPLE_BOX_TAG),
             horizontalArrangement = Arrangement.SpaceEvenly) {
         InfoBox(
                 firstCornerName,

@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.testTag
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_LARGE_PADDING
 import com.anjo.starwarswikicompose.ui.theme.MEDIUM_PADDING
 import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT
+import com.anjo.starwarswikicompose.utils.TestTags.LOADING_BOX_TAG
 import com.anjo.starwarswikicompose.utils.TestTags.PROGRESS_INDICATOR_TAG
 
 @Composable
@@ -27,7 +28,8 @@ fun LoadingBox() {
     Card(modifier = Modifier
             .fillMaxWidth()
             .height(PICTURE_HEIGHT)
-            .padding(MEDIUM_PADDING),
+            .padding(MEDIUM_PADDING)
+        .testTag(LOADING_BOX_TAG),
             shape = RoundedCornerShape(MEDIUM_PADDING),
             colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {

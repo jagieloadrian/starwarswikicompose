@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.MainViewModel
 import com.anjo.starwarswikicompose.R
@@ -66,6 +67,7 @@ import com.anjo.starwarswikicompose.ui.theme.HOME_ICON_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
+import com.anjo.starwarswikicompose.utils.TestTags.TOP_APP_BAR_TAG
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +105,8 @@ fun CustomTopAppBar(
     TopAppBar(
         modifier = modifier
             .fillMaxWidth()
-            .height(TOP_BAR_HEIGHT),
+            .height(TOP_BAR_HEIGHT)
+            .testTag(TOP_APP_BAR_TAG),
         colors = TopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             scrolledContainerColor = MaterialTheme.colorScheme.primary,

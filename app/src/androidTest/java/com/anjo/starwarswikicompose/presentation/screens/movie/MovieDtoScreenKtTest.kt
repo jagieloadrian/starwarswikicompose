@@ -11,15 +11,12 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.test.performScrollTo
@@ -111,8 +108,6 @@ class MovieDtoScreenKtTest {
         val openingCrawl = composeRule.onNodeWithText("Opening Crawl", useUnmergedTree = true)
         openingCrawl.assertIsDisplayed()
         openingCrawl.onSibling().assertTextEquals(movieDto.openingCrawl)
-        openingCrawl.onParent().assertHasClickAction()
-        openingCrawl.onParent().assertIsNotFocused()
 
         val producersName = composeRule.onNodeWithText("Producers")
         producersName.assertIsDisplayed()

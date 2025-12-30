@@ -34,7 +34,8 @@ import com.anjo.starwarswikicompose.R
 import com.anjo.starwarswikicompose.ui.theme.SMALL_BORDER
 import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING_FOR_INFOBOX
 import com.anjo.starwarswikicompose.ui.theme.TOP_APP_BAR_HEIGHT
-import com.anjo.starwarswikicompose.utils.TestTags.SEARCH_BAR_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.SEARCH_BAR_CHUNKS_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.SEARCH_BAR_TAG
 
 @Composable
 fun SearchBar(
@@ -49,7 +50,8 @@ fun SearchBar(
 ) {
     val focusManager = LocalFocusManager.current
     Surface(
-            modifier = modifier,
+            modifier = modifier
+                .testTag(SEARCH_BAR_TAG),
             color = Color.Transparent,
     ) {
         TextField(
@@ -131,7 +133,7 @@ fun SearchBarForChunks(
         placeholder: String,
 ) {
     Surface(modifier = modifier
-            .testTag(SEARCH_BAR_LABEL),
+            .testTag(SEARCH_BAR_CHUNKS_TAG),
             color = Color.Transparent,
             shape = RoundedCornerShape(SMALL_PADDING_FOR_INFOBOX),
             border = BorderStroke(SMALL_BORDER, MaterialTheme.colorScheme.primary)) {
