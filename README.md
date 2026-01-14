@@ -60,9 +60,6 @@ Project is: _in progress_
 First version released at May 2024
 
 ## Room for Improvement
-
-
-- Add edition existed objects on local machine
 - Add another api for images to proof before reach limit (switch to other api) 
 
 
