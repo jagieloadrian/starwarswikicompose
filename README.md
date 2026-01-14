@@ -51,7 +51,7 @@ Java 17, newest version IntellijUltimate/Android Studio and android emulator (it
 
 
 ## Usage
-Install on android 15.0 or higher (also avd/emulator from android studio require android 9.0)
+Install on android 15.0 or higher (also avd/emulator from android studio require android 15.0)
 
 
 ## Project Status
