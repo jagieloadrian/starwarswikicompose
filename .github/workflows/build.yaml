@@ -1,0 +1,63 @@
+name: Android CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Setup JDK
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # 3. Restore props
+      - name: Restore secret files
+        run: |
+          mkdir -p app
+          echo "${{ secrets.RELEASE_KEYSTORE_JKS }}" | base64 --decode > release-keystore.jks
+          echo "${{ secrets.KEYSTORE_PROPERTIES_PROPERTIES }}"  > release-keystore.properties
+          echo "${{ secrets.PASSWORDS_PROPERTIES }}"  > passwords.properties
+          echo "${{ secrets.SERVICE_ACCOUNT_JSON }}"  > service-account.json
+
+      # 4. Cache Gradle
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper/
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 5. Build project
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      # 6. Unit tests
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest --no-daemon
+
+#      # 🔹 Upload coverage do Codecov
+#      - name: Upload coverage to Codecov
+#        uses: codecov/codecov-action@v4
+#        with:
+#          files: build/reports/jacoco/test/jacocoTestReport.xml
+#          fail_ci_if_error: true
+#        env:
+#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

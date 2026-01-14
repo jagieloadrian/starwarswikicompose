@@ -24,14 +24,14 @@ To practice writing android applications and learn new solutions.
 
 
 ## Technologies Used
-- Kotlin - version 1.9
+- Kotlin - version 2.2.21
 - Android core
-- Jetpack Compose with Material - version 1.5.3
-- ApolloGraphql3 - version 3.8.2
-- Retrofit2 - version 2.9.0
-- Hilt/Dagger - version 2.48.1
-- Room - version 2.6.0
-- Coil - version 2.4.0
+- Jetpack Compose with Material BOM - version 2025.12.00
+- ApolloGraphql3 - version 4.3.3
+- Retrofit2 - version 3.0.0
+- Hilt/Dagger - version 2.57.2
+- Room - version 2.8.4
+- Coil - version 3.3.0
 
 
 ## Features
@@ -51,7 +51,7 @@ Java 17, newest version IntellijUltimate/Android Studio and android emulator (it
 
 
 ## Usage
-Install on android 9.0 or higher (also avd/emulator from android studio require android 9.0)
+Install on android 15.0 or higher (also avd/emulator from android studio require android 9.0)
 
 
 ## Project Status
