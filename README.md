@@ -45,7 +45,6 @@ List the ready features here:
 ## Screenshots
 //TODO add images
 
-
 ## Setup
 Java 17, newest version IntellijUltimate/Android Studio and android emulator (it can be buid-in in IDE) to run locally.
 
