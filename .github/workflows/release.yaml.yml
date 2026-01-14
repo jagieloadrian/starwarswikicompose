@@ -1,0 +1,91 @@
+name: Manual Release Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      packageName:
+        description: 'Package name to deploy'
+        required: true
+        default: com.anjo.starwarswikicompose
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Setup JDK
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # 3. Restore props
+      - name: Restore secret files
+        run: |
+          mkdir -p app
+          echo "${{ secrets.RELEASE_KEYSTORE_JKS }}" | base64 --decode > release-keystore.jks
+          echo "${{ secrets.KEYSTORE_PROPERTIES_PROPERTIES }}"  > release-keystore.properties
+          echo "${{ secrets.PASSWORDS_PROPERTIES }}"  > passwords.properties
+          echo "${{ secrets.SERVICE_ACCOUNT_JSON }}"  > service-account.json
+
+      # 4. Cache Gradle
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper/
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 5. Install custom plugin
+      - name: Install custom plugin
+        run: |
+          curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
+
+      # 6. Build Release APK & Bundle
+      - name: Build Release
+        run: |
+          ./gradlew assembleRelease
+          echo "App assembled"
+          ./gradlew bundleRelease
+          echo "Bundle created!"
+
+      # 7. Prepare Play Store uploader
+      - name: Prepare Play Store uploader
+        run: |
+          ./gradlew playstorepublish:installDist
+          chmod +x ./playstorepublish/build/install/playstorepublish/bin/playstorepublish
+
+      # 8. Setup service account from GitHub Secret
+      - name: Setup Play Store service account
+        run: |
+          printf '%s' "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" > service-account.json
+
+      # 9. Publish to Play Store
+      - name: Publish to Play Store
+        env:
+          PACKAGE_NAME: ${{ github.event.inputs.packageName }}
+        run: |
+          AAB_PATH=./app/build/outputs/bundle/release/app-release.aab
+          UPLOADER=./playstorepublish/build/install/playstorepublish/bin/playstorepublish
+          echo "Deploying ${PACKAGE_NAME} to Play Console, using ${AAB_PATH}"
+          $UPLOADER $PACKAGE_NAME $AAB_PATH service-account.json
+          echo "Published artifact!"
+
+      # 10. Upload APK & AAB as artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: SW_COMPOSE-${{ github.run_id }}
+          path: |
+            ./app/build/outputs/apk/release/*.apk
+            ./app/build/outputs/bundle/release/*.aab
+          retention-days: 30
