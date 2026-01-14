@@ -45,7 +45,6 @@ List the ready features here:
 ## Screenshots
 //TODO add images
 
-
 ## Setup
 Java 17, newest version IntellijUltimate/Android Studio and android emulator (it can be buid-in in IDE) to run locally.
 
@@ -60,9 +59,6 @@ Project is: _in progress_
 First version released at May 2024
 
 ## Room for Improvement
-
-
-- Add edition existed objects on local machine
 - Add another api for images to proof before reach limit (switch to other api) 
 
 
