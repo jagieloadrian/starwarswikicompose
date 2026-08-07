@@ -71,8 +71,9 @@ android {
         val flickrApiKey = "FLICKR_API"
         val author = "AUTHOR"
         val feedbackReceiver = "FEEDBACK_RECEIVER"
+        val flickrApiKeyValue = (passwordProperties["flickrApiKey"] as String).trim('"')
         release {
-            buildConfigField("String", flickrApiKey, passwordProperties["flickrApiKey"] as String)
+            buildConfigField("String", flickrApiKey, "\"$flickrApiKeyValue\"")
             buildConfigField("String", author, "\"d18\"")
             buildConfigField("String", feedbackReceiver, "\"diether18.apps@gmail.com\"")
             isMinifyEnabled = false
@@ -80,7 +81,7 @@ android {
             signingConfig = signingConfigs["release"]
         }
         debug {
-            buildConfigField("String", flickrApiKey, passwordProperties["flickrApiKey"] as String)
+            buildConfigField("String", flickrApiKey, "\"$flickrApiKeyValue\"")
             buildConfigField("String", author, "\"d18\"")
             buildConfigField("String", feedbackReceiver, "\"diether18.apps@gmail.com\"")
             enableAndroidTestCoverage = true
