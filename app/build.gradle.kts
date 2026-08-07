@@ -49,13 +49,11 @@ android {
     }
 
     signingConfigs {
-        if (keystoreProperties.containsKey("storePassword")) {
-            create("release") {
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-                storeFile = file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
-            }
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
         }
     }
 
@@ -79,7 +77,7 @@ android {
             buildConfigField("String", feedbackReceiver, "\"diether18.apps@gmail.com\"")
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.findByName("release")
+            signingConfig = signingConfigs["release"]
         }
         debug {
             buildConfigField("String", flickrApiKey, passwordProperties["flickrApiKey"] as String)
