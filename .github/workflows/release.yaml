@@ -45,12 +45,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # 5. Install custom plugin
-      - name: Install custom plugin
-        run: |
-          curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
-
-      # 6. Build Release APK & Bundle
+      # 5. Build Release APK & Bundle
       - name: Build Release
         run: |
           ./gradlew assembleRelease
@@ -58,18 +53,13 @@ jobs:
           ./gradlew bundleRelease
           echo "Bundle created!"
 
-      # 7. Prepare Play Store uploader
+      # 6. Prepare Play Store uploader
       - name: Prepare Play Store uploader
         run: |
           ./gradlew playstorepublish:installDist
           chmod +x ./playstorepublish/build/install/playstorepublish/bin/playstorepublish
 
-      # 8. Setup service account from GitHub Secret
-      - name: Setup Play Store service account
-        run: |
-          printf '%s' "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" > service-account.json
-
-      # 9. Publish to Play Store
+      # 7. Publish to Play Store
       - name: Publish to Play Store
         env:
           PACKAGE_NAME: ${{ github.event.inputs.packageName }}
@@ -80,7 +70,7 @@ jobs:
           $UPLOADER $PACKAGE_NAME $AAB_PATH service-account.json
           echo "Published artifact!"
 
-      # 10. Upload APK & AAB as artifacts
+      # 8. Upload APK & AAB as artifacts
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
