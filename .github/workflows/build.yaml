@@ -31,7 +31,7 @@ jobs:
           echo "${{ secrets.PASSWORDS_PROPERTIES }}"  > passwords.properties
           echo "${{ secrets.SERVICE_ACCOUNT_JSON }}"  > service-account.json
           FLICKR_KEY=$(grep -oP '(?<=flickrApiKey=").*?(?=")' passwords.properties || true)
-          [ -n "$FLICKR_KEY" ] && echo "::add-mask::$FLICKR_KEY"
+          [ -n "$FLICKR_KEY" ] && echo "::add-mask::$FLICKR_KEY"; true
 
       # 4. Cache Gradle
       - name: Cache Gradle packages
@@ -83,7 +83,7 @@ jobs:
           echo "${{ secrets.PASSWORDS_PROPERTIES }}"  > passwords.properties
           echo "${{ secrets.SERVICE_ACCOUNT_JSON }}"  > service-account.json
           FLICKR_KEY=$(grep -oP '(?<=flickrApiKey=").*?(?=")' passwords.properties || true)
-          [ -n "$FLICKR_KEY" ] && echo "::add-mask::$FLICKR_KEY"
+          [ -n "$FLICKR_KEY" ] && echo "::add-mask::$FLICKR_KEY"; true
 
       - name: Cache Gradle packages
         uses: actions/cache@v4
