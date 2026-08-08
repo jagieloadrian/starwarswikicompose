@@ -77,20 +77,23 @@ class DataFetcherImplTest {
         runTest {
             //given
             val film1 = GetAllFilmsQuery.Film(
+                    __typename = "Film",
                     title = "Film1",
                     episodeID = 1,
                     id = "movieId1"
             )
             val film2 = GetAllFilmsQuery.Film(
+                    __typename = "Film",
                     title = "Film2",
                     episodeID = 2,
                     id = "movieId2"
             )
             val allFilms = GetAllFilmsQuery.Data(
                     GetAllFilmsQuery.AllFilms(
+                            __typename = "AllFilms",
                             totalCount = 2,
                             edges = listOf(),
-                            pageInfo = GetAllFilmsQuery.PageInfo(film1.id, hasNextPage = false, hasPreviousPage = false,
+                            pageInfo = GetAllFilmsQuery.PageInfo("PageInfo", film1.id, hasNextPage = false, hasPreviousPage = false,
                                     film2.id),
                             films = listOf(film1, film2, null)
                     ))
@@ -137,20 +140,23 @@ class DataFetcherImplTest {
         runTest {
             //given
             val object1 = GetAllPeoplesQuery.Person(
+                    __typename = "Person",
                     name = "Object1",
                     id = "id1",
                     birthYear = "12ABY"
             )
             val object2 = GetAllPeoplesQuery.Person(
+                    __typename = "Person",
                     name = "Object2",
                     id = "id2",
                     birthYear = "22ABY"
             )
             val allObjects = GetAllPeoplesQuery.Data(
                     GetAllPeoplesQuery.AllPeople(
+                            __typename = "AllPeople",
                             totalCount = 2,
                             edges = listOf(),
-                            pageInfo = GetAllPeoplesQuery.PageInfo(object1.id, hasNextPage = false,
+                            pageInfo = GetAllPeoplesQuery.PageInfo("PageInfo", object1.id, hasNextPage = false,
                                     hasPreviousPage = false,
                                     object2.id),
                             people = listOf(object1, object2, null)
@@ -199,20 +205,23 @@ class DataFetcherImplTest {
         runTest {
             //given
             val object1 = GetAllPlanetsQuery.Planet(
+                    __typename = "Planet",
                     name = "Object1",
                     id = "id1",
                     population = 123.00
             )
             val object2 = GetAllPlanetsQuery.Planet(
+                    __typename = "Planet",
                     name = "Object2",
                     id = "id2",
                     population = null
             )
             val allObjects = GetAllPlanetsQuery.Data(
                     GetAllPlanetsQuery.AllPlanets(
+                            __typename = "AllPlanets",
                             totalCount = 2,
                             edges = listOf(),
-                            pageInfo = GetAllPlanetsQuery.PageInfo(object1.id, hasNextPage = false,
+                            pageInfo = GetAllPlanetsQuery.PageInfo("PageInfo", object1.id, hasNextPage = false,
                                     hasPreviousPage = false,
                                     object2.id),
                             planets = listOf(object1, object2, null)
@@ -260,20 +269,23 @@ class DataFetcherImplTest {
         runTest {
             //given
             val object1 = GetAllSpeciesQuery.Species(
+                    __typename = "Species",
                     name = "Object1",
                     id = "id1",
                     language = "language"
             )
             val object2 = GetAllSpeciesQuery.Species(
+                    __typename = "Species",
                     name = "Object2",
                     id = "id2",
                     language = "lang"
             )
             val allObjects = GetAllSpeciesQuery.Data(
                     GetAllSpeciesQuery.AllSpecies(
+                            __typename = "AllSpecies",
                             totalCount = 2,
                             edges = listOf(),
-                            pageInfo = GetAllSpeciesQuery.PageInfo(object1.id, hasNextPage = false,
+                            pageInfo = GetAllSpeciesQuery.PageInfo("PageInfo", object1.id, hasNextPage = false,
                                     hasPreviousPage = false,
                                     object2.id),
                             species = listOf(object1, object2, null)
@@ -321,20 +333,23 @@ class DataFetcherImplTest {
         runTest {
             //given
             val object1 = GetAllStarshipsQuery.Starship(
+                    __typename = "Starship",
                     name = "Object1",
                     id = "id1",
                     model = "model1"
             )
             val object2 = GetAllStarshipsQuery.Starship(
+                    __typename = "Starship",
                     name = "Object2",
                     id = "id2",
                     model = "model2"
             )
             val allObjects = GetAllStarshipsQuery.Data(
                     GetAllStarshipsQuery.AllStarships(
+                            __typename = "AllStarships",
                             totalCount = 2,
                             edges = listOf(),
-                            pageInfo = GetAllStarshipsQuery.PageInfo(object1.id, hasNextPage = false,
+                            pageInfo = GetAllStarshipsQuery.PageInfo("PageInfo", object1.id, hasNextPage = false,
                                     hasPreviousPage = false,
                                     object2.id),
                             starships = listOf(object1, object2, null)
@@ -383,20 +398,23 @@ class DataFetcherImplTest {
         runTest {
             //given
             val object1 = GetAllVehiclesQuery.Vehicle(
+                    __typename = "Vehicle",
                     name = "Object1",
                     id = "id1",
                     model = "model1"
             )
             val object2 = GetAllVehiclesQuery.Vehicle(
+                    __typename = "Vehicle",
                     name = "Object2",
                     id = "id2",
                     model = "model2"
             )
             val allObjects = GetAllVehiclesQuery.Data(
                     GetAllVehiclesQuery.AllVehicles(
+                            __typename = "AllVehicles",
                             totalCount = 2,
                             edges = listOf(),
-                            pageInfo = GetAllVehiclesQuery.PageInfo(object1.id, hasNextPage = false,
+                            pageInfo = GetAllVehiclesQuery.PageInfo("PageInfo", object1.id, hasNextPage = false,
                                     hasPreviousPage = false,
                                     object2.id),
                             vehicles = listOf(object1, object2, null)
@@ -437,20 +455,21 @@ class DataFetcherImplTest {
                 specieConnection = ConnectionDto(1,
                         listOf(UniversalChunkDto(id = "connectId", name = "specieName", category = SPECIES))))
         val data = GetFilmQuery.Data(GetFilmQuery.Film(
+                __typename = "Film",
                 title = "title", episodeID = 1, openingCrawl = "longText", director = "director",
                 producers = listOf("producer1", "producer2", null),
                 releaseDate = "it was",
-                speciesConnection = GetFilmQuery.SpeciesConnection(1,
-                        species = listOf(GetFilmQuery.Species("connectId", "specieName"), null)),
-                starshipConnection = GetFilmQuery.StarshipConnection(1,
-                        starships = listOf(GetFilmQuery.Starship("starshipId", "StarshipName"), null)),
-                characterConnection = GetFilmQuery.CharacterConnection(1,
-                        characters = listOf(GetFilmQuery.Character("charId", "charName"), null)),
-                planetConnection = GetFilmQuery.PlanetConnection(1,
-                        planets = listOf(GetFilmQuery.Planet("planetId", "planetName"), null)),
-                vehicleConnection = GetFilmQuery.VehicleConnection(1,
-                        vehicles = listOf(GetFilmQuery.Vehicle("vehicleId", "vehicleName"), null)),
-                created = "was created", edited = null, id))
+                speciesConnection = GetFilmQuery.SpeciesConnection("SpeciesConnection", 1,
+                        species = listOf(GetFilmQuery.Species("Species", "connectId", "specieName"), null)),
+                starshipConnection = GetFilmQuery.StarshipConnection("StarshipConnection", 1,
+                        starships = listOf(GetFilmQuery.Starship("Starship", "starshipId", "StarshipName"), null)),
+                characterConnection = GetFilmQuery.CharacterConnection("CharacterConnection", 1,
+                        characters = listOf(GetFilmQuery.Character("Character", "charId", "charName"), null)),
+                planetConnection = GetFilmQuery.PlanetConnection("PlanetConnection", 1,
+                        planets = listOf(GetFilmQuery.Planet("Planet", "planetId", "planetName"), null)),
+                vehicleConnection = GetFilmQuery.VehicleConnection("VehicleConnection", 1,
+                        vehicles = listOf(GetFilmQuery.Vehicle("Vehicle", "vehicleId", "vehicleName"), null)),
+                created = "was created", edited = null, id = id))
         val dataApolloResponse = Builder(operation = GetFilmQuery(),
                 requestUuid = UUID.randomUUID()).data(data = data
         ).build()
@@ -482,15 +501,16 @@ class DataFetcherImplTest {
                 starshipConnection = ConnectionDto(1,
                         listOf(UniversalChunkDto(id = "starshipId", name = "StarshipName", category = STARSHIPS))))
         val data = GetPersonQuery.Data(GetPersonQuery.Person(
+                __typename = "Person",
                 name = "name", birthYear = "it was", gender = "gender", hairColor = "hair", height = 12,
-                mass = 120.00, skinColor = "skin", homeworld = GetPersonQuery.Homeworld("planetName", "planetId"),
-                eyeColor = "", species = GetPersonQuery.Species("specieName", "connectId"),
-                filmConnection = GetPersonQuery.FilmConnection(1,
-                        films = listOf(GetPersonQuery.Film("planetId", "planetName"), null)),
-                starshipConnection = GetPersonQuery.StarshipConnection(1,
-                        starships = listOf(GetPersonQuery.Starship("StarshipName", "starshipId"), null)),
-                vehicleConnection = GetPersonQuery.VehicleConnection(1,
-                        vehicles = listOf(GetPersonQuery.Vehicle("vehicleName", "vehicleId"), null)),
+                mass = 120.00, skinColor = "skin", homeworld = GetPersonQuery.Homeworld("Homeworld", "planetName", "planetId"),
+                eyeColor = "", species = GetPersonQuery.Species("Species", "specieName", "connectId"),
+                filmConnection = GetPersonQuery.FilmConnection("FilmConnection", 1,
+                        films = listOf(GetPersonQuery.Film("Film", "planetId", "planetName"), null)),
+                starshipConnection = GetPersonQuery.StarshipConnection("StarshipConnection", 1,
+                        starships = listOf(GetPersonQuery.Starship("Starship", "StarshipName", "starshipId"), null)),
+                vehicleConnection = GetPersonQuery.VehicleConnection("VehicleConnection", 1,
+                        vehicles = listOf(GetPersonQuery.Vehicle("Vehicle", "vehicleName", "vehicleId"), null)),
                 created = "was created", edited = null, id = id))
         val dataApolloResponse = Builder(
                 operation = GetPersonQuery(),
@@ -521,12 +541,13 @@ class DataFetcherImplTest {
                 movieConnection = ConnectionDto(1,
                         listOf(UniversalChunkDto(id = "planetId", name = "planetName", category = FILMS))))
         val data = GetPlanetQuery.Data(GetPlanetQuery.Planet(
+                __typename = "Planet",
                 name = "name", diameter = 12, rotationPeriod = 15, orbitalPeriod = 15, gravity = "gravity",
                 population = 120.00, climates = listOf("clim", "ates", null), terrains = listOf("terrain", null),
-                surfaceWater = 100.00, filmConnection = GetPlanetQuery.FilmConnection(1,
-                films = listOf(GetPlanetQuery.Film("planetId", "planetName"), null)),
-                residentConnection = GetPlanetQuery.ResidentConnection(1,
-                        residents = listOf(GetPlanetQuery.Resident("charId", "charName"), null)),
+                surfaceWater = 100.00, filmConnection = GetPlanetQuery.FilmConnection("FilmConnection", 1,
+                films = listOf(GetPlanetQuery.Film("Film", "planetId", "planetName"), null)),
+                residentConnection = GetPlanetQuery.ResidentConnection("ResidentConnection", 1,
+                        residents = listOf(GetPlanetQuery.Resident("Resident", "charId", "charName"), null)),
                 created = "was created", edited = null, id = id))
         val dataApolloResponse = Builder(
                 operation = GetPlanetQuery(),
@@ -558,15 +579,17 @@ class DataFetcherImplTest {
                 movieConnection = ConnectionDto(1,
                         listOf(UniversalChunkDto(id = "planetId", name = "planetName", category = FILMS))))
         val data =
-            GetSpecieQuery.Data(GetSpecieQuery.Species(name = "name", classification = "class", designation = "design",
+            GetSpecieQuery.Data(GetSpecieQuery.Species(
+                    __typename = "Species",
+                    name = "name", classification = "class", designation = "design",
                     averageHeight = 100.00, averageLifespan = 65, eyeColors = listOf("blue", "red", null),
                     hairColors = listOf("blue", "red", null), skinColors = listOf("blue", "red", null),
                     language = "language",
-                    homeworld = GetSpecieQuery.Homeworld("planetId", "planetName"),
-                    personConnection = GetSpecieQuery.PersonConnection(1,
-                            people = listOf(GetSpecieQuery.Person("charId", "charName"), null)),
-                    filmConnection = GetSpecieQuery.FilmConnection(1,
-                            films = listOf(GetSpecieQuery.Film("planetId", "planetName"), null)),
+                    homeworld = GetSpecieQuery.Homeworld("Homeworld", "planetId", "planetName"),
+                    personConnection = GetSpecieQuery.PersonConnection("PersonConnection", 1,
+                            people = listOf(GetSpecieQuery.Person("Person", "charId", "charName"), null)),
+                    filmConnection = GetSpecieQuery.FilmConnection("FilmConnection", 1,
+                            films = listOf(GetSpecieQuery.Film("Film", "planetId", "planetName"), null)),
                     created = "was created", edited = null, id = id))
         val dataApolloResponse = Builder(
                 operation = GetSpecieQuery(),
@@ -597,14 +620,16 @@ class DataFetcherImplTest {
                 movieConnection = ConnectionDto(1,
                         listOf(UniversalChunkDto(id = "filmId", name = "filmTitle", category = FILMS))))
         val data =
-            GetVehicleQuery.Data(GetVehicleQuery.Vehicle(name = "name", model = "design", vehicleClass = "class",
+            GetVehicleQuery.Data(GetVehicleQuery.Vehicle(
+                    __typename = "Vehicle",
+                    name = "name", model = "design", vehicleClass = "class",
                     manufacturers = listOf("own", "creator", null), costInCredits = 120.00, crew = "yes",
                     length = 80.00,
                     passengers = "exists", maxAtmospheringSpeed = 10, cargoCapacity = 100.00, consumables = "consume",
-                    pilotConnection = GetVehicleQuery.PilotConnection(1,
-                            pilots = listOf(GetVehicleQuery.Pilot("charId", "charName"))),
-                    filmConnection = GetVehicleQuery.FilmConnection(1,
-                            films = listOf(GetVehicleQuery.Film("filmId", "filmTitle"))),
+                    pilotConnection = GetVehicleQuery.PilotConnection("PilotConnection", 1,
+                            pilots = listOf(GetVehicleQuery.Pilot("Pilot", "charId", "charName"))),
+                    filmConnection = GetVehicleQuery.FilmConnection("FilmConnection", 1,
+                            films = listOf(GetVehicleQuery.Film("Film", "filmId", "filmTitle"))),
                     created = "was created", edited = null, id = id))
         val dataApolloResponse = Builder(
                 operation = GetVehicleQuery(),
@@ -636,15 +661,17 @@ class DataFetcherImplTest {
                 movieConnection = ConnectionDto(1,
                         listOf(UniversalChunkDto(id = "filmId", name = "filmTitle", category = FILMS))))
         val data =
-            GetStarshipQuery.Data(GetStarshipQuery.Starship(name = "name", model = "design", starshipClass = "class",
+            GetStarshipQuery.Data(GetStarshipQuery.Starship(
+                    __typename = "Starship",
+                    name = "name", model = "design", starshipClass = "class",
                     manufacturers = listOf("own", "creator", null), costInCredits = 120.00, crew = "yes",
                     length = 80.00,
                     passengers = "exists", maxAtmospheringSpeed = 10, cargoCapacity = 100.00, consumables = "consume",
                     MGLT = 20, hyperdriveRating = 4.00,
-                    pilotConnection = GetStarshipQuery.PilotConnection(1,
-                            pilots = listOf(GetStarshipQuery.Pilot("charId", "charName"))),
-                    filmConnection = GetStarshipQuery.FilmConnection(1,
-                            films = listOf(GetStarshipQuery.Film("filmId", "filmTitle"))),
+                    pilotConnection = GetStarshipQuery.PilotConnection("PilotConnection", 1,
+                            pilots = listOf(GetStarshipQuery.Pilot("Pilot", "charId", "charName"))),
+                    filmConnection = GetStarshipQuery.FilmConnection("FilmConnection", 1,
+                            films = listOf(GetStarshipQuery.Film("Film", "filmId", "filmTitle"))),
                     created = "was created", edited = null, id = id))
         val dataApolloResponse = Builder(
                 operation = GetStarshipQuery(),

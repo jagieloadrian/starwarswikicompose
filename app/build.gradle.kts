@@ -18,6 +18,8 @@ apollo {
     service("service") {
         packageName.set("com.anjo.starwarswikicompose.apollo")
         generateDataBuilders.set(true)
+        plugin("com.apollographql.cache:normalized-cache-apollo-compiler-plugin:${libs.versions.apolloNormalizedCache.get()}")
+        pluginArgument("com.apollographql.cache.packageName", packageName.get())
     }
 }
 

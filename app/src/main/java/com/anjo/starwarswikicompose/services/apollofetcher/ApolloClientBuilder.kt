@@ -4,13 +4,13 @@ import android.content.Context
 import com.anjo.starwarswikicompose.services.interceptor.NetworkConnectionInterceptor
 import com.anjo.starwarswikicompose.utils.Constants.APOLLO_BASE_URL
 import com.anjo.starwarswikicompose.utils.Constants.APOLLO_DB
+import com.anjo.starwarswikicompose.apollo.cache.Cache.cache
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.cache.normalized.FetchPolicy
-import com.apollographql.apollo.cache.normalized.api.MemoryCacheFactory
-import com.apollographql.apollo.cache.normalized.fetchPolicy
-import com.apollographql.apollo.cache.normalized.normalizedCache
-import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo.network.okHttpClient
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
+import com.apollographql.cache.normalized.memory.MemoryCacheFactory
+import com.apollographql.cache.normalized.sql.SqlNormalizedCacheFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,7 +36,7 @@ object ApolloClientBuilder {
         return ApolloClient.Builder()
                 .dispatcher(Dispatchers.Unconfined)
                 .serverUrl(APOLLO_BASE_URL)
-                .normalizedCache(cacheFactory)
+                .cache(cacheFactory)
                 .okHttpClient(okHttpClient)
                 .fetchPolicy(FetchPolicy.CacheFirst)
                 .build()
