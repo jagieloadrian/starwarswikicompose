@@ -52,6 +52,19 @@ jobs:
       - name: Run Unit Tests
         run: ./gradlew testDebugUnitTest --no-daemon
 
+      - name: Generate coverage report
+        run: ./gradlew jacocoTestReport --no-daemon
+
+      # 🔹 Upload coverage do Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+          flags: unittests
+          fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
   instrumentedTest:
 
     runs-on: ubuntu-latest
@@ -117,6 +130,7 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           files: app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+          flags: instrumentedtests
           fail_ci_if_error: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

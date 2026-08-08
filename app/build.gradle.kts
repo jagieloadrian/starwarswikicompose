@@ -206,7 +206,8 @@ dependencies {
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {
-    dependsOn("testDebugUnitTest", "connectedDebugAndroidTest")
+    dependsOn("testDebugUnitTest")
+    mustRunAfter("connectedDebugAndroidTest")
     val fileFilter = listOf("**/R.class",
             "**/R$*.class",
             "**/BuildConfig.*",
