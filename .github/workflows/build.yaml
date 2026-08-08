@@ -108,7 +108,7 @@ jobs:
       - name: Run instrumented tests (androidTest)
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 33
+          api-level: 36
           target: google_apis
           arch: x86_64
           profile: pixel_5
