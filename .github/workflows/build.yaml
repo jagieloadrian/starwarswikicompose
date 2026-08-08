@@ -57,13 +57,12 @@ jobs:
 
       # 🔹 Upload coverage do Codecov
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
-          files: app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+          files: ${{ github.workspace }}/app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
           flags: unittests
+          token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   instrumentedTest:
 
@@ -127,10 +126,9 @@ jobs:
         run: ./gradlew jacocoTestReport --no-daemon
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
-          files: app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+          files: ${{ github.workspace }}/app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
           flags: instrumentedtests
+          token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
