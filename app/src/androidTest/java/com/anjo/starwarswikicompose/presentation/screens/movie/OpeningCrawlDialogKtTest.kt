@@ -1,17 +1,17 @@
 package com.anjo.starwarswikicompose.presentation.screens.movie
 
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.anjo.starwarswikicompose.presentation.common.detail.getLocalWidth
+import com.anjo.starwarswikicompose.utils.TestTags.INFO_BOX_DIALOG_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.OPENING_CRAWL_DIALOG_TAG
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,9 +40,9 @@ class OpeningCrawlDialogKtTest {
         longDesc.assertIsDisplayed()
         longDesc.assertIsEnabled()
 
-        longDesc.onParent().performClick()
+        composeTestRule.onNodeWithTag(INFO_BOX_DIALOG_TAG).performClick()
 
-        val dialog = composeTestRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.IsDialog))
+        val dialog = composeTestRule.onNodeWithTag(OPENING_CRAWL_DIALOG_TAG)
 
         dialog.assertIsDisplayed()
         dialog.assertIsEnabled()

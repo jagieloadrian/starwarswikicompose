@@ -1,9 +1,9 @@
 package com.anjo.starwarswikicompose.presentation.screens.webview
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onChild
-import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.anjo.starwarswikicompose.utils.TestTags.WEB_VIEW_TAG
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,6 +24,6 @@ class WebViewKtTest {
             WebView(url = url)
         }
         //then
-        composeTestRule.onRoot(false).onChild().assertExists()
+        composeTestRule.onNodeWithTag(WEB_VIEW_TAG).assertExists()
     }
 }

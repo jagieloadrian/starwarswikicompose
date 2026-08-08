@@ -2,7 +2,7 @@
 
 import com.apollographql.apollo.annotations.ApolloExperimental
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -40,10 +40,10 @@ android {
 
     defaultConfig {
         applicationId = "com.anjo.starwarswikicompose"
-        minSdk = 32
+        minSdk = 34
         targetSdk = 36
-        versionCode = 11
-        versionName = "1.2"
+        versionCode = 12
+        versionName = "1.3"
         buildFeatures.buildConfig = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -12,6 +12,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.anjo.starwarswikicompose.domain.dto.ConnectionDto
 import com.anjo.starwarswikicompose.domain.dto.UniversalChunkDto
 import com.anjo.starwarswikicompose.domain.model.sw.Category.VEHICLES
+import com.anjo.starwarswikicompose.utils.TestTags.RELATED_BUTTON_TAG
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -73,7 +74,7 @@ class CommonFunctionsKtTest {
         }
 
         //when and then
-        val images = composeTestRule.onAllNodesWithTag("related_button_tag")
+        val images = composeTestRule.onAllNodesWithTag(RELATED_BUTTON_TAG)
         images.assertCountEquals(2)
 
         val firstVehicle = composeTestRule.onNodeWithText(connection.objects[0].name)

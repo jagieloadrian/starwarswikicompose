@@ -16,8 +16,8 @@ import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.text.input.ImeAction
@@ -28,6 +28,7 @@ import com.anjo.starwarswikicompose.domain.model.flickr.FlickrPhotos
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrResponse
 import com.anjo.starwarswikicompose.domain.model.flickr.FlickrStatus
 import com.anjo.starwarswikicompose.services.usecases.operationusecase.UseCases
+import com.anjo.starwarswikicompose.utils.TestTags.PHOTO_LIST_TAG
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -98,7 +99,7 @@ class ImageContentScreenKtTest {
         searchText.assertIsNotFocused()
 
         assertPhotos(composeTestRule, photo1)
-        composeTestRule.onRoot(true).performTouchInput { swipeUp() }
+        composeTestRule.onNodeWithTag(PHOTO_LIST_TAG).performTouchInput { swipeUp() }
 
         assertPhotos(composeTestRule, photo2)
         assertPhotos(composeTestRule, photo3)

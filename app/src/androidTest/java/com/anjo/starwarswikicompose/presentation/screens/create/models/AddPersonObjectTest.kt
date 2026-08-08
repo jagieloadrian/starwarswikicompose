@@ -14,8 +14,6 @@ import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -30,12 +28,12 @@ import com.anjo.starwarswikicompose.testutils.assertChunksField
 import com.anjo.starwarswikicompose.testutils.assertStringField
 import com.anjo.starwarswikicompose.testutils.connectionShouldBeSame
 import com.anjo.starwarswikicompose.testutils.extractNames
-import com.anjo.starwarswikicompose.utils.Constants.ADD_NEW_HERO
 import com.anjo.starwarswikicompose.utils.Constants.MOVIES_NAME
 import com.anjo.starwarswikicompose.utils.Constants.STARSHIPS_NAME
 import com.anjo.starwarswikicompose.utils.Constants.VEHICLES_NAME
 import com.anjo.starwarswikicompose.utils.TestTags.ADD_IMAGE_OBJECT_TAG
 import com.anjo.starwarswikicompose.utils.TestTags.ADD_OBJECT_PERSON_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.SAVE_BUTTON_TAG
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.awaits
@@ -139,7 +137,7 @@ class AddPersonObjectTest {
         addImage.assertHasClickAction()
         addImage.onChild().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Image))
 
-        val saveButton = composeRule.onNodeWithText(ADD_NEW_HERO, useUnmergedTree = true).onParent()
+        val saveButton = composeRule.onNodeWithTag(SAVE_BUTTON_TAG, useUnmergedTree = true)
         saveButton.performScrollTo()
         composeRule.waitForIdle()
 
