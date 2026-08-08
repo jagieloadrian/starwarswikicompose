@@ -234,14 +234,13 @@ tasks.register<JacocoReport>("jacocoTestReport") {
             "**/*_Factory*.*",
             "**/*_Impl*.*"
     )
-    val debugTree = fileTree("${layout.buildDirectory.get().asFile}/tmp/kotlin-classes/debug") { exclude(fileFilter) }
-    val javaClasses = fileTree("${layout.buildDirectory.get().asFile}/intermediates/javac/debug/classes") {
+    val debugClasses = fileTree("${layout.buildDirectory.get().asFile}/intermediates/classes/debug/transformDebugClassesWithAsm/dirs") {
         exclude(fileFilter)
     }
     val mainSrc = files("src/main/java")
 
     sourceDirectories.setFrom(files(mainSrc))
-    classDirectories.setFrom(files(debugTree, javaClasses))
+    classDirectories.setFrom(files(debugClasses))
     executionData.setFrom(fileTree(layout.buildDirectory.get().asFile) {
         include(
                 "jacoco/testDebugUnitTest.exec", // Unit tests
