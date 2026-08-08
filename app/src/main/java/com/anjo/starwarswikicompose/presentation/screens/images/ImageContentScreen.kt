@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -68,7 +69,10 @@ import com.anjo.starwarswikicompose.utils.Constants.COPIED_TO_CLIPBOARD
 import com.anjo.starwarswikicompose.utils.TestTags.CUSTOM_ANIMATED_LABEL
 import com.anjo.starwarswikicompose.utils.TestTags.ERROR_ANIMATED_LABEL
 import com.anjo.starwarswikicompose.utils.TestTags.FAIL_ANIMATED_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.IMAGES_CONTENT_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.IMAGE_SCREEN_TAG
 import com.anjo.starwarswikicompose.utils.TestTags.LOADING_ANIMATED_LABEL
+import com.anjo.starwarswikicompose.utils.TestTags.PHOTO_LIST_TAG
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -85,7 +89,9 @@ fun ImageScreen(
     }
     val snackBarHostState = remember { SnackbarHostState() }
     Scaffold(
-        modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+        modifier = Modifier
+            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .testTag(IMAGE_SCREEN_TAG),
             topBar = { CustomTopAppBar(navHostController = navController) },
             bottomBar = { CustomBottomAppBar(navController) },
             snackbarHost = { SnackbarHost(snackBarHostState) }
@@ -147,7 +153,8 @@ private fun ImagesContentVisualisation(
             .fillMaxSize()
             .paint(painter = painterResource(R.drawable.stars_image),
                     contentScale = ContentScale.FillBounds)
-            .alpha(alphaAnim)) {
+            .alpha(alphaAnim)
+            .testTag(IMAGES_CONTENT_TAG)) {
         if (!refreshing.value) {
             Column(modifier = Modifier
                     .fillMaxSize()
@@ -237,7 +244,8 @@ fun LazyColumnPhotos(
         lazyListState: LazyListState,
         addCopyAction: () -> Unit,
 ) {
-    LazyColumn(state = lazyListState,
+    LazyColumn(modifier = Modifier.testTag(PHOTO_LIST_TAG),
+            state = lazyListState,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(LARGE_PADDING),
             contentPadding = PaddingValues(all = SMALL_PADDING)) {

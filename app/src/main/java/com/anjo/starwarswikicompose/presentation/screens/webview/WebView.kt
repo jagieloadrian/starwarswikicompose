@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import com.anjo.starwarswikicompose.presentation.common.appbars.CustomBottomAppBar
@@ -35,6 +36,8 @@ import com.anjo.starwarswikicompose.presentation.common.errorempty.ErrorScreenWr
 import com.anjo.starwarswikicompose.services.interceptor.NetworkConnectionInterceptor
 import com.anjo.starwarswikicompose.utils.Constants.ERROR_UNAVAILABLE_INTERNET
 import com.anjo.starwarswikicompose.utils.Constants.WOOKIEPEDIA_URL
+import com.anjo.starwarswikicompose.utils.TestTags.WEBVIEW_SCREEN_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.WEB_VIEW_TAG
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -60,7 +63,8 @@ fun WebViewScreen(navController: NavHostController) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(padding)
+                .testTag(WEBVIEW_SCREEN_TAG),
             contentAlignment = Alignment.Center
         ) {
             if (!isRefreshing) {
@@ -89,7 +93,7 @@ fun WebView(
 
     if (hasInternetConnection(localContext)) {
         AndroidView(
-            modifier = modifier,
+            modifier = modifier.testTag(WEB_VIEW_TAG),
             factory = { context ->
                 WebView(context).apply {
                     layoutParams = ViewGroup.LayoutParams(

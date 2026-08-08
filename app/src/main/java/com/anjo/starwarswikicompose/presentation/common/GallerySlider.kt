@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -45,6 +46,9 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.utils.Constants
 import com.anjo.starwarswikicompose.utils.Constants.MEDIUM_WHITE_BACKGROUND_COPY
 import com.anjo.starwarswikicompose.utils.Constants.PHOTO_NAME
+import com.anjo.starwarswikicompose.utils.TestTags.GALLERY_IMAGE_BOX_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.GALLERY_SLIDER_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.IMAGE_CAROUSEL_TAG
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -95,7 +99,8 @@ fun GallerySlider(
 
     if (images.isNotEmpty()) {
         Card(modifier = Modifier
-                .padding(SMALL_PADDING),
+                .padding(SMALL_PADDING)
+                .testTag(GALLERY_SLIDER_TAG),
                 shape = RoundedCornerShape(MEDIUM_PADDING)) {
             ImageCarousel(images) { index ->
                 ImageBox(images, index, maxWidth, onCLickLeft, onCLickRight)
@@ -116,6 +121,7 @@ fun ImageBox(
     val currentImage = images[index]
     Box(modifier = Modifier
             .fillMaxWidth()
+            .testTag(GALLERY_IMAGE_BOX_TAG)
     ) {
         AsyncImage(
                 model = currentImage.url,
@@ -159,7 +165,8 @@ fun ImageCarousel(
 
     Box(modifier = modifier
             .fillMaxWidth()
-            .background(Color.Transparent)) {
+            .background(Color.Transparent)
+            .testTag(IMAGE_CAROUSEL_TAG)) {
         HorizontalPager(state = pagerState, key = { index -> items[index].id!! }) { page ->
             itemContent(page)
         }

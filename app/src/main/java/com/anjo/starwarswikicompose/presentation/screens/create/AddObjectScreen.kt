@@ -68,6 +68,7 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.VEHICLE_PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.utils.TestTags.ADD_OBJECT_CATEGORY_DROPDOWN
 import com.anjo.starwarswikicompose.utils.TestTags.ADD_OBJECT_MAIN_SCREEN
+import com.anjo.starwarswikicompose.utils.TestTags.SHOW_MEME_TAG
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
@@ -156,6 +157,7 @@ fun ShowMeme() {
                     .size(VEHICLE_PICTURE_HEIGHT)
                     .clip(RoundedCornerShape(MEDIUM_PADDING))
                     .alpha(alphaAnim)
+                    .testTag(SHOW_MEME_TAG)
     )
 }
 

@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +35,9 @@ import com.anjo.starwarswikicompose.services.imagefetcher.findImageAsset
 import com.anjo.starwarswikicompose.ui.theme.EXTRA_SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.ROUND_CORNER_BUTTONS
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
+import com.anjo.starwarswikicompose.utils.TestTags.COMMON_BUTTON_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.UNIVERSAL_COLUMN_TEXT_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.UNIVERSAL_ROW_TEXT_TAG
 import com.anjo.starwarswikicompose.utils.getDescriptionName
 import com.anjo.starwarswikicompose.utils.isFromLocalStorage
 
@@ -46,7 +50,8 @@ fun CommonButton(navController: NavHostController, item: UniversalChunkDto) {
                     .background(brush = Brush.linearGradient(listOf(
                             Color.Yellow, Color.Red, Color.Blue
                     )))
-                    .clickable { navigateToProperlyCompose(navController, item) },
+                    .clickable { navigateToProperlyCompose(navController, item) }
+                    .testTag(COMMON_BUTTON_TAG),
     ) {
         Row(horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically) {
@@ -77,7 +82,9 @@ private fun ColumnText(item: UniversalChunkDto, modifier: Modifier) {
 
 @Composable
 fun UniversalRowText(item: UniversalChunkDto, modifier: Modifier) {
-    Row(modifier = modifier.fillMaxSize()) {
+    Row(modifier = modifier
+            .fillMaxSize()
+            .testTag(UNIVERSAL_ROW_TEXT_TAG)) {
         Text(text = item.name,
                 modifier = Modifier.weight(2f),
                 textAlign = TextAlign.Center,
@@ -96,7 +103,9 @@ fun UniversalRowText(item: UniversalChunkDto, modifier: Modifier) {
 @Composable
 fun UniversalColumnText(item: UniversalChunkDto, modifier: Modifier) {
     val description = getDescriptionName(item.desc, null)
-    Column(modifier = modifier.fillMaxSize()) {
+    Column(modifier = modifier
+            .fillMaxSize()
+            .testTag(UNIVERSAL_COLUMN_TEXT_TAG)) {
         Text(text = item.name,
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.onSecondary)
