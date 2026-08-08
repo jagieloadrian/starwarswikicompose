@@ -50,6 +50,7 @@ class AddObjectScreenTest {
     private val dispatcher = StandardTestDispatcher()
     private val viewModel = AddObjectViewModel(useCase, insertUseCase, dispatcher)
 
+    @Suppress("DEPRECATION")
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalCoroutinesApi::class)
     @Test
     fun givenCategoryAndChangeCategory_WhenDisplayed_thenAssertResults() = runTest(dispatcher) {
@@ -103,7 +104,7 @@ class AddObjectScreenTest {
 
         val dragHandle =
             composeRule.onNodeWithContentDescription("Drag handle", substring = true, useUnmergedTree = true)
-        dragHandle.assert(SemanticsMatcher.expectValue(SemanticsProperties.IsTraversalGroup, true))
+        dragHandle.assert(SemanticsMatcher.expectValue(SemanticsProperties.IsContainer, true))
 
         dragHandle.onParent().performSemanticsAction(SemanticsActions.Dismiss)
 

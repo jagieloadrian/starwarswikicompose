@@ -26,6 +26,7 @@ class UpdateObjectBottomModalTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    @Suppress("DEPRECATION")
     @Test
     fun givenContent_whenDisplay_thenVerifyComponents() {
         //given
@@ -44,13 +45,13 @@ class UpdateObjectBottomModalTest {
         //when and then
         val modal = composeTestRule.onNodeWithTag(ADD_OBJECT_MAIN_SCREEN, useUnmergedTree = true)
         modal.assertExists()
-        modal.assert(SemanticsMatcher.expectValue(SemanticsProperties.IsTraversalGroup, true))
+        modal.assert(SemanticsMatcher.expectValue(SemanticsProperties.IsContainer, true))
         modal.assert(SemanticsMatcher.expectValue(SemanticsProperties.PaneTitle, "Bottom Sheet"))
 
         val dragPart = modal.onChildAt(0).onChildAt(0)
         dragPart.assertExists()
         dragPart.assertIsNotFocused()
-        dragPart.onChild().assert(SemanticsMatcher.expectValue(SemanticsProperties.IsTraversalGroup, true))
+        dragPart.onChild().assert(SemanticsMatcher.expectValue(SemanticsProperties.IsContainer, true))
 
 
         val text = modal.onChildAt(0).onChildAt(1)
