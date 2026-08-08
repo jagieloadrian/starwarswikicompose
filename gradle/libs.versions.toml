@@ -1,7 +1,7 @@
 [versions]
 #AndroidApp
 accompanistPermissions = "0.37.3"
-agp = "9.1.0"
+agp = "9.1.1"
 apollo = "5.0.1"
 apolloNormalizedCache = "1.0.6"
 coil = "3.5.0"
@@ -43,7 +43,6 @@ googleApiServicesAndroidpublisher = "v3-rev20260706-2.0.0"
 #Apollo
 apollo-normalized-cache = { module = "com.apollographql.cache:normalized-cache", version.ref = "apolloNormalizedCache" }
 apollo-normalized-cache-sqlite = { module = "com.apollographql.cache:normalized-cache-sqlite", version.ref = "apolloNormalizedCache" }
-apollo-normalized-cache-compiler-plugin = { module = "com.apollographql.cache:normalized-cache-apollo-compiler-plugin", version.ref = "apolloNormalizedCache" }
 apollo-api = { module = "com.apollographql.apollo:apollo-api", version.ref = "apollo" }
 apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo"}
 
