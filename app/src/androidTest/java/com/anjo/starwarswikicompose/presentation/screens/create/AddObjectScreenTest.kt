@@ -13,7 +13,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -103,7 +103,7 @@ class AddObjectScreenTest {
 
         val dragHandle =
             composeRule.onNodeWithContentDescription("Drag handle", substring = true, useUnmergedTree = true)
-        dragHandle.assert(SemanticsMatcher.expectValue(SemanticsProperties.IsContainer, true))
+        dragHandle.assert(SemanticsMatcher.expectValue(SemanticsProperties.IsTraversalGroup, true))
 
         dragHandle.onParent().performSemanticsAction(SemanticsActions.Dismiss)
 
