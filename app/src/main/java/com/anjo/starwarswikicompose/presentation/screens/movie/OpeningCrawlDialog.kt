@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +47,8 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING_FOR_INFOBOX
 import com.anjo.starwarswikicompose.utils.Constants.EMOJI
 import com.anjo.starwarswikicompose.utils.Constants.LESS_WHITE_BACKGROUND_COPY
 import com.anjo.starwarswikicompose.utils.Constants.MAX_LINES_NUMBER
+import com.anjo.starwarswikicompose.utils.TestTags.INFO_BOX_DIALOG_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.OPENING_CRAWL_DIALOG_TAG
 
 @Composable
 fun InfoBoxDialog(
@@ -67,7 +70,8 @@ fun InfoBoxDialog(
             .clickable {
                 openDialog.value = true
             }
-            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))) {
+            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(EXTRA_SMALL_PADDING))
+            .testTag(INFO_BOX_DIALOG_TAG)) {
         Box(modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(EXTRA_SMALL_PADDING))
@@ -116,7 +120,8 @@ fun DialogWithOpeningCrawl(
                 modifier = Modifier
                         .fillMaxWidth()
                         .height(height)
-                        .padding(16.dp),
+                        .padding(16.dp)
+                        .testTag(OPENING_CRAWL_DIALOG_TAG),
                 shape = RoundedCornerShape(16.dp),
         ) {
             Box(modifier = Modifier

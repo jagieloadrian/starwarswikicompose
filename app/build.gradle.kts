@@ -2,11 +2,10 @@
 
 import com.apollographql.apollo.annotations.ApolloExperimental
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt.plugin)
@@ -19,6 +18,8 @@ apollo {
     service("service") {
         packageName.set("com.anjo.starwarswikicompose.apollo")
         generateDataBuilders.set(true)
+        plugin("com.apollographql.cache:normalized-cache-apollo-compiler-plugin:${libs.versions.apolloNormalizedCache.get()}")
+        pluginArgument("com.apollographql.cache.packageName", packageName.get())
     }
 }
 
@@ -34,16 +35,16 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.anjo.starwarswikicompose"
-    compileSdk = 36
+    compileSdk = 37
     useLibrary("android.test.mock")
     buildFeatures.buildConfig = true
 
     defaultConfig {
         applicationId = "com.anjo.starwarswikicompose"
-        minSdk = 32
+        minSdk = 34
         targetSdk = 36
-        versionCode = 11
-        versionName = "1.2"
+        versionCode = 12
+        versionName = "1.3"
         buildFeatures.buildConfig = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -207,7 +208,8 @@ dependencies {
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {
-    dependsOn("testDebugUnitTest", "connectedDebugAndroidTest")
+    dependsOn("testDebugUnitTest")
+    mustRunAfter("connectedDebugAndroidTest")
     val fileFilter = listOf("**/R.class",
             "**/R$*.class",
             "**/BuildConfig.*",
@@ -232,14 +234,13 @@ tasks.register<JacocoReport>("jacocoTestReport") {
             "**/*_Factory*.*",
             "**/*_Impl*.*"
     )
-    val debugTree = fileTree("${layout.buildDirectory.get().asFile}/tmp/kotlin-classes/debug") { exclude(fileFilter) }
-    val javaClasses = fileTree("${layout.buildDirectory.get().asFile}/intermediates/javac/debug/classes") {
+    val debugClasses = fileTree("${layout.buildDirectory.get().asFile}/intermediates/classes/debug/transformDebugClassesWithAsm/dirs") {
         exclude(fileFilter)
     }
     val mainSrc = files("src/main/java")
 
     sourceDirectories.setFrom(files(mainSrc))
-    classDirectories.setFrom(files(debugTree, javaClasses))
+    classDirectories.setFrom(files(debugClasses))
     executionData.setFrom(fileTree(layout.buildDirectory.get().asFile) {
         include(
                 "jacoco/testDebugUnitTest.exec", // Unit tests

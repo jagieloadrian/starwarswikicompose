@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -59,6 +60,7 @@ import com.anjo.starwarswikicompose.ui.theme.PICTURE_HEIGHT
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.utils.Constants.HEROES_NAME
 import com.anjo.starwarswikicompose.utils.Constants.MOVIES_NAME
+import com.anjo.starwarswikicompose.utils.TestTags.SPECIE_SCREEN_TAG
 import com.anjo.starwarswikicompose.utils.updateImages
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -132,7 +134,8 @@ fun SpecieScreenContent(
     Box(modifier = modifier
             .fillMaxSize()
             .paint(painter = painterResource(R.drawable.stars_image),
-                    contentScale = ContentScale.FillBounds)) {
+                    contentScale = ContentScale.FillBounds)
+            .testTag(SPECIE_SCREEN_TAG)) {
         Column(modifier = Modifier.verticalScroll(state),
                 horizontalAlignment = Alignment.CenterHorizontally
         ) {

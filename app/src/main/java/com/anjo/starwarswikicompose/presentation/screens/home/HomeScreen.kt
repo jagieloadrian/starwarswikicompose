@@ -80,13 +80,17 @@ import com.anjo.starwarswikicompose.ui.theme.SMALL_PADDING
 import com.anjo.starwarswikicompose.ui.theme.SOLOFontName
 import com.anjo.starwarswikicompose.ui.theme.TOP_BAR_HEIGHT
 import com.anjo.starwarswikicompose.utils.TestTags.CHUNK_LIST
+import com.anjo.starwarswikicompose.utils.TestTags.HOME_CONTENT_SCREEN_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.HOME_SCREEN_TAG
 import com.anjo.starwarswikicompose.utils.TestTags.SEARCH_CHUNK_ICON
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(navController: NavHostController) {
     Scaffold(
-        modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+        modifier = Modifier
+            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .testTag(HOME_SCREEN_TAG),
         topBar = { CustomTopAppBar(navHostController = navController) },
         bottomBar = { CustomBottomAppBar(navController) },
         containerColor = MaterialTheme.colorScheme.primary
@@ -118,7 +122,8 @@ fun HomeContentScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .background(Color.Transparent),
+            .background(Color.Transparent)
+            .testTag(HOME_CONTENT_SCREEN_TAG),
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {

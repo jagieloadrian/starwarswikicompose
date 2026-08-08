@@ -13,7 +13,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -50,6 +50,7 @@ class AddObjectScreenTest {
     private val dispatcher = StandardTestDispatcher()
     private val viewModel = AddObjectViewModel(useCase, insertUseCase, dispatcher)
 
+    @Suppress("DEPRECATION")
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalCoroutinesApi::class)
     @Test
     fun givenCategoryAndChangeCategory_WhenDisplayed_thenAssertResults() = runTest(dispatcher) {

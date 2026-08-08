@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -61,6 +62,7 @@ import com.anjo.starwarswikicompose.utils.Constants.PLANETS_NAME
 import com.anjo.starwarswikicompose.utils.Constants.SPECIES_NAME
 import com.anjo.starwarswikicompose.utils.Constants.STARSHIPS_NAME
 import com.anjo.starwarswikicompose.utils.Constants.VEHICLES_NAME
+import com.anjo.starwarswikicompose.utils.TestTags.MOVIE_SCREEN_TAG
 import com.anjo.starwarswikicompose.utils.updateImages
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -133,7 +135,8 @@ fun MovieScreen(
     Box(modifier = modifier
             .fillMaxSize()
             .paint(painter = painterResource(R.drawable.stars_image),
-                    contentScale = ContentScale.FillBounds)) {
+                    contentScale = ContentScale.FillBounds)
+            .testTag(MOVIE_SCREEN_TAG)) {
         Column(modifier = Modifier.verticalScroll(state),
                 horizontalAlignment = Alignment.CenterHorizontally) {
             AsyncImage(model = findImageAsset(selected.id, FILMS, selected.isFromLocalStore,

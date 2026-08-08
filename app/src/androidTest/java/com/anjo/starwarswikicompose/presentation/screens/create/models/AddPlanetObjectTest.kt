@@ -11,11 +11,9 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsNotFocused
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -30,11 +28,11 @@ import com.anjo.starwarswikicompose.testutils.assertListField
 import com.anjo.starwarswikicompose.testutils.assertStringField
 import com.anjo.starwarswikicompose.testutils.connectionShouldBeSame
 import com.anjo.starwarswikicompose.testutils.extractNames
-import com.anjo.starwarswikicompose.utils.Constants.ADD_NEW_PLANET
 import com.anjo.starwarswikicompose.utils.Constants.HEROES_NAME
 import com.anjo.starwarswikicompose.utils.Constants.MOVIES_NAME
 import com.anjo.starwarswikicompose.utils.TestTags.ADD_IMAGE_OBJECT_TAG
 import com.anjo.starwarswikicompose.utils.TestTags.ADD_OBJECT_PLANET_TAG
+import com.anjo.starwarswikicompose.utils.TestTags.SAVE_BUTTON_TAG
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -131,7 +129,7 @@ class AddPlanetObjectTest {
         addImage.assertHasClickAction()
         addImage.onChild().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Image))
 
-        val saveButton = composeRule.onNodeWithText(ADD_NEW_PLANET, useUnmergedTree = true).onParent()
+        val saveButton = composeRule.onNodeWithTag(SAVE_BUTTON_TAG, useUnmergedTree = true)
         saveButton.performScrollTo()
         composeRule.waitForIdle()
 

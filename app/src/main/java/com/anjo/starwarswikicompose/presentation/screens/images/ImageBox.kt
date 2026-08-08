@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -53,6 +54,7 @@ import com.anjo.starwarswikicompose.utils.Constants.FLICKR_BASE_URL_IMAGE
 import com.anjo.starwarswikicompose.utils.Constants.FLICKR_EXT
 import com.anjo.starwarswikicompose.utils.Constants.MAX_LINES_NUMBER
 import com.anjo.starwarswikicompose.utils.Constants.MEDIUM_WHITE_BACKGROUND_COPY
+import com.anjo.starwarswikicompose.utils.TestTags.FLICKR_IMAGE_BOX_TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -71,7 +73,8 @@ fun ImageBox(
 
     Box(modifier = Modifier
             .fillMaxSize()
-            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(SMALL_PADDING))) {
+            .border(SMALL_BORDER, Color.Black, shape = RoundedCornerShape(SMALL_PADDING))
+            .testTag(FLICKR_IMAGE_BOX_TAG)) {
         Box(modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(SMALL_PADDING))) {

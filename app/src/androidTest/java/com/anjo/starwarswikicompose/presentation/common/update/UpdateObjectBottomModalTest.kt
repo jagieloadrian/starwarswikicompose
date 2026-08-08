@@ -7,7 +7,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onNodeWithTag
@@ -26,6 +26,7 @@ class UpdateObjectBottomModalTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    @Suppress("DEPRECATION")
     @Test
     fun givenContent_whenDisplay_thenVerifyComponents() {
         //given

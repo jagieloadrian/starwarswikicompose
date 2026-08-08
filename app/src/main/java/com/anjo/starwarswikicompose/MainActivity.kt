@@ -30,9 +30,9 @@ import com.anjo.starwarswikicompose.navigation.SetupNavGraph
 import com.anjo.starwarswikicompose.services.usecases.stateusecase.StateUseCase
 import com.anjo.starwarswikicompose.ui.theme.StarWarsWikiComposeTheme
 import com.anjo.starwarswikicompose.utils.TestTags.MAIN_NAV_GRAPH
+import com.google.android.gms.ads.AgeRestrictedTreatment
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
-import com.google.android.gms.ads.RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
     private fun mobileAdsConfig() {
         MobileAds.setRequestConfiguration(
             RequestConfiguration.Builder()
-                .setTagForUnderAgeOfConsent(TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE)
+                .setAgeRestrictedTreatment(AgeRestrictedTreatment.CHILD)
                 .setPublisherPrivacyPersonalizationState(RequestConfiguration.PublisherPrivacyPersonalizationState.DISABLED)
                 .build()
         )
